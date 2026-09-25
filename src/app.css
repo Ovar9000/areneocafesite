@@ -1,0 +1,246 @@
+/* Lot 7 Cafe — Intentional Editorial Design System */
+:root {
+	/* Warm Natural Light Gallery Palette */
+	--bg-base: #fafaf7;
+	--bg-surface: #ffffff;
+	--bg-subtle: #f3f3ed;
+	--bg-warm-tint: #eaeae0;
+	--bg-card: #ffffff;
+
+	/* Deep Charcoal & Near-Black Typography */
+	--text-main: #141416;
+	--text-secondary: #3c3c43;
+	--text-muted: #6e6e78;
+	--text-dim: #94949f;
+
+	/* Intentional Accent Palette (Restrained & Purposeful) */
+	--accent-navy: #14213d;
+	--accent-amber: #d9962a;
+	--accent-red: #b9382f;
+	--accent-steel: #2b5a9e;
+	--accent-green: #256f48;
+
+	--border-subtle: #e6e6de;
+	--border-mid: #d2d2c8;
+	--border-dark: #141416;
+
+	--radius-pill: 9999px;
+	--radius-card: 14px;
+	--radius-card-sm: 8px;
+
+	--font-display: 'Bebas Neue', -apple-system, BlinkMacSystemFont, sans-serif;
+	--font-editorial: 'Newsreader', Georgia, 'Times New Roman', serif;
+	--font-sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+	--font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+	--container-max: 1200px;
+	--page-padding: clamp(1.25rem, 5vw, 3.5rem);
+	--header-height: 70px;
+
+	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+	--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+	--ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+*, *::before, *::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	-webkit-tap-highlight-color: transparent !important;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+	-webkit-touch-callout: none;
+}
+
+:focus:not(:focus-visible) {
+	outline: none !important;
+}
+
+button, a, input, select, textarea, [role="button"], summary {
+	-webkit-tap-highlight-color: transparent !important;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+	-webkit-touch-callout: none;
+	outline: none;
+}
+
+button:focus:not(:focus-visible), 
+a:focus:not(:focus-visible) {
+	outline: none !important;
+}
+
+button:focus-visible, 
+a:focus-visible {
+	outline: 2px solid var(--accent-navy);
+	outline-offset: 3px;
+}
+
+html {
+	scroll-behavior: smooth;
+	background-color: var(--bg-base);
+	color: var(--text-main);
+	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	min-height: 100vh;
+	background-color: var(--bg-base);
+	color: var(--text-main);
+	overflow-x: hidden;
+	position: relative;
+	line-height: 1.5;
+}
+
+::selection {
+	background: var(--accent-navy);
+	color: #ffffff;
+}
+
+/* Subtle Paper Texture */
+.paper-texture {
+	position: relative;
+}
+
+.paper-texture::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	opacity: 0.025;
+	z-index: 1;
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Minimalist Clean Scrollbar */
+::-webkit-scrollbar {
+	width: 7px;
+	height: 7px;
+}
+::-webkit-scrollbar-track {
+	background: var(--bg-subtle);
+}
+::-webkit-scrollbar-thumb {
+	background: #cecec4;
+	border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: #9d9d93;
+}
+
+/* Container */
+.container {
+	width: 100%;
+	max-width: var(--container-max);
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: var(--page-padding);
+	padding-right: var(--page-padding);
+}
+
+/* Typography Classes */
+.font-display {
+	font-family: var(--font-display);
+	letter-spacing: -0.015em;
+	line-height: 0.88;
+	text-transform: uppercase;
+}
+
+.font-editorial {
+	font-family: var(--font-editorial);
+	font-style: italic;
+}
+
+.font-sans {
+	font-family: var(--font-sans);
+}
+
+.font-mono {
+	font-family: var(--font-mono);
+}
+
+/* Section Header Typography */
+.section-headline {
+	font-family: var(--font-sans);
+	font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	text-transform: uppercase;
+	line-height: 1.1;
+	color: var(--text-main);
+}
+
+.section-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+	margin-bottom: 0.75rem;
+}
+
+.section-label-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--accent-amber);
+}
+
+/* Pill Button */
+.btn-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 0.65rem 1.4rem;
+	border-radius: var(--radius-pill);
+	border: 1.5px solid var(--text-main);
+	background: var(--bg-surface);
+	color: var(--text-main);
+	font-family: var(--font-sans);
+	font-size: 0.88rem;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	text-transform: uppercase;
+	text-decoration: none;
+	cursor: pointer;
+	transition: all 0.2s var(--ease-out);
+	white-space: nowrap;
+}
+
+.btn-pill:hover {
+	background: var(--text-main);
+	color: #ffffff;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 14px rgba(20, 20, 22, 0.12);
+}
+
+.btn-pill-primary {
+	background: var(--accent-navy);
+	color: #ffffff;
+	border-color: var(--accent-navy);
+}
+
+.btn-pill-primary:hover {
+	background: #0d172c;
+	border-color: #0d172c;
+	color: #ffffff;
+	box-shadow: 0 4px 16px rgba(20, 33, 61, 0.22);
+}
+
+/* Card Framing */
+.photo-frame {
+	border: 1px solid var(--border-subtle);
+	border-radius: var(--radius-card);
+	background: var(--bg-surface);
+	overflow: hidden;
+	box-shadow: 0 2px 16px rgba(0, 0, 0, 0.025);
+	transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.photo-frame:hover {
+	border-color: var(--border-mid);
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+}

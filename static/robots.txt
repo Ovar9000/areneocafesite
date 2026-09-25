@@ -1,0 +1,10 @@
+# Lot 7 Cafe — Robots Policy
+User-agent: *
+Allow: /
+
+# Prevent indexing of build artifacts and internal directories
+Disallow: /_app/
+Disallow: /build/
+
+# Security Policy
+# See /.well-known/security.txt
