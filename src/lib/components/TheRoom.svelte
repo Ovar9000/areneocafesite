@@ -12,9 +12,6 @@
 			
 			<div class="header-row">
 				<h2 class="section-headline">ROOM ARTIFACTS &amp; ARCHITECTURE</h2>
-				<p class="header-desc font-sans">
-					Documented on-site. Mismatched stamped metal, backlit wood paneling, and natural day lighting.
-				</p>
 			</div>
 		</div>
 
@@ -39,9 +36,6 @@
 						<span class="info-tag font-mono">PRIMARY ARTIFACT</span>
 						<h3 class="feature-title font-sans">THE LICENSE PLATE WALL</h3>
 					</div>
-					<p class="feature-desc font-sans">
-						A full wall of authentic mismatched metal license plates from states across the US, set into custom backlit vertical wood paneling.
-					</p>
 				</div>
 			</article>
 
@@ -84,9 +78,6 @@
 					</div>
 					<div class="sub-info">
 						<h4 class="sub-title font-sans">NATURAL LIGHT LOUNGE</h4>
-						<p class="sub-desc font-sans">
-							Clean white walls, vintage furnishings, and generous day lighting for conversation and listening.
-						</p>
 						<span class="sub-meta font-mono">Floor seating &amp; espresso counter</span>
 					</div>
 				</article>
@@ -124,13 +115,6 @@
 		}
 	}
 
-	.header-desc {
-		color: var(--text-secondary);
-		font-size: 0.95rem;
-		max-width: 440px;
-		line-height: 1.5;
-	}
-
 	/* Editorial Gallery */
 	.editorial-gallery {
 		display: flex;
@@ -143,6 +127,13 @@
 		display: flex;
 		flex-direction: column;
 		background: var(--bg-surface);
+		cursor: pointer;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	.feature-card:hover {
+		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+		border-color: var(--border-mid);
 	}
 
 	.feature-media {
@@ -153,17 +144,78 @@
 		background: #ecece7;
 	}
 
+	/* Frosted glass light sweep across the tile */
+	.feature-media::before,
+	.sub-media::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			115deg,
+			transparent 35%,
+			rgba(255, 255, 255, 0.3) 50%,
+			transparent 65%
+		);
+		transform: translateX(-100%);
+		transition: transform 0.75s var(--ease-out);
+		pointer-events: none;
+		z-index: 3;
+	}
+
+	/* Frosted glass overlay pane */
+	.feature-media::after,
+	.sub-media::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.32) 0%,
+			rgba(255, 255, 255, 0.12) 45%,
+			rgba(240, 240, 235, 0.28) 100%
+		);
+		backdrop-filter: blur(10px) saturate(140%) brightness(1.02);
+		-webkit-backdrop-filter: blur(10px) saturate(140%) brightness(1.02);
+		border: 1px solid rgba(255, 255, 255, 0.45);
+		box-shadow: 
+			inset 0 0 24px rgba(255, 255, 255, 0.25),
+			inset 0 1px 2px rgba(255, 255, 255, 0.6),
+			inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+		opacity: 0;
+		pointer-events: none;
+		z-index: 2;
+		transition: opacity 0.45s var(--ease-out);
+	}
+
 	.gallery-photo {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 		display: block;
-		transition: transform 0.6s var(--ease-out);
+		transition: transform 0.65s var(--ease-out), filter 0.5s var(--ease-out);
+		will-change: transform, filter;
 	}
 
 	.feature-card:hover .gallery-photo,
-	.sub-card:hover .gallery-photo {
-		transform: scale(1.03);
+	.feature-card:focus-within .gallery-photo,
+	.sub-card:hover .gallery-photo,
+	.sub-card:focus-within .gallery-photo {
+		transform: scale(1.05);
+		filter: blur(8px) saturate(1.15) brightness(0.96);
+	}
+
+	.feature-card:hover .feature-media::after,
+	.feature-card:focus-within .feature-media::after,
+	.sub-card:hover .sub-media::after,
+	.sub-card:focus-within .sub-media::after {
+		opacity: 1;
+	}
+
+	.feature-card:hover .feature-media::before,
+	.feature-card:focus-within .feature-media::before,
+	.sub-card:hover .sub-media::before,
+	.sub-card:focus-within .sub-media::before {
+		transform: translateX(100%);
 	}
 
 	.photo-tag {
@@ -178,9 +230,22 @@
 		color: var(--text-main);
 		background: rgba(255, 255, 255, 0.94);
 		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 		padding: 0.45rem 0.75rem;
 		border-radius: var(--radius-card-sm);
 		border: 1px solid var(--border-subtle);
+		z-index: 4;
+		transition: transform 0.4s var(--ease-out), background 0.3s ease, box-shadow 0.4s ease, border-color 0.3s ease;
+	}
+
+	.feature-card:hover .photo-tag,
+	.feature-card:focus-within .photo-tag,
+	.sub-card:hover .photo-tag,
+	.sub-card:focus-within .photo-tag {
+		transform: translateY(-2px);
+		background: rgba(255, 255, 255, 0.98);
+		border-color: rgba(255, 255, 255, 0.85);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 	}
 
 	.feature-info {
@@ -212,13 +277,6 @@
 		color: var(--text-main);
 	}
 
-	.feature-desc {
-		font-size: 0.9rem;
-		color: var(--text-secondary);
-		max-width: 500px;
-		line-height: 1.5;
-	}
-
 	/* Sub-grid */
 	.sub-gallery-grid {
 		display: grid;
@@ -237,6 +295,13 @@
 		display: flex;
 		flex-direction: column;
 		background: var(--bg-surface);
+		cursor: pointer;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	.sub-card:hover {
+		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+		border-color: var(--border-mid);
 	}
 
 	.sub-media {

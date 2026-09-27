@@ -24,9 +24,6 @@
 			
 			<div class="header-row">
 				<h2 class="section-headline">RESIDENT DECK &amp; SLEEVES</h2>
-				<p class="sound-subtext font-sans">
-					Grounded in the physical turntable, near-field studio monitors, and active vinyl rotations kept at the front counter.
-				</p>
 			</div>
 		</div>
 
@@ -49,9 +46,6 @@
 
 					<div class="turntable-details">
 						<h3 class="card-heading font-sans">DIRECT-DRIVE ANALOG DECK</h3>
-						<p class="card-desc font-sans">
-							Active listening station behind the bar. Uncompressed analog sound spinning throughout the room during daytime coffee and after-hours.
-						</p>
 					</div>
 				</div>
 
@@ -103,10 +97,6 @@
 							<span>POP-UP BY GROOVY</span>
 							<span>“YOUR NEIGHBORHOOD, JUST A LITTLE BETTER.”</span>
 						</div>
-
-						<p class="archive-note font-sans">
-							Archival record of our soft opening. For future unannounced listening sessions and guest selectors, check our Instagram stories.
-						</p>
 					</div>
 				</div>
 			</div>
@@ -145,13 +135,6 @@
 		}
 	}
 
-	.sound-subtext {
-		color: var(--text-secondary);
-		font-size: 0.95rem;
-		max-width: 480px;
-		line-height: 1.5;
-	}
-
 	/* Grid */
 	.sound-grid {
 		display: grid;
@@ -178,6 +161,13 @@
 		background: var(--bg-surface);
 		display: flex;
 		flex-direction: column;
+		cursor: pointer;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	.turntable-card:hover {
+		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+		border-color: var(--border-mid);
 	}
 
 	.turntable-media {
@@ -187,16 +177,70 @@
 		background: #ecece7;
 	}
 
+	/* Frosted glass light sweep across the tile */
+	.turntable-media::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			115deg,
+			transparent 35%,
+			rgba(255, 255, 255, 0.3) 50%,
+			transparent 65%
+		);
+		transform: translateX(-100%);
+		transition: transform 0.75s var(--ease-out);
+		pointer-events: none;
+		z-index: 3;
+	}
+
+	/* Frosted glass overlay pane */
+	.turntable-media::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.32) 0%,
+			rgba(255, 255, 255, 0.12) 45%,
+			rgba(240, 240, 235, 0.28) 100%
+		);
+		backdrop-filter: blur(10px) saturate(140%) brightness(1.02);
+		-webkit-backdrop-filter: blur(10px) saturate(140%) brightness(1.02);
+		border: 1px solid rgba(255, 255, 255, 0.45);
+		box-shadow: 
+			inset 0 0 24px rgba(255, 255, 255, 0.25),
+			inset 0 1px 2px rgba(255, 255, 255, 0.6),
+			inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+		opacity: 0;
+		pointer-events: none;
+		z-index: 2;
+		transition: opacity 0.45s var(--ease-out);
+	}
+
 	.turntable-img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 		display: block;
-		transition: transform 0.6s var(--ease-out);
+		transition: transform 0.65s var(--ease-out), filter 0.5s var(--ease-out);
+		will-change: transform, filter;
 	}
 
-	.turntable-card:hover .turntable-img {
-		transform: scale(1.03);
+	.turntable-card:hover .turntable-img,
+	.turntable-card:focus-within .turntable-img {
+		transform: scale(1.05);
+		filter: blur(8px) saturate(1.15) brightness(0.96);
+	}
+
+	.turntable-card:hover .turntable-media::after,
+	.turntable-card:focus-within .turntable-media::after {
+		opacity: 1;
+	}
+
+	.turntable-card:hover .turntable-media::before,
+	.turntable-card:focus-within .turntable-media::before {
+		transform: translateX(100%);
 	}
 
 	.media-tag {
@@ -211,9 +255,20 @@
 		color: var(--text-main);
 		background: rgba(255, 255, 255, 0.94);
 		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 		padding: 0.45rem 0.75rem;
 		border-radius: var(--radius-card-sm);
 		border: 1px solid var(--border-subtle);
+		z-index: 4;
+		transition: transform 0.4s var(--ease-out), background 0.3s ease, box-shadow 0.4s ease, border-color 0.3s ease;
+	}
+
+	.turntable-card:hover .media-tag,
+	.turntable-card:focus-within .media-tag {
+		transform: translateY(-2px);
+		background: rgba(255, 255, 255, 0.98);
+		border-color: rgba(255, 255, 255, 0.85);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 	}
 
 	.turntable-details {
@@ -227,12 +282,6 @@
 		font-size: 1.2rem;
 		font-weight: 700;
 		color: var(--text-main);
-	}
-
-	.card-desc {
-		font-size: 0.88rem;
-		color: var(--text-muted);
-		line-height: 1.5;
 	}
 
 	/* Sleeves Box */
@@ -309,6 +358,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.25rem;
+		cursor: pointer;
+		transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	}
+
+	.archive-card:hover {
+		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+		border-color: var(--border-mid);
 	}
 
 	.archive-top {
@@ -339,6 +395,47 @@
 		padding: 1rem;
 		display: flex;
 		justify-content: center;
+		position: relative;
+	}
+
+	/* Frosted glass light sweep across the poster tile */
+	.archive-poster-wrap::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			115deg,
+			transparent 35%,
+			rgba(255, 255, 255, 0.28) 50%,
+			transparent 65%
+		);
+		transform: translateX(-100%);
+		transition: transform 0.75s var(--ease-out);
+		pointer-events: none;
+		z-index: 3;
+	}
+
+	/* Frosted glass overlay pane */
+	.archive-poster-wrap::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.28) 0%,
+			rgba(255, 255, 255, 0.1) 45%,
+			rgba(20, 33, 61, 0.35) 100%
+		);
+		backdrop-filter: blur(8px) saturate(130%) brightness(1.02);
+		-webkit-backdrop-filter: blur(8px) saturate(130%) brightness(1.02);
+		border: 1px solid rgba(255, 255, 255, 0.35);
+		box-shadow: 
+			inset 0 0 20px rgba(255, 255, 255, 0.2),
+			inset 0 1px 2px rgba(255, 255, 255, 0.4);
+		opacity: 0;
+		pointer-events: none;
+		z-index: 2;
+		transition: opacity 0.45s var(--ease-out);
 	}
 
 	.archive-poster {
@@ -347,6 +444,24 @@
 		object-fit: contain;
 		display: block;
 		border-radius: 4px;
+		transition: transform 0.65s var(--ease-out), filter 0.5s var(--ease-out);
+		will-change: transform, filter;
+	}
+
+	.archive-card:hover .archive-poster,
+	.archive-card:focus-within .archive-poster {
+		transform: scale(1.04);
+		filter: blur(6px) saturate(1.15) brightness(0.96);
+	}
+
+	.archive-card:hover .archive-poster-wrap::after,
+	.archive-card:focus-within .archive-poster-wrap::after {
+		opacity: 1;
+	}
+
+	.archive-card:hover .archive-poster-wrap::before,
+	.archive-card:focus-within .archive-poster-wrap::before {
+		transform: translateX(100%);
 	}
 
 	.archive-caption {
@@ -378,11 +493,5 @@
 		padding: 0.5rem 0;
 		border-top: 1px dashed var(--border-subtle);
 		border-bottom: 1px dashed var(--border-subtle);
-	}
-
-	.archive-note {
-		font-size: 0.82rem;
-		color: var(--text-secondary);
-		line-height: 1.5;
 	}
 </style>

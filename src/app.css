@@ -244,3 +244,23 @@ body {
 	border-color: var(--border-mid);
 	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
 }
+
+/* Accessibility: respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+	.gallery-photo,
+	.story-photo,
+	.turntable-img,
+	.archive-poster {
+		transition: none !important;
+		transform: none !important;
+	}
+
+	.feature-media::before,
+	.sub-media::before,
+	.story-media::before,
+	.turntable-media::before,
+	.archive-poster-wrap::before {
+		display: none !important;
+	}
+}
+
