@@ -1,4 +1,6 @@
 <script lang="ts">
+	import MediaFrame from './MediaFrame.svelte';
+
 	const sleeves = [
 		{
 			title: 'MOVE',
@@ -32,17 +34,14 @@
 			<!-- Column 1: Hardware & Verified Counter Sleeves -->
 			<div class="deck-column">
 				<div class="turntable-card photo-frame">
-					<div class="turntable-media">
-						<img 
-							src="/images/interior-turntable-setup.png" 
-							alt="Resident Turntable Deck &amp; Studio Monitors at Lot 7" 
-							class="turntable-img"
+					<MediaFrame aspect="4 / 3" tags={['RESIDENT DECK', 'STUDIO MONITORS']}>
+						<enhanced:img
+							src="$lib/assets/images/turntable-setup.jpg"
+							alt="Resident Turntable Deck &amp; Studio Monitors at Lot 7"
+							sizes="(min-width: 1200px) 580px, (min-width: 900px) 50vw, 92vw"
+							loading="lazy"
 						/>
-						<div class="media-tag font-mono">
-							<span>RESIDENT DECK</span>
-							<span>STUDIO MONITORS</span>
-						</div>
-					</div>
+					</MediaFrame>
 
 					<div class="turntable-details">
 						<h3 class="card-heading font-sans">DIRECT-DRIVE ANALOG DECK</h3>
@@ -80,10 +79,12 @@
 					</div>
 
 					<div class="archive-poster-wrap">
-						<img 
-							src="/images/brand-soft-opening-poster.png" 
+						<enhanced:img 
+							src="$lib/assets/images/soft-opening-poster.jpg" 
 							alt="Lot 7 Soft Opening Poster: 09.08.26 featuring Vinz, Pancake, Bos, Kim, Suki" 
 							class="archive-poster"
+							width="434"
+							loading="lazy"
 						/>
 					</div>
 
@@ -150,7 +151,8 @@
 		}
 	}
 
-	.deck-column, .archive-column {
+	.deck-column,
+	.archive-column {
 		display: flex;
 		flex-direction: column;
 		gap: 1.75rem;
@@ -161,114 +163,12 @@
 		background: var(--bg-surface);
 		display: flex;
 		flex-direction: column;
-		cursor: pointer;
 		transition: border-color 0.3s ease, box-shadow 0.3s ease;
 	}
 
 	.turntable-card:hover {
 		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
 		border-color: var(--border-mid);
-	}
-
-	.turntable-media {
-		position: relative;
-		aspect-ratio: 4 / 3;
-		overflow: hidden;
-		background: #ecece7;
-	}
-
-	/* Frosted glass light sweep across the tile */
-	.turntable-media::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			115deg,
-			transparent 35%,
-			rgba(255, 255, 255, 0.3) 50%,
-			transparent 65%
-		);
-		transform: translateX(-100%);
-		transition: transform 0.75s var(--ease-out);
-		pointer-events: none;
-		z-index: 3;
-	}
-
-	/* Frosted glass overlay pane */
-	.turntable-media::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			135deg,
-			rgba(255, 255, 255, 0.32) 0%,
-			rgba(255, 255, 255, 0.12) 45%,
-			rgba(240, 240, 235, 0.28) 100%
-		);
-		backdrop-filter: blur(10px) saturate(140%) brightness(1.02);
-		-webkit-backdrop-filter: blur(10px) saturate(140%) brightness(1.02);
-		border: 1px solid rgba(255, 255, 255, 0.45);
-		box-shadow: 
-			inset 0 0 24px rgba(255, 255, 255, 0.25),
-			inset 0 1px 2px rgba(255, 255, 255, 0.6),
-			inset 0 -1px 2px rgba(0, 0, 0, 0.05);
-		opacity: 0;
-		pointer-events: none;
-		z-index: 2;
-		transition: opacity 0.45s var(--ease-out);
-	}
-
-	.turntable-img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-		transition: transform 0.65s var(--ease-out), filter 0.5s var(--ease-out);
-		will-change: transform, filter;
-	}
-
-	.turntable-card:hover .turntable-img,
-	.turntable-card:focus-within .turntable-img {
-		transform: scale(1.05);
-		filter: blur(8px) saturate(1.15) brightness(0.96);
-	}
-
-	.turntable-card:hover .turntable-media::after,
-	.turntable-card:focus-within .turntable-media::after {
-		opacity: 1;
-	}
-
-	.turntable-card:hover .turntable-media::before,
-	.turntable-card:focus-within .turntable-media::before {
-		transform: translateX(100%);
-	}
-
-	.media-tag {
-		position: absolute;
-		bottom: 1rem;
-		left: 1rem;
-		right: 1rem;
-		display: flex;
-		justify-content: space-between;
-		font-size: 0.65rem;
-		letter-spacing: 0.1em;
-		color: var(--text-main);
-		background: rgba(255, 255, 255, 0.94);
-		backdrop-filter: blur(8px);
-		-webkit-backdrop-filter: blur(8px);
-		padding: 0.45rem 0.75rem;
-		border-radius: var(--radius-card-sm);
-		border: 1px solid var(--border-subtle);
-		z-index: 4;
-		transition: transform 0.4s var(--ease-out), background 0.3s ease, box-shadow 0.4s ease, border-color 0.3s ease;
-	}
-
-	.turntable-card:hover .media-tag,
-	.turntable-card:focus-within .media-tag {
-		transform: translateY(-2px);
-		background: rgba(255, 255, 255, 0.98);
-		border-color: rgba(255, 255, 255, 0.85);
-		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 	}
 
 	.turntable-details {
@@ -294,7 +194,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		font-size: 0.68rem;
+		font-size: 0.7rem;
 		letter-spacing: 0.12em;
 		color: var(--text-muted);
 		padding-bottom: 0.75rem;
@@ -347,8 +247,8 @@
 	}
 
 	.sleeve-tag {
-		font-size: 0.62rem;
-		color: var(--text-dim);
+		font-size: 0.7rem;
+		color: var(--text-muted);
 	}
 
 	/* Archival Card */
@@ -358,7 +258,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.25rem;
-		cursor: pointer;
 		transition: border-color 0.3s ease, box-shadow 0.3s ease;
 	}
 
@@ -371,7 +270,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		font-size: 0.68rem;
+		font-size: 0.7rem;
 		letter-spacing: 0.1em;
 		padding-bottom: 0.5rem;
 		border-bottom: 1px solid var(--border-subtle);
@@ -383,7 +282,7 @@
 	}
 
 	.archive-date {
-		color: var(--accent-amber);
+		color: var(--accent-amber-text);
 		font-weight: 700;
 	}
 
@@ -415,52 +314,20 @@
 		z-index: 3;
 	}
 
-	/* Frosted glass overlay pane */
-	.archive-poster-wrap::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			135deg,
-			rgba(255, 255, 255, 0.28) 0%,
-			rgba(255, 255, 255, 0.1) 45%,
-			rgba(20, 33, 61, 0.35) 100%
-		);
-		backdrop-filter: blur(8px) saturate(130%) brightness(1.02);
-		-webkit-backdrop-filter: blur(8px) saturate(130%) brightness(1.02);
-		border: 1px solid rgba(255, 255, 255, 0.35);
-		box-shadow: 
-			inset 0 0 20px rgba(255, 255, 255, 0.2),
-			inset 0 1px 2px rgba(255, 255, 255, 0.4);
-		opacity: 0;
-		pointer-events: none;
-		z-index: 2;
-		transition: opacity 0.45s var(--ease-out);
-	}
-
 	.archive-poster {
 		max-height: 290px;
 		width: auto;
 		object-fit: contain;
 		display: block;
 		border-radius: 4px;
-		transition: transform 0.65s var(--ease-out), filter 0.5s var(--ease-out);
-		will-change: transform, filter;
+		transition: transform 0.65s var(--ease-out);
 	}
 
-	.archive-card:hover .archive-poster,
-	.archive-card:focus-within .archive-poster {
+	.archive-card:hover .archive-poster {
 		transform: scale(1.04);
-		filter: blur(6px) saturate(1.15) brightness(0.96);
 	}
 
-	.archive-card:hover .archive-poster-wrap::after,
-	.archive-card:focus-within .archive-poster-wrap::after {
-		opacity: 1;
-	}
-
-	.archive-card:hover .archive-poster-wrap::before,
-	.archive-card:focus-within .archive-poster-wrap::before {
+	.archive-card:hover .archive-poster-wrap::before {
 		transform: translateX(100%);
 	}
 
@@ -471,7 +338,7 @@
 	}
 
 	.lineup-label {
-		font-size: 0.65rem;
+		font-size: 0.7rem;
 		letter-spacing: 0.12em;
 		color: var(--text-muted);
 	}
@@ -487,7 +354,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.2rem;
-		font-size: 0.65rem;
+		font-size: 0.7rem;
 		letter-spacing: 0.08em;
 		color: var(--text-muted);
 		padding: 0.5rem 0;

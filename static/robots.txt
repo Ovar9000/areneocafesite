@@ -1,10 +1,6 @@
 # Lot 7 Cafe — Robots Policy
+# /_app/ holds the site's CSS and JS; crawlers need it to render pages, so it is not blocked.
 User-agent: *
 Allow: /
 
-# Prevent indexing of build artifacts and internal directories
-Disallow: /_app/
-Disallow: /build/
-
-# Security Policy
-# See /.well-known/security.txt
+Sitemap: https://lot7.cafe/sitemap.xml

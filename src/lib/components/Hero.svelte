@@ -1,37 +1,90 @@
 <script lang="ts">
-	let heroIgBouncing = $state(false);
+	import { clickSpring } from '$lib/attachments/click-spring';
+	import { INSTAGRAM_URL } from '$lib/site';
 
-	function triggerHeroIg() {
-		heroIgBouncing = true;
-		setTimeout(() => {
-			heroIgBouncing = false;
-		}, 480);
-	}
+	let video: HTMLVideoElement;
+	let paused = $state(true);
+	// Set when the visitor pauses (or prefers no motion) so we never resume on our own
+	let userPaused = false;
 
-	function scrollToSection(e: MouseEvent, id: string) {
-		e.preventDefault();
-		const el = document.getElementById(id);
-		if (el) {
-			el.scrollIntoView({ behavior: 'smooth' });
+	$effect(() => {
+		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const saveData =
+			(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData ===
+			true;
+
+		// Poster + play button only; with preload="none" the video is never downloaded
+		if (reduceMotion || saveData) {
+			userPaused = true;
+			return;
+		}
+
+		// Only play while the video is on screen
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting && !userPaused) video.play().catch(() => {});
+				else if (!entry.isIntersecting) video.pause();
+			},
+			{ threshold: 0.25 }
+		);
+		observer.observe(video);
+		return () => observer.disconnect();
+	});
+
+	function togglePlayback() {
+		if (video.paused) {
+			userPaused = false;
+			video.play().catch(() => {});
+		} else {
+			userPaused = true;
+			video.pause();
 		}
 	}
 </script>
 
 <section class="hero-section" id="hero">
 	<div class="hero-inner container">
+		<h1 class="visually-hidden">Lot 7 Cafe — specialty coffee and vinyl listening room in Naga City</h1>
+
 		<!-- Main Visual: Dynamic Showcase Video (4:5 Portrait on mobile, 16:9 Landscape on desktop) -->
 		<div class="showcase-video-wrapper photo-frame">
-			<video 
-				src="/videos/lot7-showcase.mp4" 
-				poster="/images/video-poster.jpg"
-				autoplay
+			<!-- Playback is started from script (not `autoplay`) so reduced-motion and
+			     data-saver visitors get the poster only. The on-screen text is repeated
+			     in the manifesto section, so the video itself is hidden from screen readers. -->
+			<video
+				bind:this={video}
+				poster="/videos/lot7-showcase-poster.webp"
+				preload="none"
 				loop
 				muted
 				playsinline
+				aria-hidden="true"
 				class="showcase-video"
+				onplay={() => (paused = false)}
+				onpause={() => (paused = true)}
 			>
-				<track kind="captions" />
+				<!-- AV1 is ~40% smaller; browsers without AV1 decode fall through to H.264 -->
+				<source src="/videos/lot7-showcase-av1.mp4" type={'video/mp4; codecs="av01.0.05M.08"'} />
+				<source src="/videos/lot7-showcase.mp4" type={'video/mp4; codecs="avc1.64001F"'} />
 			</video>
+
+			<button
+				type="button"
+				class="video-toggle"
+				onclick={togglePlayback}
+				aria-label={paused ? 'Play background video' : 'Pause background video'}
+			>
+				{#if paused}
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"></path>
+					</svg>
+				{:else}
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<rect x="6" y="5" width="4" height="14" rx="1"></rect>
+						<rect x="14" y="5" width="4" height="14" rx="1"></rect>
+					</svg>
+				{/if}
+			</button>
 		</div>
 
 		<!-- Creed Tagline directly below the video -->
@@ -43,26 +96,25 @@
 
 		<!-- Fat Seed Inspired Bottom In-Page Navigation Pills Dock -->
 		<nav class="hero-pills-dock font-mono" aria-label="Hero quick jump">
-			<a href="#story" class="hero-pill" onclick={(e) => scrollToSection(e, 'story')}>
+			<a href="#story" class="hero-pill">
 				<span>THE STORY</span>
 			</a>
-			<a href="#room" class="hero-pill" onclick={(e) => scrollToSection(e, 'room')}>
+			<a href="#room" class="hero-pill">
 				<span>THE ROOM</span>
 			</a>
-			<a href="#sound" class="hero-pill" onclick={(e) => scrollToSection(e, 'sound')}>
+			<a href="#sound" class="hero-pill">
 				<span>SOUND</span>
 			</a>
-			<a href="#visit" class="hero-pill" onclick={(e) => scrollToSection(e, 'visit')}>
+			<a href="#visit" class="hero-pill">
 				<span>VISIT US</span>
 			</a>
 			<a 
-				href="https://instagram.com/lot7.cafe" 
+				href={INSTAGRAM_URL} 
 				target="_blank" 
 				rel="noopener noreferrer" 
 				class="hero-pill hero-pill-accent"
-				class:bouncing={heroIgBouncing}
-				onclick={triggerHeroIg}
-				aria-label="Lot 7 on Instagram"
+				{@attach clickSpring}
+				aria-label="@LOT7.CAFE on Instagram"
 			>
 				<svg class="ig-svg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -119,6 +171,41 @@
 		display: block;
 	}
 
+	/* Pause / play control (WCAG 2.2.2: moving content longer than 5s must be pausable) */
+	.video-toggle {
+		position: absolute;
+		right: 0.85rem;
+		bottom: 0.85rem;
+		z-index: 2;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		border: 1px solid rgba(255, 255, 255, 0.6);
+		background: rgba(255, 255, 255, 0.88);
+		color: var(--text-main);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+		cursor: pointer;
+		transition: transform 0.2s var(--ease-spring), background-color 0.2s ease;
+	}
+
+	.video-toggle:hover {
+		background: #ffffff;
+		transform: scale(1.06);
+	}
+
+	.video-toggle:active {
+		transform: scale(0.92);
+	}
+
+	/* Ring sits over the (usually dark) video */
+	.video-toggle:focus-visible {
+		outline-color: #ffffff;
+	}
+
 	.hero-caption-block {
 		display: flex;
 		flex-direction: column;
@@ -156,10 +243,7 @@
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		text-decoration: none;
-		-webkit-tap-highlight-color: transparent !important;
-		-webkit-touch-callout: none;
 		user-select: none;
-		outline: none;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 		transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), 
 		            box-shadow 0.2s ease, 
@@ -218,30 +302,6 @@
 		transition: transform 0.08s ease;
 	}
 
-	.hero-pill.hero-pill-accent.bouncing {
-		animation: igClickSpring 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-	}
-
-	.hero-pill.hero-pill-accent.bouncing :global(.ig-svg-icon) {
-		animation: igIconSpin 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-	}
-
-	@keyframes igClickSpring {
-		0% { transform: scale(1); }
-		25% { transform: translateY(2px) scale(0.9); }
-		55% { transform: translateY(-4px) scale(1.08); }
-		75% { transform: translateY(1px) scale(0.97); }
-		100% { transform: translateY(0) scale(1); }
-	}
-
-	@keyframes igIconSpin {
-		0% { transform: rotate(0deg) scale(1); }
-		30% { transform: rotate(-18deg) scale(1.28); }
-		60% { transform: rotate(12deg) scale(1.15); }
-		80% { transform: rotate(-4deg) scale(1.06); }
-		100% { transform: rotate(0deg) scale(1); }
-	}
-
 	/* Mobile View (Matching Fat Seed Portrait Energy) */
 	@media (max-width: 768px) {
 		.hero-section {
@@ -281,7 +341,7 @@
 
 		.hero-pill {
 			padding: 0.45rem 0.75rem;
-			font-size: 0.64rem;
+			font-size: 0.7rem;
 			letter-spacing: 0.04em;
 			text-align: center;
 		}

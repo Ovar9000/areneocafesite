@@ -4,87 +4,114 @@ export interface CafeStatus {
 	nextChangeText: string;
 }
 
+/** Opening and closing time, in minutes after midnight (Asia/Manila) */
+export interface DayHours {
+	open: number;
+	close: number;
+}
+
+export const CAFE_TIMEZONE = 'Asia/Manila';
+
+const weekday: DayHours = { open: 10 * 60, close: 22 * 60 };
+const saturday: DayHours = { open: 14 * 60, close: 22 * 60 };
+
 /**
- * Computes cafe status locked explicitly to Asia/Manila timezone (UTC+8),
- * as confirmed from the storefront signage:
+ * Single source of truth for opening hours, as confirmed from the storefront signage:
  * MON - FRI: 10:00 AM - 10:00 PM
  * SAT: 2:00 PM - 10:00 PM
  * SUN: CLOSED
+ *
+ * Indexed like Date#getDay(): 0 = Sunday … 6 = Saturday; null = closed.
  */
-export function getCafeStatus(now: Date = new Date()): CafeStatus {
-	// Format into parts in the cafe's confirmed local timezone
-	const formatter = new Intl.DateTimeFormat('en-US', {
-		timeZone: 'Asia/Manila',
+export const WEEKLY_HOURS: readonly (DayHours | null)[] = [
+	null,
+	weekday,
+	weekday,
+	weekday,
+	weekday,
+	weekday,
+	saturday
+];
+
+export const DAY_NAMES = [
+	'Sunday',
+	'Monday',
+	'Tuesday',
+	'Wednesday',
+	'Thursday',
+	'Friday',
+	'Saturday'
+] as const;
+
+const SHORT_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+/** 600 → "10:00 AM", 1320 → "10:00 PM" */
+export function formatTime(minutes: number): string {
+	const h = Math.floor(minutes / 60);
+	const m = minutes % 60;
+	const suffix = h < 12 ? 'AM' : 'PM';
+	const h12 = h % 12 === 0 ? 12 : h % 12;
+	return `${h12}:${String(m).padStart(2, '0')} ${suffix}`;
+}
+
+/** 600 → "10:00" (24-hour, for schema.org) */
+export function formatTime24(minutes: number): string {
+	return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+}
+
+/** Day index (0 = Sunday) and minutes after midnight, in the cafe's timezone */
+function cafeClock(now: Date): { day: number; minutes: number } {
+	const parts = new Intl.DateTimeFormat('en-US', {
+		timeZone: CAFE_TIMEZONE,
 		weekday: 'short',
 		hour: 'numeric',
 		minute: 'numeric',
-		hour12: false
-	});
+		// h23 guarantees 0–23; `hour12: false` can yield "24" at midnight in some engines
+		hourCycle: 'h23'
+	}).formatToParts(now);
 
-	const parts = formatter.formatToParts(now);
-	let weekday = '';
-	let hour = 0;
-	let minute = 0;
+	const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
+	const dayIndex = SHORT_DAYS.indexOf(get('weekday'));
+	return {
+		day: dayIndex >= 0 ? dayIndex : 0,
+		minutes: parseInt(get('hour'), 10) * 60 + parseInt(get('minute'), 10)
+	};
+}
 
-	for (const p of parts) {
-		if (p.type === 'weekday') weekday = p.value;
-		if (p.type === 'hour') hour = parseInt(p.value, 10);
-		if (p.type === 'minute') minute = parseInt(p.value, 10);
-	}
+/** Computes the live open/closed status in the cafe's timezone, whatever the visitor's timezone. */
+export function getCafeStatus(now: Date = new Date()): CafeStatus {
+	const { day, minutes } = cafeClock(now);
+	const today = WEEKLY_HOURS[day];
 
-	const currentTime = hour + minute / 60;
-
-	// Sunday: Closed
-	if (weekday === 'Sun') {
-		return {
-			isOpen: false,
-			statusText: 'CLOSED (SUNDAY)',
-			nextChangeText: 'Opens Monday at 10:00 AM'
-		};
-	}
-
-	// Saturday: 2:00 PM (14.0) to 10:00 PM (22.0)
-	if (weekday === 'Sat') {
-		if (currentTime >= 14 && currentTime < 22) {
-			return {
-				isOpen: true,
-				statusText: 'DOORS OPEN NOW',
-				nextChangeText: 'Open until 10:00 PM'
-			};
-		} else if (currentTime < 14) {
-			return {
-				isOpen: false,
-				statusText: 'OPENS AT 2:00 PM',
-				nextChangeText: 'Doors open at 2:00 PM today'
-			};
-		} else {
-			return {
-				isOpen: false,
-				statusText: 'CLOSED FOR THE NIGHT',
-				nextChangeText: 'Opens Monday at 10:00 AM'
-			};
-		}
-	}
-
-	// Monday - Friday: 10:00 AM (10.0) to 10:00 PM (22.0)
-	if (currentTime >= 10 && currentTime < 22) {
+	if (today && minutes >= today.open && minutes < today.close) {
 		return {
 			isOpen: true,
 			statusText: 'DOORS OPEN NOW',
-			nextChangeText: 'Open until 10:00 PM'
-		};
-	} else if (currentTime < 10) {
-		return {
-			isOpen: false,
-			statusText: 'OPENS AT 10:00 AM',
-			nextChangeText: 'Doors open at 10:00 AM today'
-		};
-	} else {
-		const nextDayText = weekday === 'Fri' ? 'Opens Saturday at 2:00 PM' : 'Opens tomorrow at 10:00 AM';
-		return {
-			isOpen: false,
-			statusText: 'CLOSED FOR THE NIGHT',
-			nextChangeText: nextDayText
+			nextChangeText: `Open until ${formatTime(today.close)}`
 		};
 	}
+
+	if (today && minutes < today.open) {
+		return {
+			isOpen: false,
+			statusText: `OPENS AT ${formatTime(today.open)}`,
+			nextChangeText: `Doors open at ${formatTime(today.open)} today`
+		};
+	}
+
+	// Closed for the rest of today: find the next day with hours
+	for (let offset = 1; offset <= 7; offset++) {
+		const nextDay = (day + offset) % 7;
+		const next = WEEKLY_HOURS[nextDay];
+		if (!next) continue;
+
+		const when = offset === 1 ? 'tomorrow' : DAY_NAMES[nextDay];
+		return {
+			isOpen: false,
+			statusText: today ? 'CLOSED FOR THE NIGHT' : `CLOSED (${DAY_NAMES[day].toUpperCase()})`,
+			nextChangeText: `Opens ${when} at ${formatTime(next.open)}`
+		};
+	}
+
+	return { isOpen: false, statusText: 'CLOSED', nextChangeText: 'Check Instagram for updates' };
 }

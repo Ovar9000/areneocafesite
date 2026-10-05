@@ -1,38 +1,31 @@
 <script lang="ts">
 	import Lot7Logo from './Lot7Logo.svelte';
-
-	let footerIgBouncing = $state(false);
-
-	function triggerFooterIg() {
-		footerIgBouncing = true;
-		setTimeout(() => {
-			footerIgBouncing = false;
-		}, 480);
-	}
+	import { clickSpring } from '$lib/attachments/click-spring';
+	import { INSTAGRAM_URL } from '$lib/site';
 
 	function scrollToTop(e: MouseEvent) {
 		e.preventDefault();
-		window.scrollTo({ top: 0, behavior: 'smooth' });
+		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
 	}
 </script>
 
 <footer class="site-footer">
 	<div class="footer-inner container">
-		<!-- Left: Refined Vector Brand Logo -->
-		<div class="footer-brand">
-			<Lot7Logo variant="badge" height="34px" />
-		</div>
+		<!-- Left: Brand logo, links home -->
+		<a href="/" class="footer-brand" aria-label="Lot 7 Cafe home">
+			<Lot7Logo height="34px" />
+		</a>
 
 		<!-- Center: Outbound Instagram Door -->
 		<div class="footer-social">
 			<a 
-				href="https://instagram.com/lot7.cafe" 
+				href={INSTAGRAM_URL} 
 				target="_blank" 
 				rel="noopener noreferrer" 
 				class="footer-ig-link font-mono"
-				class:bouncing={footerIgBouncing}
-				onclick={triggerFooterIg}
-				aria-label="Lot 7 Cafe on Instagram"
+				{@attach clickSpring}
+				aria-label="@lot7.cafe on Instagram"
 			>
 				<svg class="ig-svg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -53,10 +46,10 @@
 			</a>
 			<div class="footer-legal">
 				<a href="/privacy" class="footer-legal-link">PRIVACY</a>
-				<span class="legal-bullet">·</span>
+				<span class="legal-bullet" aria-hidden="true">·</span>
 				<a href="/terms" class="footer-legal-link">TERMS</a>
 			</div>
-			<span class="copyright">© 2026 LOT 7 CAFE. NAGA CITY, CAMARINES SUR.</span>
+			<span class="copyright">© {new Date().getFullYear()} LOT 7 CAFE. NAGA CITY, CAMARINES SUR.</span>
 		</div>
 	</div>
 </footer>
@@ -91,10 +84,7 @@
 		align-items: center;
 		justify-content: center;
 		text-decoration: none;
-		-webkit-tap-highlight-color: transparent !important;
-		-webkit-touch-callout: none;
 		user-select: none;
-		outline: none;
 		cursor: pointer;
 		transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 		will-change: transform;
@@ -127,10 +117,7 @@
 		text-decoration: none;
 		font-size: 0.75rem;
 		font-weight: 600;
-		-webkit-tap-highlight-color: transparent !important;
-		-webkit-touch-callout: none;
 		user-select: none;
-		outline: none;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 		transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
 		            box-shadow 0.25s ease, 
@@ -168,30 +155,6 @@
 		transition: transform 0.08s ease;
 	}
 
-	.footer-ig-link.bouncing {
-		animation: igClickSpring 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-	}
-
-	.footer-ig-link.bouncing :global(.ig-svg-icon) {
-		animation: igIconSpin 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-	}
-
-	@keyframes igClickSpring {
-		0% { transform: scale(1); }
-		25% { transform: translateY(2px) scale(0.9); }
-		55% { transform: translateY(-4px) scale(1.08); }
-		75% { transform: translateY(1px) scale(0.97); }
-		100% { transform: translateY(0) scale(1); }
-	}
-
-	@keyframes igIconSpin {
-		0% { transform: rotate(0deg) scale(1); }
-		30% { transform: rotate(-18deg) scale(1.28); }
-		60% { transform: rotate(12deg) scale(1.15); }
-		80% { transform: rotate(-4deg) scale(1.06); }
-		100% { transform: rotate(0deg) scale(1); }
-	}
-
 	.footer-right {
 		display: flex;
 		flex-direction: column;
@@ -199,7 +162,7 @@
 		text-align: center;
 		gap: 0.45rem;
 		font-size: 0.7rem;
-		color: var(--text-dim);
+		color: var(--text-muted);
 	}
 
 	@media (min-width: 768px) {
@@ -214,14 +177,12 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.35rem;
-		padding: 0.2rem 0.4rem;
+		padding: 0.3rem 0.4rem;
 		color: var(--text-muted);
 		text-decoration: none;
-		font-size: 0.68rem;
+		font-size: 0.7rem;
 		letter-spacing: 0.08em;
-		-webkit-tap-highlight-color: transparent !important;
 		user-select: none;
-		outline: none;
 		transition: color 0.15s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 
@@ -240,17 +201,15 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.5rem;
-		font-size: 0.68rem;
+		font-size: 0.7rem;
 		letter-spacing: 0.08em;
 	}
 
 	.footer-legal-link {
 		color: var(--text-muted);
 		text-decoration: none;
-		padding: 0.2rem 0.35rem;
-		-webkit-tap-highlight-color: transparent !important;
+		padding: 0.3rem 0.35rem;
 		user-select: none;
-		outline: none;
 		transition: color 0.15s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 

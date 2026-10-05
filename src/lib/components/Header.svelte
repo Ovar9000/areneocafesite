@@ -1,67 +1,58 @@
 <script lang="ts">
 	import Lot7Logo from './Lot7Logo.svelte';
+	import { clickSpring } from '$lib/attachments/click-spring';
+	import { INSTAGRAM_URL } from '$lib/site';
 
 	let scrolled = $state(false);
 	let mobileOpen = $state(false);
-	let headerIgBouncing = $state(false);
-	let drawerIgBouncing = $state(false);
+	let drawer: HTMLDialogElement;
 
 	$effect(() => {
 		const handleScroll = () => {
 			scrolled = window.scrollY > 20;
 		};
 
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === 'Escape' && mobileOpen) {
-				closeMobile();
-			}
+		// The drawer only exists in the mobile layout; close it if the viewport grows past it
+		const desktopQuery = window.matchMedia('(min-width: 900px)');
+		const handleBreakpoint = (e: MediaQueryListEvent) => {
+			if (e.matches) closeMobile();
 		};
 
 		// Enable touch active states on mobile WebKit
-		if (typeof document !== 'undefined') {
-			document.body.addEventListener('touchstart', () => {}, { passive: true });
-		}
+		const noop = () => {};
 
+		document.body.addEventListener('touchstart', noop, { passive: true });
 		window.addEventListener('scroll', handleScroll, { passive: true });
-		window.addEventListener('keydown', handleKeyDown);
+		desktopQuery.addEventListener('change', handleBreakpoint);
 		handleScroll();
 
 		return () => {
+			document.body.removeEventListener('touchstart', noop);
 			window.removeEventListener('scroll', handleScroll);
-			window.removeEventListener('keydown', handleKeyDown);
+			desktopQuery.removeEventListener('change', handleBreakpoint);
 		};
 	});
 
-	$effect(() => {
-		if (typeof document !== 'undefined') {
-			if (mobileOpen) {
-				document.body.style.overflow = 'hidden';
-			} else {
-				document.body.style.overflow = '';
-			}
-		}
-	});
-
-	function toggleMobile() {
-		mobileOpen = !mobileOpen;
+	// showModal() gives focus trapping, Escape-to-close, an inert background
+	// and focus return to the toggle button for free.
+	function openMobile() {
+		drawer.showModal();
+		mobileOpen = true;
 	}
 
 	function closeMobile() {
+		drawer.close();
+	}
+
+	// Fires for every close path: close button, links, backdrop click and Escape
+	function handleDrawerClose() {
 		mobileOpen = false;
 	}
 
-	function triggerHeaderIg() {
-		headerIgBouncing = true;
-		setTimeout(() => {
-			headerIgBouncing = false;
-		}, 480);
-	}
-
-	function triggerDrawerIg() {
-		drawerIgBouncing = true;
-		setTimeout(() => {
-			drawerIgBouncing = false;
-		}, 480);
+	function handleBackdropClick(e: MouseEvent) {
+		// The dialog's own children cover its whole box, so a click whose
+		// target is the dialog itself landed on the ::backdrop
+		if (e.target === drawer) closeMobile();
 	}
 </script>
 
@@ -71,10 +62,11 @@
 		<div class="header-left">
 			<button 
 				type="button" 
-				class="mobile-toggle" 
-				class:active={mobileOpen}
-				onclick={toggleMobile}
+				class="mobile-toggle"
+				onclick={openMobile}
 				aria-label="Open navigation menu"
+				aria-haspopup="dialog"
+				aria-controls="site-drawer"
 				aria-expanded={mobileOpen}
 			>
 				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -85,13 +77,13 @@
 			</button>
 
 			<a href="/" class="brand-link desktop-only-brand" aria-label="Lot 7 Cafe home">
-				<Lot7Logo variant="badge" height="36px" />
+				<Lot7Logo height="36px" />
 			</a>
 		</div>
 
 		<!-- Mobile Centered Brand Logo (Matches Fat Seed Mascot style) -->
 		<a href="/" class="brand-link mobile-center-brand" class:drawer-open={mobileOpen} aria-label="Lot 7 Cafe home">
-			<Lot7Logo variant="badge" height="32px" />
+			<Lot7Logo height="32px" />
 		</a>
 
 		<!-- Center: Desktop In-Page Jumps -->
@@ -105,13 +97,12 @@
 		<!-- Right: Primary Instagram Door Only -->
 		<div class="header-actions">
 			<a 
-				href="https://instagram.com/lot7.cafe" 
+				href={INSTAGRAM_URL} 
 				target="_blank" 
 				rel="noopener noreferrer" 
 				class="ig-link font-mono"
 				class:drawer-open={mobileOpen}
-				class:bouncing={headerIgBouncing}
-				onclick={triggerHeaderIg}
+				{@attach clickSpring}
 				aria-label="Follow Lot 7 on Instagram @lot7.cafe"
 			>
 				<svg class="ig-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -125,33 +116,30 @@
 	</div>
 </header>
 
-<!-- Sideswipe Backdrop Scrim -->
-<div 
-	class="sideswipe-scrim" 
-	class:active={mobileOpen} 
-	onclick={closeMobile}
-	onkeydown={(e) => e.key === 'Escape' && closeMobile()}
-	role="presentation"
-></div>
-
-<!-- Sideswipe Navigation Drawer (Smooth horizontal swipe from left) -->
-<aside 
-	class="sideswipe-drawer" 
-	class:open={mobileOpen}
-	aria-label="Navigation drawer"
-	aria-hidden={!mobileOpen}
+<!-- Sideswipe Navigation Drawer: a native modal dialog that slides in from the left.
+     Escape closes it natively, so the backdrop click handler needs no key equivalent. -->
+<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
+<dialog
+	bind:this={drawer}
+	id="site-drawer"
+	class="sideswipe-drawer"
+	aria-label="Site navigation"
+	onclose={handleDrawerClose}
+	onclick={handleBackdropClick}
 >
 	<!-- Drawer Header with Logo & Circular Close Button -->
 	<div class="drawer-header">
 		<a href="/" onclick={closeMobile} class="drawer-logo" aria-label="Lot 7 Cafe home">
-			<Lot7Logo variant="badge" height="34px" />
+			<Lot7Logo height="34px" />
 		</a>
 
-		<button 
-			type="button" 
-			class="drawer-close-btn" 
+		<!-- svelte-ignore a11y_autofocus -->
+		<button
+			type="button"
+			class="drawer-close-btn"
 			onclick={closeMobile}
 			aria-label="Close navigation menu"
+			autofocus
 		>
 			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
 				<line x1="18" y1="6" x2="6" y2="18"></line>
@@ -162,7 +150,7 @@
 
 	<!-- Drawer Navigation Links -->
 	<div class="drawer-body">
-		<nav class="drawer-nav font-sans">
+		<nav class="drawer-nav font-sans" aria-label="Page sections">
 			<a href="/#story" onclick={closeMobile} class="drawer-nav-item">
 				<span class="nav-idx font-mono">01</span>
 				<span class="nav-text">THE STORY</span>
@@ -196,12 +184,11 @@
 		<!-- Drawer Footer & Instagram -->
 		<div class="drawer-footer">
 			<a 
-				href="https://instagram.com/lot7.cafe" 
+				href={INSTAGRAM_URL} 
 				target="_blank" 
 				rel="noopener noreferrer" 
 				class="drawer-ig-cta font-mono"
-				class:bouncing={drawerIgBouncing}
-				onclick={triggerDrawerIg}
+				{@attach clickSpring}
 			>
 				<svg class="ig-svg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -216,7 +203,7 @@
 			</div>
 		</div>
 	</div>
-</aside>
+</dialog>
 
 <style>
 	.site-header {
@@ -256,10 +243,7 @@
 		display: flex;
 		align-items: center;
 		text-decoration: none;
-		-webkit-tap-highlight-color: transparent !important;
-		-webkit-touch-callout: none;
 		user-select: none;
-		outline: none;
 		cursor: pointer;
 		transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 		will-change: transform;
@@ -333,9 +317,7 @@
 		color: var(--text-secondary);
 		text-decoration: none;
 		padding: 0.35rem 0.25rem;
-		-webkit-tap-highlight-color: transparent !important;
 		user-select: none;
-		outline: none;
 		transition: color 0.15s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 		will-change: transform;
 	}
@@ -371,10 +353,7 @@
 		font-size: 0.75rem;
 		font-weight: 600;
 		text-decoration: none;
-		-webkit-tap-highlight-color: transparent !important;
-		-webkit-touch-callout: none;
 		user-select: none;
-		outline: none;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 		transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
 		            opacity 0.25s ease,
@@ -419,14 +398,6 @@
 		transition: transform 0.08s ease;
 	}
 
-	.ig-link.bouncing {
-		animation: igClickSpring 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-	}
-
-	.ig-link.bouncing :global(.ig-svg-icon) {
-		animation: igIconSpin 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-	}
-
 	@media (max-width: 640px) {
 		.ig-handle {
 			display: none;
@@ -452,10 +423,7 @@
 		height: 40px;
 		border-radius: 50%;
 		cursor: pointer;
-		-webkit-tap-highlight-color: transparent !important;
-		-webkit-touch-callout: none;
 		user-select: none;
-		outline: none;
 		transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), 
 		            background-color 0.2s ease, 
 		            border-color 0.2s ease, 
@@ -485,46 +453,76 @@
 	   SIDESWIPE NAVIGATION DRAWER ANIMATION
 	   ========================================= */
 
-	/* Sideswipe Backdrop Scrim */
-	.sideswipe-scrim {
+	/* Lock page scroll behind the open drawer */
+	:global(body:has(dialog.sideswipe-drawer[open])) {
+		overflow: hidden;
+	}
+
+	/* Sideswipe Drawer: a modal <dialog> that slides in from the left.
+	   `display` and `overlay` transition discretely so the exit animation
+	   plays before the dialog leaves the top layer. */
+	.sideswipe-drawer {
 		position: fixed;
-		inset: 0;
+		inset: 0 auto 0 0;
+		width: min(85vw, 360px);
+		max-width: none;
+		height: 100dvh;
+		max-height: none;
+		margin: 0;
+		padding: 0;
+		border: none;
+		border-right: 1px solid var(--border-subtle);
+		background: #ffffff;
+		color: var(--text-main);
+		flex-direction: column;
+		transform: translateX(-100%);
+		box-shadow: none;
+		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+		            box-shadow 0.4s ease,
+		            overlay 0.4s allow-discrete,
+		            display 0.4s allow-discrete;
+	}
+
+	/* display is only set while open, so the UA's dialog:not([open]) { display: none } still applies */
+	.sideswipe-drawer[open] {
+		display: flex;
+		transform: translateX(0);
+		box-shadow: 25px 0 60px rgba(0, 0, 0, 0.25);
+	}
+
+	.sideswipe-drawer::backdrop {
 		background: rgba(15, 17, 23, 0.48);
 		backdrop-filter: blur(8px);
 		-webkit-backdrop-filter: blur(8px);
-		z-index: 2000;
 		opacity: 0;
-		pointer-events: none;
-		-webkit-tap-highlight-color: transparent !important;
-		transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+		transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+		            overlay 0.4s allow-discrete,
+		            display 0.4s allow-discrete;
 	}
 
-	.sideswipe-scrim.active {
+	.sideswipe-drawer[open]::backdrop {
 		opacity: 1;
-		pointer-events: auto;
 	}
 
-	/* Sideswipe Drawer: Slides in smoothly from the left side */
-	.sideswipe-drawer {
-		position: fixed;
-		top: 0;
-		left: 0;
-		bottom: 0;
-		width: min(85vw, 360px);
-		background: #ffffff;
-		z-index: 2001;
-		display: flex;
-		flex-direction: column;
-		transform: translateX(-100%);
-		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
-		box-shadow: none;
-		border-right: 1px solid var(--border-subtle);
-		will-change: transform;
-	}
+	/* Entry animation start points (the dialog goes from display:none to flex) */
+	@starting-style {
+		.sideswipe-drawer[open] {
+			transform: translateX(-100%);
+		}
 
-	.sideswipe-drawer.open {
-		transform: translateX(0);
-		box-shadow: 25px 0 60px rgba(0, 0, 0, 0.25);
+		.sideswipe-drawer[open]::backdrop {
+			opacity: 0;
+		}
+
+		.sideswipe-drawer[open] .drawer-logo {
+			transform: translateX(-14px) scale(0.92);
+			opacity: 0;
+		}
+
+		.sideswipe-drawer[open] .drawer-ig-cta {
+			transform: translateY(22px) scale(0.9);
+			opacity: 0;
+		}
 	}
 
 	.drawer-header {
@@ -540,9 +538,7 @@
 		display: flex;
 		align-items: center;
 		text-decoration: none;
-		-webkit-tap-highlight-color: transparent !important;
 		user-select: none;
-		outline: none;
 		cursor: pointer;
 		transform: translateX(-14px) scale(0.92);
 		opacity: 0;
@@ -551,7 +547,7 @@
 		will-change: transform, opacity;
 	}
 
-	.sideswipe-drawer.open .drawer-logo {
+	.sideswipe-drawer[open] .drawer-logo {
 		transform: translateX(0) scale(1);
 		opacity: 1;
 	}
@@ -576,10 +572,7 @@
 		height: 38px;
 		color: var(--text-main);
 		cursor: pointer;
-		-webkit-tap-highlight-color: transparent !important;
-		-webkit-touch-callout: none;
 		user-select: none;
-		outline: none;
 		transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
 		            background-color 0.2s ease, 
 		            color 0.2s ease, 
@@ -625,9 +618,7 @@
 		font-weight: 700;
 		font-size: 1.05rem;
 		letter-spacing: 0.04em;
-		-webkit-tap-highlight-color: transparent !important;
 		user-select: none;
-		outline: none;
 		transition: background-color 0.2s ease, 
 		            color 0.2s ease, 
 		            transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -687,10 +678,7 @@
 		font-size: 0.78rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
-		-webkit-tap-highlight-color: transparent !important;
-		-webkit-touch-callout: none;
 		user-select: none;
-		outline: none;
 		box-shadow: 0 4px 16px rgba(20, 33, 61, 0.22);
 		transform: translateY(22px) scale(0.9);
 		opacity: 0;
@@ -701,7 +689,7 @@
 		will-change: transform, opacity;
 	}
 
-	.sideswipe-drawer.open .drawer-ig-cta {
+	.sideswipe-drawer[open] .drawer-ig-cta {
 		transform: translateY(0) scale(1);
 		opacity: 1;
 	}
@@ -731,33 +719,8 @@
 		transition: transform 0.08s ease;
 	}
 
-	.drawer-ig-cta.bouncing {
-		animation: igClickSpring 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-	}
-
-	.drawer-ig-cta.bouncing :global(.ig-svg-icon) {
-		animation: igIconSpin 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-	}
-
-	/* Keyframe Animations for Ergonomic Spring Bounces */
-	@keyframes igClickSpring {
-		0% { transform: scale(1); }
-		25% { transform: translateY(2px) scale(0.9); }
-		55% { transform: translateY(-4px) scale(1.08); }
-		75% { transform: translateY(1px) scale(0.97); }
-		100% { transform: translateY(0) scale(1); }
-	}
-
-	@keyframes igIconSpin {
-		0% { transform: rotate(0deg) scale(1); }
-		30% { transform: rotate(-18deg) scale(1.28); }
-		60% { transform: rotate(12deg) scale(1.15); }
-		80% { transform: rotate(-4deg) scale(1.06); }
-		100% { transform: rotate(0deg) scale(1); }
-	}
-
 	.drawer-location {
-		font-size: 0.68rem;
+		font-size: 0.7rem;
 		color: var(--text-muted);
 		text-align: center;
 		letter-spacing: 0.1em;

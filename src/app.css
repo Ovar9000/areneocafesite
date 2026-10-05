@@ -11,11 +11,12 @@
 	--text-main: #141416;
 	--text-secondary: #3c3c43;
 	--text-muted: #6e6e78;
-	--text-dim: #94949f;
 
 	/* Intentional Accent Palette (Restrained & Purposeful) */
 	--accent-navy: #14213d;
 	--accent-amber: #d9962a;
+	/* Amber for text: --accent-amber is 2.5:1 on white, this is 5.3:1 (WCAG AA) */
+	--accent-amber-text: #94610f;
 	--accent-red: #b9382f;
 	--accent-steel: #2b5a9e;
 	--accent-green: #256f48;
@@ -29,9 +30,9 @@
 	--radius-card-sm: 8px;
 
 	--font-display: 'Bebas Neue', -apple-system, BlinkMacSystemFont, sans-serif;
-	--font-editorial: 'Newsreader', Georgia, 'Times New Roman', serif;
-	--font-sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
-	--font-mono: 'JetBrains Mono', ui-monospace, monospace;
+	--font-editorial: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+	--font-sans: 'Space Grotesk Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 
 	--container-max: 1200px;
 	--page-padding: clamp(1.25rem, 5vw, 3.5rem);
@@ -46,35 +47,20 @@
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
-	-webkit-tap-highlight-color: transparent !important;
-	-webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
-	-webkit-touch-callout: none;
 }
 
-:focus:not(:focus-visible) {
-	outline: none !important;
+/* Interactive elements provide their own :hover / :active feedback */
+html {
+	-webkit-tap-highlight-color: transparent;
 }
 
-button, a, input, select, textarea, [role="button"], summary {
-	-webkit-tap-highlight-color: transparent !important;
-	-webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
-	-webkit-touch-callout: none;
-	outline: none;
-}
-
-button:focus:not(:focus-visible), 
-a:focus:not(:focus-visible) {
-	outline: none !important;
-}
-
-button:focus-visible, 
-a:focus-visible {
+/* Keyboard focus ring: shown for keyboard navigation only, never suppressed */
+:focus-visible {
 	outline: 2px solid var(--accent-navy);
 	outline-offset: 3px;
 }
 
 html {
-	scroll-behavior: smooth;
 	background-color: var(--bg-base);
 	color: var(--text-main);
 	font-family: var(--font-sans);
@@ -135,6 +121,19 @@ body {
 	margin-right: auto;
 	padding-left: var(--page-padding);
 	padding-right: var(--page-padding);
+}
+
+/* Hidden visually, still read by screen readers and search engines */
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
 }
 
 /* Typography Classes */
@@ -245,22 +244,51 @@ body {
 	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
 }
 
-/* Accessibility: respect prefers-reduced-motion */
+/* Click "spring" feedback, applied by $lib/attachments/click-spring.ts */
+.is-springing {
+	animation: click-spring 0.48s var(--ease-spring);
+}
+
+.is-springing .ig-svg-icon {
+	animation: icon-spin 0.48s var(--ease-spring);
+}
+
+@keyframes click-spring {
+	0% { transform: scale(1); }
+	25% { transform: translateY(2px) scale(0.9); }
+	55% { transform: translateY(-4px) scale(1.08); }
+	75% { transform: translateY(1px) scale(0.97); }
+	100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes icon-spin {
+	0% { transform: rotate(0deg) scale(1); }
+	30% { transform: rotate(-18deg) scale(1.28); }
+	60% { transform: rotate(12deg) scale(1.15); }
+	80% { transform: rotate(-4deg) scale(1.06); }
+	100% { transform: rotate(0deg) scale(1); }
+}
+
+/* Smooth in-page scrolling only for visitors who have not asked for reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
+}
+
+/* Accessibility: respect prefers-reduced-motion site-wide (drawer, hovers, button springs) */
 @media (prefers-reduced-motion: reduce) {
-	.gallery-photo,
-	.story-photo,
-	.turntable-img,
-	.archive-poster {
-		transition: none !important;
-		transform: none !important;
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
 	}
 
-	.feature-media::before,
-	.sub-media::before,
-	.story-media::before,
-	.turntable-media::before,
+	/* Hover light sweeps over photos (MediaFrame.svelte, SoundBar poster) */
+	.media-frame::before,
 	.archive-poster-wrap::before {
 		display: none !important;
 	}
 }
-

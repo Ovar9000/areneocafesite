@@ -1,9 +1,13 @@
 <script lang="ts">
-	import { getCafeStatus } from '$lib/hours';
+	import { getCafeStatus, type CafeStatus } from '$lib/hours';
+	import { INSTAGRAM_URL, MAPS_URL } from '$lib/site';
 
-	let status = $state(getCafeStatus());
+	// Computed in the browser only: the page is prerendered, so a value computed
+	// during the build would be frozen into the HTML that crawlers and previews see.
+	let status = $state<CafeStatus | null>(null);
 
 	$effect(() => {
+		status = getCafeStatus();
 		const interval = setInterval(() => {
 			status = getCafeStatus();
 		}, 60000);
@@ -17,7 +21,7 @@
 		<div class="visit-header">
 			<div class="section-label">
 				<span class="section-label-dot"></span>
-				<span>05 / VISIT US</span>
+				<span>04 / VISIT US</span>
 			</div>
 			
 			<h2 class="section-headline">FIND THE ROOM</h2>
@@ -32,9 +36,9 @@
 			<div class="visit-card photo-frame">
 				<div class="card-head font-mono">
 					<span class="head-tag">STOREFRONT SIGNAGE HOURS</span>
-					<div class="live-pill" class:is-open={status.isOpen}>
+					<div class="live-pill" class:is-open={status?.isOpen}>
 						<span class="live-dot"></span>
-						<span>{status.statusText}</span>
+						<span>{status?.statusText ?? 'CHECKING HOURS'}</span>
 					</div>
 				</div>
 
@@ -66,7 +70,7 @@
 
 				<div class="card-foot font-mono">
 					<span class="foot-label">LOCAL STATUS:</span>
-					<span class="foot-time">{status.nextChangeText} (Asia/Manila)</span>
+					<span class="foot-time">{status?.nextChangeText ?? 'All times in Philippine time'} (Asia/Manila)</span>
 				</div>
 			</div>
 
@@ -89,7 +93,7 @@
 					<!-- Primary Door Out #1: Google Maps Navigation -->
 					<div class="location-action">
 						<a 
-							href="https://maps.app.goo.gl/HByZgJ5EC8Uqx9Md7" 
+							href={MAPS_URL} 
 							target="_blank" 
 							rel="noopener noreferrer" 
 							class="btn-pill btn-pill-primary map-btn"
@@ -121,7 +125,7 @@
 
 				<div class="ig-action">
 					<a 
-						href="https://instagram.com/lot7.cafe" 
+						href={INSTAGRAM_URL} 
 						target="_blank" 
 						rel="noopener noreferrer" 
 						class="btn-pill ig-btn"
@@ -193,7 +197,7 @@
 		align-items: center;
 		padding: 1.15rem 1.5rem;
 		border-bottom: 1px solid var(--border-subtle);
-		font-size: 0.68rem;
+		font-size: 0.7rem;
 		letter-spacing: 0.12em;
 		background: var(--bg-subtle);
 	}
@@ -216,7 +220,7 @@
 		background: #ffffff;
 		border: 1px solid var(--border-subtle);
 		color: var(--text-muted);
-		font-size: 0.65rem;
+		font-size: 0.7rem;
 		font-weight: 600;
 	}
 
@@ -268,11 +272,11 @@
 	}
 
 	.day-badge {
-		font-size: 0.58rem;
+		font-size: 0.7rem;
 		padding: 0.15rem 0.4rem;
 		border-radius: 3px;
 		background: var(--border-subtle);
-		color: var(--text-muted);
+		color: var(--text-secondary);
 	}
 
 	.time-slot {
@@ -320,9 +324,9 @@
 	}
 
 	.location-label {
-		font-size: 0.68rem;
+		font-size: 0.7rem;
 		letter-spacing: 0.12em;
-		color: var(--accent-amber);
+		color: var(--accent-amber-text);
 		font-weight: 700;
 	}
 
@@ -396,6 +400,10 @@
 		border-color: #ffffff;
 		padding: 0.85rem 1.75rem;
 		font-weight: 700;
+	}
+
+	.ig-btn:focus-visible {
+		outline-color: #ffffff;
 	}
 
 	.ig-btn:hover {
