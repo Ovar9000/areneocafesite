@@ -46,7 +46,7 @@
 			All coffee beverages, beans, seasonal drinks, and pastry offerings are subject to availability.
 		</p>
 		<p>
-			Listening sessions, guest selector appearances, and opening hours may adjust based on private events or holiday schedules. Real-time updates and unannounced drops are communicated through our Instagram stories (<a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">@lot7.cafe</a>).
+			Listening sessions, guest selector appearances, and opening hours may adjust based on private events or holiday schedules. Real-time announcements and updates are communicated through our Instagram stories (<a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">@lot7.cafe</a>).
 		</p>
 	</section>
 

@@ -118,9 +118,6 @@
 						<span>THE SECOND DOOR OUT</span>
 					</div>
 					<h3 class="ig-title font-display">FOLLOW @LOT7.CAFE</h3>
-					<p class="ig-text font-sans">
-						Unannounced listening drops, seasonal specials, and daily room energy via Instagram stories.
-					</p>
 				</div>
 
 				<div class="ig-action">
@@ -385,13 +382,7 @@
 		font-size: clamp(2.4rem, 4.5vw, 3.8rem);
 		color: #ffffff;
 		line-height: 0.95;
-		margin: 0.25rem 0 0.75rem;
-	}
-
-	.ig-text {
-		font-size: 0.95rem;
-		color: #dbeafe;
-		line-height: 1.5;
+		margin: 0.25rem 0 0;
 	}
 
 	.ig-btn {
