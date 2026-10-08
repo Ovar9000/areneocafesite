@@ -44,6 +44,22 @@ PHOTOS = {
 	'portrait-night': 'DSCF0719',
 }
 
+# Gallery strip: shown at most ~690 CSS px wide, so 1400px masters cover 2x screens
+GALLERY_EDGE = 1400
+GALLERY = {
+	'gallery-pour': '_DSC4628',
+	'gallery-handoff': '_DSC4541',
+	'gallery-cups': '_DSC4602',
+	'gallery-soda': '_DSC4607',
+	'gallery-iced-black': 'DSCF0575',
+	'gallery-grinder': 'DSCF8178',
+	'gallery-booth': 'DSCF0676',
+	'gallery-portrait': 'DSCF0720',
+	'gallery-lightbox': 'DSCF9157',
+	'gallery-rush': 'DSCF9150',
+	'gallery-ceiling': 'DSCF8188',
+}
+
 
 def open_photo(name: str) -> Image.Image:
 	im = Image.open(PICTURES / f'{name}.JPG')
@@ -61,6 +77,13 @@ def export_photos() -> None:
 	for web_name, camera_name in PHOTOS.items():
 		im = open_photo(camera_name)
 		im.thumbnail((MASTER_EDGE, MASTER_EDGE), Image.Resampling.LANCZOS)
+		save_jpeg(im, IMAGES / f'{web_name}.jpg')
+
+
+def export_gallery() -> None:
+	for web_name, camera_name in GALLERY.items():
+		im = open_photo(camera_name)
+		im.thumbnail((GALLERY_EDGE, GALLERY_EDGE), Image.Resampling.LANCZOS)
 		save_jpeg(im, IMAGES / f'{web_name}.jpg')
 
 
@@ -146,6 +169,7 @@ def export_icons(cream: Image.Image) -> None:
 
 if __name__ == '__main__':
 	export_photos()
+	export_gallery()
 	cream, _ = export_brand()
 	export_og_image()
 	export_icons(cream)

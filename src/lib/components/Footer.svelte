@@ -48,6 +48,7 @@
 				<a href="/#room" class="footer-nav-link">THE ROOM</a>
 				<a href="/#menu" class="footer-nav-link">MENU</a>
 				<a href="/#sound" class="footer-nav-link">SOUND</a>
+				<a href="/#gallery" class="footer-nav-link">GALLERY</a>
 				<a href="/#visit" class="footer-nav-link">VISIT US</a>
 			</nav>
 
@@ -242,7 +243,7 @@
 			right: 0;
 		}
 
-		/* 3 + 2 layout: each link spans two of six columns, the last row is centred */
+		/* Two even rows of three: each link spans two of six columns */
 		.footer-nav-link {
 			grid-column: span 2;
 			display: flex;
@@ -253,10 +254,6 @@
 			background: var(--fill);
 			font-size: 0.74rem;
 			text-align: center;
-		}
-
-		.footer-nav-link:nth-child(4) {
-			grid-column: 2 / span 2;
 		}
 
 		.footer-bottom {

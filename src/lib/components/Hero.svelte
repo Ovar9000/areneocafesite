@@ -161,7 +161,10 @@
 			<a href="#sound" class="hero-pill" style="--i: 3">
 				<span>SOUND</span>
 			</a>
-			<a href="#visit" class="hero-pill" style="--i: 4">
+			<a href="#gallery" class="hero-pill" style="--i: 4">
+				<span>GALLERY</span>
+			</a>
+			<a href="#visit" class="hero-pill" style="--i: 5">
 				<span>VISIT US</span>
 			</a>
 			<a 
@@ -169,7 +172,7 @@
 				target="_blank" 
 				rel="noopener noreferrer" 
 				class="hero-pill hero-pill-accent"
-				style="--i: 5"
+				style="--i: 6"
 				{@attach clickSpring}
 				aria-label="@LOT7.CAFE on Instagram"
 			>
