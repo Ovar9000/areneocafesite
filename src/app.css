@@ -1,19 +1,26 @@
-/* Lot 7 Cafe — Intentional Editorial Design System */
+/* Lot 7 Cafe — editorial type on an iOS 27 surface system (Liquid Glass, grouped cards, capsules) */
 :root {
-	/* Warm Natural Light Gallery Palette */
-	--bg-base: #fafaf7;
+	/* Grouped canvas: cards sit as white surfaces on a soft grey page, like iOS Settings */
+	--bg-base: #f2f2f7;
 	--bg-surface: #ffffff;
-	--bg-subtle: #f3f3ed;
+	--bg-subtle: #f6f6f9;
 	--bg-warm-tint: #eaeae0;
 	--bg-card: #ffffff;
+	/* iOS fill for secondary controls and pressed rows */
+	--fill: rgba(120, 120, 128, 0.12);
+	--fill-strong: rgba(120, 120, 128, 0.2);
 
 	/* Deep Charcoal & Near-Black Typography */
 	--text-main: #141416;
 	--text-secondary: #3c3c43;
-	--text-muted: #6e6e78;
+	--text-muted: #6b6b75;
 
-	/* Intentional Accent Palette (Restrained & Purposeful) */
-	--accent-navy: #14213d;
+	/* Tint: the official brand blue (sampled from the LOT 7 sticker), used like an iOS app tint */
+	--tint: #00388a;
+	--tint-pressed: #002a69;
+	--tint-soft: rgba(0, 56, 138, 0.1);
+	--brand-blue: #00388a;
+	--brand-cream: #fffff0;
 	--accent-amber: #d9962a;
 	/* Amber for text: --accent-amber is 2.5:1 on white, this is 5.3:1 (WCAG AA) */
 	--accent-amber-text: #94610f;
@@ -21,13 +28,30 @@
 	--accent-steel: #2b5a9e;
 	--accent-green: #256f48;
 
-	--border-subtle: #e6e6de;
-	--border-mid: #d2d2c8;
+	/* Hairline separators */
+	--border-subtle: rgba(60, 60, 67, 0.12);
+	--border-mid: rgba(60, 60, 67, 0.22);
 	--border-dark: #141416;
 
+	/* Concentric corners: inner radius = outer radius - padding */
 	--radius-pill: 9999px;
-	--radius-card: 14px;
-	--radius-card-sm: 8px;
+	--radius-card: 28px;
+	--radius-card-sm: 16px;
+	--radius-inner: 12px;
+
+	--shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 30px rgba(0, 0, 0, 0.05);
+	--shadow-float: 0 2px 6px rgba(0, 0, 0, 0.05), 0 16px 40px rgba(0, 0, 0, 0.1);
+
+	/* Liquid Glass material (iOS 27 tuning: denser diffusion, less see-through than iOS 26) */
+	--glass-bg: rgba(255, 255, 255, 0.7);
+	--glass-blur: blur(28px) saturate(180%);
+	--glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 0 0 0.5px rgba(255, 255, 255, 0.6);
+	--glass-dark-bg: rgba(28, 28, 32, 0.42);
+
+	/* Plate wall background: tile size (scripts/generate-plates.py draws a 1440 x 520 tile),
+	   and the veil that calms it behind the content column */
+	--plates-size: 2880px 1040px;
+	--plates-veil: rgba(242, 242, 247, 0.72);
 
 	--font-display: 'Bebas Neue', -apple-system, BlinkMacSystemFont, sans-serif;
 	--font-editorial: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
@@ -35,12 +59,34 @@
 	--font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 
 	--container-max: 1200px;
-	--page-padding: clamp(1.25rem, 5vw, 3.5rem);
-	--header-height: 70px;
+	--page-padding: clamp(1rem, 5vw, 3.5rem);
+	/* Floating glass bar (58px) plus its top and bottom gap */
+	--header-height: 78px;
 
 	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 	--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 	--ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Like the iOS 27 transparency setting: visitors who ask for less transparency get solid surfaces */
+@media (max-width: 767px) {
+	:root {
+		--plates-size: 1800px 650px;
+	}
+}
+
+@media (prefers-reduced-transparency: reduce) {
+	:root {
+		--glass-bg: rgba(255, 255, 255, 0.97);
+		--glass-dark-bg: rgba(28, 28, 32, 0.9);
+	}
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	:root {
+		--glass-bg: rgba(255, 255, 255, 0.97);
+		--glass-dark-bg: rgba(28, 28, 32, 0.9);
+	}
 }
 
 *, *::before, *::after {
@@ -56,21 +102,33 @@ html {
 
 /* Keyboard focus ring: shown for keyboard navigation only, never suppressed */
 :focus-visible {
-	outline: 2px solid var(--accent-navy);
+	outline: 2px solid var(--tint);
 	outline-offset: 3px;
 }
 
+/* House identity: the procedural plate wall (scripts/generate-plates.py). It shows in colour at
+   the screen edges and sits under a veil behind the content column, where all the text is.
+   On narrow screens the column is the whole width, so the plates become a quiet texture. */
 html {
-	background-color: var(--bg-base);
+	background:
+		linear-gradient(
+			90deg,
+			transparent max(0px, calc(50% - 820px)),
+			var(--plates-veil) max(0px, calc(50% - 600px)),
+			var(--plates-veil) min(100%, calc(50% + 600px)),
+			transparent min(100%, calc(50% + 820px))
+		),
+		url('/images/plates-page.svg') 0 0 / var(--plates-size) repeat,
+		var(--bg-base);
 	color: var(--text-main);
 	font-family: var(--font-sans);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
 
+/* Transparent so the plate wall on <html> shows through */
 body {
 	min-height: 100vh;
-	background-color: var(--bg-base);
 	color: var(--text-main);
 	overflow-x: hidden;
 	position: relative;
@@ -78,23 +136,16 @@ body {
 }
 
 ::selection {
-	background: var(--accent-navy);
+	background: var(--tint);
 	color: #ffffff;
 }
 
-/* Subtle Paper Texture */
-.paper-texture {
-	position: relative;
-}
-
-.paper-texture::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	opacity: 0.025;
-	z-index: 1;
-	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+/* Liquid Glass surface: blurred, saturated backdrop with a bright specular edge */
+.glass {
+	background: var(--glass-bg);
+	-webkit-backdrop-filter: var(--glass-blur);
+	backdrop-filter: var(--glass-blur);
+	box-shadow: var(--glass-edge), var(--shadow-float);
 }
 
 /* Minimalist Clean Scrollbar */
@@ -184,20 +235,21 @@ body {
 	width: 6px;
 	height: 6px;
 	border-radius: 50%;
-	background: var(--accent-amber);
+	background: var(--tint);
 }
 
-/* Pill Button */
+/* Capsule buttons: tinted fill for the primary action, grey fill for the rest (iOS 27 button styles) */
 .btn-pill {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
+	min-height: 44px;
 	padding: 0.65rem 1.4rem;
 	border-radius: var(--radius-pill);
-	border: 1.5px solid var(--text-main);
-	background: var(--bg-surface);
-	color: var(--text-main);
+	border: none;
+	background: var(--fill);
+	color: var(--tint);
 	font-family: var(--font-sans);
 	font-size: 0.88rem;
 	font-weight: 600;
@@ -205,43 +257,33 @@ body {
 	text-transform: uppercase;
 	text-decoration: none;
 	cursor: pointer;
-	transition: all 0.2s var(--ease-out);
+	transition: transform 0.2s var(--ease-out), background-color 0.2s ease, color 0.2s ease;
 	white-space: nowrap;
 }
 
 .btn-pill:hover {
-	background: var(--text-main);
-	color: #ffffff;
-	transform: translateY(-1px);
-	box-shadow: 0 4px 14px rgba(20, 20, 22, 0.12);
+	background: var(--fill-strong);
+}
+
+.btn-pill:active {
+	transform: scale(0.97);
 }
 
 .btn-pill-primary {
-	background: var(--accent-navy);
+	background: var(--tint);
 	color: #ffffff;
-	border-color: var(--accent-navy);
 }
 
 .btn-pill-primary:hover {
-	background: #0d172c;
-	border-color: #0d172c;
-	color: #ffffff;
-	box-shadow: 0 4px 16px rgba(20, 33, 61, 0.22);
+	background: var(--tint-pressed);
 }
 
-/* Card Framing */
+/* Grouped card: a white rounded surface on the grey canvas. Static: no hover motion on photos. */
 .photo-frame {
-	border: 1px solid var(--border-subtle);
 	border-radius: var(--radius-card);
 	background: var(--bg-surface);
 	overflow: hidden;
-	box-shadow: 0 2px 16px rgba(0, 0, 0, 0.025);
-	transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-.photo-frame:hover {
-	border-color: var(--border-mid);
-	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+	box-shadow: var(--shadow-card);
 }
 
 /* Click "spring" feedback, applied by $lib/attachments/click-spring.ts */
@@ -253,20 +295,17 @@ body {
 	animation: icon-spin 0.48s var(--ease-spring);
 }
 
+/* A short press-and-settle, like a tapped iOS control */
 @keyframes click-spring {
 	0% { transform: scale(1); }
-	25% { transform: translateY(2px) scale(0.9); }
-	55% { transform: translateY(-4px) scale(1.08); }
-	75% { transform: translateY(1px) scale(0.97); }
-	100% { transform: translateY(0) scale(1); }
+	35% { transform: scale(0.94); }
+	100% { transform: scale(1); }
 }
 
 @keyframes icon-spin {
-	0% { transform: rotate(0deg) scale(1); }
-	30% { transform: rotate(-18deg) scale(1.28); }
-	60% { transform: rotate(12deg) scale(1.15); }
-	80% { transform: rotate(-4deg) scale(1.06); }
-	100% { transform: rotate(0deg) scale(1); }
+	0% { transform: scale(1); }
+	35% { transform: scale(0.9); }
+	100% { transform: scale(1); }
 }
 
 /* Smooth in-page scrolling only for visitors who have not asked for reduced motion */
@@ -284,11 +323,5 @@ body {
 		animation-duration: 0.01ms !important;
 		animation-iteration-count: 1 !important;
 		transition-duration: 0.01ms !important;
-	}
-
-	/* Hover light sweeps over photos (MediaFrame.svelte, SoundBar poster) */
-	.media-frame::before,
-	.archive-poster-wrap::before {
-		display: none !important;
 	}
 }

@@ -24,9 +24,15 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+# Raw camera files (~400 MB); web masters are exported by scripts/export-assets.py
+design-assets/PICTURES/
+
 # Scratch & Temporary
 scratch/
 scratch*
 *.tmp
 *.log
 
+
+# Python
+__pycache__/

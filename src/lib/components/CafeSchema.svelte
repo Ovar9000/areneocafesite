@@ -1,17 +1,41 @@
 <script lang="ts">
 	import { DAY_NAMES, WEEKLY_HOURS, formatTime24 } from '$lib/hours';
+	import { ADD_ONS, MENU, type MenuItem } from '$lib/menu';
 	import { INSTAGRAM_URL, MAPS_URL, SITE_URL } from '$lib/site';
 
-	// schema.org structured data so search engines can show hours, location and links.
-	// Hours come from the same table that drives the live open/closed status.
+	const menuItem = (item: MenuItem) => ({
+		'@type': 'MenuItem',
+		name: item.name,
+		...(item.notes && { description: item.notes }),
+		offers: { '@type': 'Offer', price: item.price, priceCurrency: 'PHP' }
+	});
+
+	// schema.org structured data so search engines can show hours, location, menu and links.
+	// Hours and menu come from the same tables that drive the page.
 	const schema = {
 		'@context': 'https://schema.org',
 		'@type': 'CafeOrCoffeeShop',
 		name: 'Lot 7 Cafe',
+		slogan: 'Your neighborhood, just a little better.',
 		description:
-			'Specialty coffee, resident vinyl listening, and natural light in Naga City, Camarines Sur.',
+			'Espresso classics, house mixes and sodas with a resident deck in Naga City, Camarines Sur.',
 		url: `${SITE_URL}/`,
-		image: `${SITE_URL}/images/brand-cafe-lounge.jpg`,
+		image: `${SITE_URL}/images/og-lot7.jpg`,
+		priceRange: '₱₱',
+		servesCuisine: 'Coffee',
+		hasMenu: {
+			'@type': 'Menu',
+			url: `${SITE_URL}/#menu`,
+			hasMenuSection: [
+				...MENU.map((section) => ({
+					'@type': 'MenuSection',
+					name: section.title,
+					...(section.subtitle && { description: section.subtitle }),
+					hasMenuItem: section.items.map(menuItem)
+				})),
+				{ '@type': 'MenuSection', name: 'Add-ons', hasMenuItem: ADD_ONS.map(menuItem) }
+			]
+		},
 		address: {
 			'@type': 'PostalAddress',
 			addressLocality: 'Naga City',

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getCafeStatus, type CafeStatus } from '$lib/hours';
-	import { INSTAGRAM_URL, MAPS_URL } from '$lib/site';
+	import { MAPS_URL } from '$lib/site';
 
 	// Computed in the browser only: the page is prerendered, so a value computed
 	// during the build would be frozen into the HTML that crawlers and previews see.
@@ -15,13 +15,13 @@
 	});
 </script>
 
-<section class="visit-section paper-texture" id="visit">
+<section class="visit-section" id="visit">
 	<div class="visit-inner container">
 		<!-- Section Header -->
 		<div class="visit-header">
 			<div class="section-label">
 				<span class="section-label-dot"></span>
-				<span>04 / VISIT US</span>
+				<span>05 / VISIT US</span>
 			</div>
 			
 			<h2 class="section-headline">FIND THE ROOM</h2>
@@ -35,7 +35,7 @@
 			<!-- Card 1: Authoritative Storefront Hours & Live Local Status -->
 			<div class="visit-card photo-frame">
 				<div class="card-head font-mono">
-					<span class="head-tag">STOREFRONT SIGNAGE HOURS</span>
+					<span class="head-tag">WINDOW DECAL HOURS</span>
 					<div class="live-pill" class:is-open={status?.isOpen}>
 						<span class="live-dot"></span>
 						<span>{status?.statusText ?? 'CHECKING HOURS'}</span>
@@ -45,18 +45,9 @@
 				<div class="hours-schedule">
 					<div class="schedule-row">
 						<div class="day-group">
-							<span class="day-name font-sans">MON — FRI</span>
-							<span class="day-badge font-mono">WEEKDAY</span>
+							<span class="day-name font-sans">MON — SAT</span>
 						</div>
 						<span class="time-slot font-mono">10:00 AM — 10:00 PM</span>
-					</div>
-
-					<div class="schedule-row">
-						<div class="day-group">
-							<span class="day-name font-sans">SATURDAY</span>
-							<span class="day-badge font-mono">WEEKEND</span>
-						</div>
-						<span class="time-slot font-mono">2:00 PM — 10:00 PM</span>
 					</div>
 
 					<div class="schedule-row is-closed">
@@ -109,45 +100,15 @@
 				</div>
 			</div>
 		</div>
-
-		<!-- Primary Door Out #2: The Big Instagram Banner -->
-		<div class="instagram-banner photo-frame">
-			<div class="ig-inner">
-				<div class="ig-copy">
-					<div class="section-label ig-label font-mono">
-						<span>THE SECOND DOOR OUT</span>
-					</div>
-					<h3 class="ig-title font-display">FOLLOW @LOT7.CAFE</h3>
-				</div>
-
-				<div class="ig-action">
-					<a 
-						href={INSTAGRAM_URL} 
-						target="_blank" 
-						rel="noopener noreferrer" 
-						class="btn-pill ig-btn"
-					>
-						<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-							<path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-							<line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-						</svg>
-						<span>@LOT7.CAFE ON INSTAGRAM</span>
-					</a>
-				</div>
-			</div>
-		</div>
 	</div>
 </section>
 
 <style>
+	/* Last section: sized to its content so the footer follows straight on */
 	.visit-section {
-		min-height: 100dvh;
 		display: flex;
 		align-items: center;
-		padding: 5.5rem 0;
-		background-color: var(--bg-surface);
-		border-top: 1px solid var(--border-subtle);
+		padding: 5.5rem 0 3rem;
 		position: relative;
 		box-sizing: border-box;
 	}
@@ -171,7 +132,6 @@
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: 2rem;
-		margin-bottom: 2.75rem;
 	}
 
 	@media (min-width: 800px) {
@@ -192,15 +152,14 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 1.15rem 1.5rem;
-		border-bottom: 1px solid var(--border-subtle);
+		gap: 0.75rem;
+		padding: 1.4rem 1.6rem 0;
 		font-size: 0.7rem;
 		letter-spacing: 0.12em;
-		background: var(--bg-subtle);
 	}
 
 	.head-tag {
-		color: var(--accent-navy);
+		color: var(--tint);
 		font-weight: 700;
 	}
 
@@ -212,19 +171,18 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.45rem;
-		padding: 0.25rem 0.65rem;
+		padding: 0.3rem 0.7rem;
 		border-radius: var(--radius-pill);
-		background: #ffffff;
-		border: 1px solid var(--border-subtle);
+		background: var(--fill);
 		color: var(--text-muted);
 		font-size: 0.7rem;
 		font-weight: 600;
+		white-space: nowrap;
 	}
 
 	.live-pill.is-open {
-		background: #f0fdf4;
-		border-color: #bbf7d0;
-		color: #166534;
+		background: rgba(52, 199, 89, 0.14);
+		color: #1c6b34;
 	}
 
 	.live-dot {
@@ -235,31 +193,49 @@
 	}
 
 	.live-pill.is-open .live-dot {
-		background: #22c55e;
+		background: #34c759;
 	}
 
 	/* Hours Schedule */
+	/* iOS inset grouped list: one rounded group, rows split by an inset hairline */
 	.hours-schedule {
-		padding: 2rem 1.75rem;
+		margin: 1.25rem;
 		display: flex;
 		flex-direction: column;
-		gap: 1.15rem;
+		border-radius: var(--radius-card-sm);
+		background: var(--bg-subtle);
+		overflow: hidden;
 	}
 
 	.schedule-row {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 0.85rem 1rem;
-		border-radius: var(--radius-card-sm);
-		background: var(--bg-subtle);
-		border: 1px solid var(--border-subtle);
+		flex-wrap: wrap;
+		gap: 0.35rem 1rem;
+		min-height: 52px;
+		padding: 0.8rem 1.1rem;
+		position: relative;
+	}
+
+	.schedule-row + .schedule-row::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 1.1rem;
+		right: 0;
+		border-top: 1px solid var(--border-subtle);
 	}
 
 	.day-group {
 		display: flex;
 		align-items: center;
 		gap: 0.65rem;
+	}
+
+	.day-name,
+	.time-slot {
+		white-space: nowrap;
 	}
 
 	.day-name {
@@ -270,9 +246,9 @@
 
 	.day-badge {
 		font-size: 0.7rem;
-		padding: 0.15rem 0.4rem;
-		border-radius: 3px;
-		background: var(--border-subtle);
+		padding: 0.15rem 0.5rem;
+		border-radius: var(--radius-pill);
+		background: var(--fill);
 		color: var(--text-secondary);
 	}
 
@@ -287,9 +263,7 @@
 	}
 
 	.card-foot {
-		padding: 1rem 1.5rem;
-		background: var(--bg-subtle);
-		border-top: 1px solid var(--border-subtle);
+		padding: 0 1.6rem 1.5rem;
 		font-size: 0.72rem;
 		display: flex;
 		gap: 0.5rem;
@@ -306,7 +280,7 @@
 
 	/* Location Body */
 	.location-body {
-		padding: 2.25rem 2rem;
+		padding: 1.5rem 1.6rem 1.6rem;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
@@ -345,61 +319,5 @@
 		width: 100%;
 		padding: 0.9rem 1.5rem;
 		font-size: 0.85rem;
-	}
-
-	/* Instagram Banner */
-	.instagram-banner {
-		background: var(--accent-navy);
-		color: #ffffff;
-		padding: 3rem var(--page-padding);
-	}
-
-	.ig-inner {
-		display: flex;
-		flex-direction: column;
-		gap: 2rem;
-		align-items: flex-start;
-		justify-content: space-between;
-	}
-
-	@media (min-width: 800px) {
-		.ig-inner {
-			flex-direction: row;
-			align-items: center;
-		}
-	}
-
-	.ig-copy {
-		max-width: 580px;
-	}
-
-	.ig-label {
-		color: #93c5fd;
-		margin-bottom: 0.25rem;
-	}
-
-	.ig-title {
-		font-size: clamp(2.4rem, 4.5vw, 3.8rem);
-		color: #ffffff;
-		line-height: 0.95;
-		margin: 0.25rem 0 0;
-	}
-
-	.ig-btn {
-		background: #ffffff;
-		color: var(--accent-navy);
-		border-color: #ffffff;
-		padding: 0.85rem 1.75rem;
-		font-weight: 700;
-	}
-
-	.ig-btn:focus-visible {
-		outline-color: #ffffff;
-	}
-
-	.ig-btn:hover {
-		background: var(--accent-amber);
-		border-color: var(--accent-amber);
-		color: #141416;
 	}
 </style>

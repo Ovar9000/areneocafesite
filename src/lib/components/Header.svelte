@@ -56,8 +56,10 @@
 	}
 </script>
 
+<!-- Floating Liquid Glass bar: page content scrolls underneath it -->
 <header class="site-header" class:scrolled>
-	<div class="header-inner container">
+	<div class="container">
+	<div class="header-inner glass">
 		<!-- Left: Hamburger on Mobile / Brand Logo on Desktop -->
 		<div class="header-left">
 			<button 
@@ -77,19 +79,20 @@
 			</button>
 
 			<a href="/" class="brand-link desktop-only-brand" aria-label="Lot 7 Cafe home">
-				<Lot7Logo height="36px" />
+				<Lot7Logo height="38px" />
 			</a>
 		</div>
 
 		<!-- Mobile Centered Brand Logo (Matches Fat Seed Mascot style) -->
 		<a href="/" class="brand-link mobile-center-brand" class:drawer-open={mobileOpen} aria-label="Lot 7 Cafe home">
-			<Lot7Logo height="32px" />
+			<Lot7Logo height="36px" />
 		</a>
 
 		<!-- Center: Desktop In-Page Jumps -->
 		<nav class="desktop-nav font-sans" aria-label="Page Sections">
 			<a href="/#story" class="nav-item">THE STORY</a>
 			<a href="/#room" class="nav-item">THE ROOM</a>
+			<a href="/#menu" class="nav-item">MENU</a>
 			<a href="/#sound" class="nav-item">SOUND</a>
 			<a href="/#visit" class="nav-item">VISIT</a>
 		</nav>
@@ -114,6 +117,7 @@
 			</a>
 		</div>
 	</div>
+	</div>
 </header>
 
 <!-- Sideswipe Navigation Drawer: a native modal dialog that slides in from the left.
@@ -130,7 +134,7 @@
 	<!-- Drawer Header with Logo & Circular Close Button -->
 	<div class="drawer-header">
 		<a href="/" onclick={closeMobile} class="drawer-logo" aria-label="Lot 7 Cafe home">
-			<Lot7Logo height="34px" />
+			<Lot7Logo height="36px" />
 		</a>
 
 		<!-- svelte-ignore a11y_autofocus -->
@@ -165,15 +169,22 @@
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
-			<a href="/#sound" onclick={closeMobile} class="drawer-nav-item">
+			<a href="/#menu" onclick={closeMobile} class="drawer-nav-item">
 				<span class="nav-idx font-mono">03</span>
+				<span class="nav-text">THE MENU</span>
+				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="9 18 15 12 9 6"></polyline>
+				</svg>
+			</a>
+			<a href="/#sound" onclick={closeMobile} class="drawer-nav-item">
+				<span class="nav-idx font-mono">04</span>
 				<span class="nav-text">SOUND &amp; VINYL</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
 			<a href="/#visit" onclick={closeMobile} class="drawer-nav-item">
-				<span class="nav-idx font-mono">04</span>
+				<span class="nav-idx font-mono">05</span>
 				<span class="nav-text">VISIT US &amp; HOURS</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
@@ -209,28 +220,38 @@
 	.site-header {
 		position: sticky;
 		top: 0;
-		left: 0;
-		right: 0;
 		z-index: 1000;
-		background: rgba(250, 250, 247, 0.94);
-		backdrop-filter: blur(14px);
-		-webkit-backdrop-filter: blur(14px);
-		border-bottom: 1px solid var(--border-subtle);
-		transition: background-color 0.25s ease, box-shadow 0.25s ease;
+		height: var(--header-height);
+		display: flex;
+		align-items: center;
+		pointer-events: none;
 	}
 
-	.site-header.scrolled {
-		background: rgba(255, 255, 255, 0.98);
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+	.site-header > .container {
+		pointer-events: auto;
 	}
 
 	.header-inner {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: var(--header-height);
+		height: 58px;
 		gap: 1rem;
+		padding: 0 0.6rem 0 1.1rem;
+		border-radius: var(--radius-pill);
 		position: relative;
+		transition: box-shadow 0.25s ease;
+	}
+
+	/* Lift the bar a little once content is moving under it */
+	.site-header.scrolled .header-inner {
+		box-shadow: var(--glass-edge), 0 4px 12px rgba(0, 0, 0, 0.06), 0 20px 48px rgba(0, 0, 0, 0.12);
+	}
+
+	@media (max-width: 899px) {
+		.header-inner {
+			padding: 0 0.5rem;
+		}
 	}
 
 	.header-left {
@@ -238,24 +259,17 @@
 		align-items: center;
 	}
 
-	/* Brand Badge Desktop */
 	.brand-link {
 		display: flex;
 		align-items: center;
 		text-decoration: none;
 		user-select: none;
 		cursor: pointer;
-		transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-		will-change: transform;
-	}
-
-	.brand-link:hover {
-		transform: translateY(-2px) scale(1.04);
+		transition: transform 0.2s var(--ease-out);
 	}
 
 	.brand-link:active {
-		transform: translateY(1.5px) scale(0.92);
-		transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1);
+		transform: scale(0.95);
 	}
 
 	.desktop-only-brand {
@@ -267,22 +281,16 @@
 		display: flex;
 		position: absolute;
 		left: 50%;
-		transform: translateX(-50%) translateY(0) scale(1);
-		transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
-		will-change: transform, opacity;
-	}
-
-	.mobile-center-brand:hover {
-		transform: translateX(-50%) translateY(-2px) scale(1.04);
+		transform: translateX(-50%);
+		transition: transform 0.3s var(--ease-out), opacity 0.25s ease;
 	}
 
 	.mobile-center-brand:active {
-		transform: translateX(-50%) translateY(1.5px) scale(0.92);
-		transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1);
+		transform: translateX(-50%) scale(0.95);
 	}
 
 	.mobile-center-brand.drawer-open {
-		transform: translateX(-50%) scale(0.85);
+		transform: translateX(-50%) scale(0.9);
 		opacity: 0;
 		pointer-events: none;
 	}
@@ -297,11 +305,11 @@
 		}
 	}
 
-	/* Desktop Nav */
+	/* Desktop Nav: labels that pick up a grey capsule on hover, like an iOS segmented bar */
 	.desktop-nav {
 		display: none;
 		align-items: center;
-		gap: 2.25rem;
+		gap: 0.15rem;
 	}
 
 	@media (min-width: 900px) {
@@ -311,91 +319,64 @@
 	}
 
 	.nav-item {
-		font-size: 0.82rem;
+		font-size: 0.8rem;
 		font-weight: 600;
 		letter-spacing: 0.05em;
 		color: var(--text-secondary);
 		text-decoration: none;
-		padding: 0.35rem 0.25rem;
+		padding: 0.55rem 0.95rem;
+		border-radius: var(--radius-pill);
 		user-select: none;
-		transition: color 0.15s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-		will-change: transform;
+		transition: background-color 0.15s ease, color 0.15s ease, transform 0.2s var(--ease-out);
 	}
 
 	.nav-item:hover {
+		background: var(--fill);
 		color: var(--text-main);
-		transform: translateY(-1.5px);
-		text-decoration: underline;
-		text-underline-offset: 4px;
 	}
 
 	.nav-item:active {
-		transform: translateY(1px) scale(0.95);
-		transition-duration: 0.06s;
+		transform: scale(0.96);
 	}
 
 	/* Header Actions & Instagram Button */
 	.header-actions {
 		display: flex;
 		align-items: center;
-		gap: 0.85rem;
 	}
 
 	.ig-link {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.48rem;
-		padding: 0.45rem 0.95rem;
+		gap: 0.45rem;
+		height: 42px;
+		padding: 0 1.05rem;
 		border-radius: var(--radius-pill);
-		border: 1px solid var(--border-subtle);
-		background: var(--bg-surface);
-		color: var(--text-main);
-		font-size: 0.75rem;
+		background: var(--tint);
+		color: #ffffff;
+		font-size: 0.74rem;
 		font-weight: 600;
 		text-decoration: none;
 		user-select: none;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-		transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
-		            opacity 0.25s ease,
-		            box-shadow 0.25s ease, 
-		            background-color 0.2s ease, 
-		            color 0.2s ease, 
-		            border-color 0.2s ease;
-		will-change: transform, opacity;
+		transition: transform 0.2s var(--ease-out), opacity 0.25s ease, background-color 0.15s ease;
 	}
 
 	.ig-link.drawer-open {
-		transform: scale(0.85);
+		transform: scale(0.9);
 		opacity: 0;
 		pointer-events: none;
 	}
 
 	.ig-link :global(.ig-svg-icon) {
-		transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 		flex-shrink: 0;
 	}
 
 	.ig-link:hover {
-		border-color: var(--accent-navy);
-		background: var(--accent-navy);
-		color: #ffffff;
-		transform: translateY(-2.5px) scale(1.04);
-		box-shadow: 0 8px 22px rgba(20, 33, 61, 0.22);
-	}
-
-	.ig-link:hover :global(.ig-svg-icon) {
-		transform: rotate(-12deg) scale(1.2);
+		background: var(--tint-pressed);
 	}
 
 	.ig-link:active {
-		transform: translateY(2px) scale(0.91);
-		box-shadow: 0 2px 4px rgba(20, 33, 61, 0.12);
-		transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.08s ease;
-	}
-
-	.ig-link:active :global(.ig-svg-icon) {
-		transform: rotate(0deg) scale(0.92);
-		transition: transform 0.08s ease;
+		transform: scale(0.95);
 	}
 
 	@media (max-width: 640px) {
@@ -403,10 +384,8 @@
 			display: none;
 		}
 		.ig-link {
-			padding: 0.45rem;
-			border-radius: 50%;
-			width: 38px;
-			height: 38px;
+			padding: 0;
+			width: 42px;
 			justify-content: center;
 		}
 	}
@@ -416,31 +395,23 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: transparent;
-		border: 1px solid var(--border-subtle);
+		background: var(--fill);
+		border: none;
 		color: var(--text-main);
-		width: 40px;
-		height: 40px;
+		width: 42px;
+		height: 42px;
 		border-radius: 50%;
 		cursor: pointer;
 		user-select: none;
-		transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), 
-		            background-color 0.2s ease, 
-		            border-color 0.2s ease, 
-		            color 0.2s ease;
-		will-change: transform;
+		transition: transform 0.2s var(--ease-out), background-color 0.15s ease;
 	}
 
 	.mobile-toggle:hover {
-		background: var(--bg-surface);
-		border-color: var(--text-main);
-		transform: scale(1.06);
+		background: var(--fill-strong);
 	}
 
 	.mobile-toggle:active {
-		transform: scale(0.88);
-		background: var(--bg-subtle);
-		transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1);
+		transform: scale(0.92);
 	}
 
 	@media (min-width: 900px) {
@@ -461,21 +432,24 @@
 	/* Sideswipe Drawer: a modal <dialog> that slides in from the left.
 	   `display` and `overlay` transition discretely so the exit animation
 	   plays before the dialog leaves the top layer. */
+	/* A floating glass sheet inset from the screen edge, like an iOS 27 sidebar */
 	.sideswipe-drawer {
 		position: fixed;
-		inset: 0 auto 0 0;
+		inset: 0.6rem auto 0.6rem 0.6rem;
 		width: min(85vw, 360px);
 		max-width: none;
-		height: 100dvh;
+		height: calc(100dvh - 1.2rem);
 		max-height: none;
 		margin: 0;
 		padding: 0;
 		border: none;
-		border-right: 1px solid var(--border-subtle);
-		background: #ffffff;
+		border-radius: var(--radius-card);
+		background: var(--glass-bg);
+		-webkit-backdrop-filter: var(--glass-blur);
+		backdrop-filter: var(--glass-blur);
 		color: var(--text-main);
 		flex-direction: column;
-		transform: translateX(-100%);
+		transform: translateX(calc(-100% - 1rem));
 		box-shadow: none;
 		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
 		            box-shadow 0.4s ease,
@@ -487,13 +461,11 @@
 	.sideswipe-drawer[open] {
 		display: flex;
 		transform: translateX(0);
-		box-shadow: 25px 0 60px rgba(0, 0, 0, 0.25);
+		box-shadow: var(--glass-edge), 0 24px 64px rgba(0, 0, 0, 0.22);
 	}
 
 	.sideswipe-drawer::backdrop {
-		background: rgba(15, 17, 23, 0.48);
-		backdrop-filter: blur(8px);
-		-webkit-backdrop-filter: blur(8px);
+		background: rgba(0, 0, 0, 0.25);
 		opacity: 0;
 		transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
 		            overlay 0.4s allow-discrete,
@@ -507,7 +479,7 @@
 	/* Entry animation start points (the dialog goes from display:none to flex) */
 	@starting-style {
 		.sideswipe-drawer[open] {
-			transform: translateX(-100%);
+			transform: translateX(calc(-100% - 1rem));
 		}
 
 		.sideswipe-drawer[open]::backdrop {
@@ -520,7 +492,7 @@
 		}
 
 		.sideswipe-drawer[open] .drawer-ig-cta {
-			transform: translateY(22px) scale(0.9);
+			transform: translateY(16px);
 			opacity: 0;
 		}
 	}
@@ -529,8 +501,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 1.25rem 1.5rem;
-		border-bottom: 1px solid var(--border-subtle);
+		padding: 1rem 1rem 0.5rem 1.4rem;
 	}
 
 	/* Drawer Logo with spring reveal animation */
@@ -552,44 +523,32 @@
 		opacity: 1;
 	}
 
-	.drawer-logo:hover {
-		transform: translateY(-2px) scale(1.04);
-	}
-
 	.drawer-logo:active {
-		transform: translateY(1.5px) scale(0.92);
-		transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1);
+		transform: scale(0.95);
+		transition: transform 0.08s ease;
 	}
 
 	.drawer-close-btn {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: transparent;
-		border: 1px solid var(--border-subtle);
+		background: var(--fill);
+		border: none;
 		border-radius: 50%;
 		width: 38px;
 		height: 38px;
 		color: var(--text-main);
 		cursor: pointer;
 		user-select: none;
-		transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
-		            background-color 0.2s ease, 
-		            color 0.2s ease, 
-		            border-color 0.2s ease;
-		will-change: transform;
+		transition: transform 0.2s var(--ease-out), background-color 0.15s ease;
 	}
 
 	.drawer-close-btn:hover {
-		background: var(--accent-navy);
-		color: #ffffff;
-		border-color: var(--accent-navy);
-		transform: scale(1.08) rotate(90deg);
+		background: var(--fill-strong);
 	}
 
 	.drawer-close-btn:active {
-		transform: scale(0.88) rotate(90deg);
-		transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1);
+		transform: scale(0.92);
 	}
 
 	.drawer-body {
@@ -597,49 +556,52 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		padding: 2rem 1.5rem 2.5rem;
+		padding: 1rem 1rem 1.25rem;
 		overflow-y: auto;
 	}
 
+	/* iOS inset grouped list */
 	.drawer-nav {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		background: rgba(255, 255, 255, 0.75);
+		border-radius: var(--radius-card-sm);
+		overflow: hidden;
 	}
 
 	.drawer-nav-item {
 		display: flex;
 		align-items: center;
 		gap: 1rem;
-		padding: 0.95rem 1rem;
-		border-radius: var(--radius-card-sm);
+		min-height: 52px;
+		padding: 0.85rem 1rem;
+		position: relative;
 		text-decoration: none;
 		color: var(--text-main);
 		font-weight: 700;
-		font-size: 1.05rem;
+		font-size: 1rem;
 		letter-spacing: 0.04em;
 		user-select: none;
-		transition: background-color 0.2s ease, 
-		            color 0.2s ease, 
-		            transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-		border-bottom: 1px solid var(--border-subtle);
-		will-change: transform;
+		transition: background-color 0.15s ease;
 	}
 
-	.drawer-nav-item:hover {
-		background: var(--bg-surface);
-		color: var(--accent-navy);
-		transform: translateX(5px);
+	.drawer-nav-item + .drawer-nav-item::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 3.1rem;
+		right: 0;
+		border-top: 1px solid var(--border-subtle);
 	}
 
+	.drawer-nav-item:hover,
 	.drawer-nav-item:active {
-		transform: translateX(2px) scale(0.97);
-		transition-duration: 0.06s;
+		background: var(--fill);
 	}
 
 	.nav-idx {
 		font-size: 0.72rem;
-		color: var(--accent-navy);
+		color: var(--tint);
 		font-weight: 700;
 	}
 
@@ -649,12 +611,6 @@
 
 	.nav-arrow {
 		color: var(--text-muted);
-		transition: transform 0.2s ease;
-	}
-
-	.drawer-nav-item:hover .nav-arrow {
-		transform: translateX(3px);
-		color: var(--accent-navy);
 	}
 
 	.drawer-footer {
@@ -662,7 +618,6 @@
 		flex-direction: column;
 		gap: 1.25rem;
 		padding-top: 1.5rem;
-		border-top: 1px solid var(--border-subtle);
 	}
 
 	.drawer-ig-cta {
@@ -670,59 +625,34 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.65rem;
+		min-height: 50px;
 		padding: 0.85rem 1.25rem;
 		border-radius: var(--radius-pill);
-		background: var(--accent-navy);
+		background: var(--tint);
 		color: #ffffff;
 		text-decoration: none;
 		font-size: 0.78rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		user-select: none;
-		box-shadow: 0 4px 16px rgba(20, 33, 61, 0.22);
-		transform: translateY(22px) scale(0.9);
+		transform: translateY(16px);
 		opacity: 0;
-		transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s, 
-		            opacity 0.35s ease 0.14s,
-		            box-shadow 0.25s ease, 
-		            background-color 0.2s ease;
-		will-change: transform, opacity;
+		transition: transform 0.4s var(--ease-out) 0.12s,
+		            opacity 0.3s ease 0.12s,
+		            background-color 0.15s ease;
 	}
 
 	.sideswipe-drawer[open] .drawer-ig-cta {
-		transform: translateY(0) scale(1);
+		transform: none;
 		opacity: 1;
 	}
 
-	.drawer-ig-cta :global(.ig-svg-icon) {
-		transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-		flex-shrink: 0;
-	}
-
 	.drawer-ig-cta:hover {
-		transform: translateY(-2.5px) scale(1.03);
-		box-shadow: 0 10px 28px rgba(20, 33, 61, 0.32);
-	}
-
-	.drawer-ig-cta:hover :global(.ig-svg-icon) {
-		transform: rotate(-12deg) scale(1.22);
+		background: var(--tint-pressed);
 	}
 
 	.drawer-ig-cta:active {
-		transform: translateY(2px) scale(0.92);
-		box-shadow: 0 2px 6px rgba(20, 33, 61, 0.15);
-		transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.08s ease;
-	}
-
-	.drawer-ig-cta:active :global(.ig-svg-icon) {
-		transform: rotate(0deg) scale(0.92);
+		transform: scale(0.96);
 		transition: transform 0.08s ease;
-	}
-
-	.drawer-location {
-		font-size: 0.7rem;
-		color: var(--text-muted);
-		text-align: center;
-		letter-spacing: 0.1em;
 	}
 </style>

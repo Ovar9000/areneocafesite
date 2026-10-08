@@ -15,13 +15,13 @@
 	];
 </script>
 
-<section class="sound-section paper-texture" id="sound">
+<section class="sound-section" id="sound">
 	<div class="sound-inner container">
 		<!-- Section Header -->
 		<div class="sound-header">
 			<div class="section-label">
 				<span class="section-label-dot"></span>
-				<span>03 / SOUND &amp; VINYL</span>
+				<span>04 / SOUND &amp; VINYL</span>
 			</div>
 			
 			<div class="header-row">
@@ -34,18 +34,15 @@
 			<!-- Column 1: Hardware & Verified Counter Sleeves -->
 			<div class="deck-column">
 				<div class="turntable-card photo-frame">
-					<MediaFrame aspect="4 / 3" tags={['RESIDENT DECK', 'STUDIO MONITORS']}>
+					<!-- Portrait source in a landscape frame: keep the selector and the deck in view -->
+					<MediaFrame aspect="4 / 3" focus="center 62%" title="The Deck by the Window" detail="Resident night sessions">
 						<enhanced:img
-							src="$lib/assets/images/turntable-setup.jpg"
-							alt="Resident Turntable Deck &amp; Studio Monitors at Lot 7"
+							src="$lib/assets/images/dj-night.jpg"
+							alt="A DJ playing a set at the Lot 7 deck by the window, with guests looking on"
 							sizes="(min-width: 1200px) 580px, (min-width: 900px) 50vw, 92vw"
 							loading="lazy"
 						/>
 					</MediaFrame>
-
-					<div class="turntable-details">
-						<h3 class="card-heading font-sans">DIRECT-DRIVE ANALOG DECK</h3>
-					</div>
 				</div>
 
 				<!-- Verified Sleeves Photographed On-Site -->
@@ -96,10 +93,43 @@
 
 						<div class="archive-subline font-mono">
 							<span>POP-UP BY GROOVY</span>
-							<span>“YOUR NEIGHBORHOOD, JUST A LITTLE BETTER.”</span>
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<!-- Night Strip: the room once the music is on -->
+		<div class="nights-strip">
+			<div class="photo-frame">
+				<MediaFrame aspect="4 / 5" focus="center 40%" title="In the Mirror" detail="Night sessions">
+					<enhanced:img
+						src="$lib/assets/images/crowd-mirror.jpg"
+						alt="The crowd around the deck, reflected in the room's round convex mirror"
+						sizes="(min-width: 1200px) 352px, 31vw"
+						loading="lazy"
+					/>
+				</MediaFrame>
+			</div>
+			<div class="photo-frame">
+				<MediaFrame aspect="4 / 5" focus="center 35%" title="Regulars" detail="After hours">
+					<enhanced:img
+						src="$lib/assets/images/portrait-night.jpg"
+						alt="A regular in a plaid shirt caught in warm flash light during a night session"
+						sizes="(min-width: 1200px) 352px, 31vw"
+						loading="lazy"
+					/>
+				</MediaFrame>
+			</div>
+			<div class="photo-frame">
+				<MediaFrame aspect="4 / 5" focus="center 45%" title="Hands On" detail="The controller">
+					<enhanced:img
+						src="$lib/assets/images/dj-controller.jpg"
+						alt="Close-up of hands on the DJ controller's jog wheel and pads"
+						sizes="(min-width: 1200px) 352px, 31vw"
+						loading="lazy"
+					/>
+				</MediaFrame>
 			</div>
 		</div>
 	</div>
@@ -111,9 +141,6 @@
 		display: flex;
 		align-items: center;
 		padding: 5.5rem 0;
-		background-color: var(--bg-surface);
-		border-top: 1px solid var(--border-subtle);
-		border-bottom: 1px solid var(--border-subtle);
 		position: relative;
 		box-sizing: border-box;
 	}
@@ -158,35 +185,39 @@
 		gap: 1.75rem;
 	}
 
+	/* Night Strip */
+	.nights-strip {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.5rem;
+		margin-top: 2.25rem;
+	}
+
+	/* Phones: a tight contact-sheet row instead of three full-height photos */
+	@media (max-width: 767px) {
+		.nights-strip {
+			gap: 0.5rem;
+		}
+
+		.nights-strip :global(.media-caption) {
+			display: none;
+		}
+
+		.nights-strip .photo-frame {
+			border-radius: var(--radius-card-sm);
+		}
+	}
+
 	/* Turntable Card */
 	.turntable-card {
 		background: var(--bg-surface);
 		display: flex;
 		flex-direction: column;
-		transition: border-color 0.3s ease, box-shadow 0.3s ease;
-	}
-
-	.turntable-card:hover {
-		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-		border-color: var(--border-mid);
-	}
-
-	.turntable-details {
-		padding: 1.5rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.card-heading {
-		font-size: 1.2rem;
-		font-weight: 700;
-		color: var(--text-main);
 	}
 
 	/* Sleeves Box */
 	.sleeves-box {
-		padding: 1.5rem;
+		padding: 1.25rem;
 		background: var(--bg-surface);
 	}
 
@@ -197,9 +228,7 @@
 		font-size: 0.7rem;
 		letter-spacing: 0.12em;
 		color: var(--text-muted);
-		padding-bottom: 0.75rem;
-		border-bottom: 1px solid var(--border-subtle);
-		margin-bottom: 1rem;
+		padding: 0 0.25rem 0.85rem;
 	}
 
 	.status-verified {
@@ -207,26 +236,36 @@
 		font-weight: 700;
 	}
 
+	/* iOS inset grouped list: one rounded group, rows split by inset hairlines */
 	.sleeves-list {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
+		background: var(--bg-subtle);
+		border-radius: var(--radius-card-sm);
+		overflow: hidden;
 	}
 
 	.sleeve-item {
 		display: flex;
 		align-items: center;
 		gap: 1rem;
-		padding: 0.75rem 1rem;
-		background: var(--bg-subtle);
-		border-radius: var(--radius-card-sm);
-		border: 1px solid var(--border-subtle);
+		padding: 0.8rem 1rem;
+		position: relative;
+	}
+
+	.sleeve-item + .sleeve-item::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 2.9rem;
+		right: 0;
+		border-top: 1px solid var(--border-subtle);
 	}
 
 	.sleeve-idx {
 		font-size: 0.75rem;
 		font-weight: 700;
-		color: var(--accent-navy);
+		color: var(--tint);
 	}
 
 	.sleeve-info {
@@ -253,31 +292,24 @@
 
 	/* Archival Card */
 	.archive-card {
-		padding: 1.75rem;
+		padding: 1.25rem;
 		background: var(--bg-surface);
 		display: flex;
 		flex-direction: column;
 		gap: 1.25rem;
-		transition: border-color 0.3s ease, box-shadow 0.3s ease;
-	}
-
-	.archive-card:hover {
-		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-		border-color: var(--border-mid);
 	}
 
 	.archive-top {
+		padding: 0.35rem 0.5rem 0;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		font-size: 0.7rem;
 		letter-spacing: 0.1em;
-		padding-bottom: 0.5rem;
-		border-bottom: 1px solid var(--border-subtle);
 	}
 
 	.archive-pill {
-		color: var(--accent-navy);
+		color: var(--tint);
 		font-weight: 700;
 	}
 
@@ -290,28 +322,11 @@
 		width: 100%;
 		border-radius: var(--radius-card-sm);
 		overflow: hidden;
-		background: #14213d;
+		background: var(--tint);
 		padding: 1rem;
 		display: flex;
 		justify-content: center;
 		position: relative;
-	}
-
-	/* Frosted glass light sweep across the poster tile */
-	.archive-poster-wrap::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(
-			115deg,
-			transparent 35%,
-			rgba(255, 255, 255, 0.28) 50%,
-			transparent 65%
-		);
-		transform: translateX(-100%);
-		transition: transform 0.75s var(--ease-out);
-		pointer-events: none;
-		z-index: 3;
 	}
 
 	.archive-poster {
@@ -319,19 +334,11 @@
 		width: auto;
 		object-fit: contain;
 		display: block;
-		border-radius: 4px;
-		transition: transform 0.65s var(--ease-out);
-	}
-
-	.archive-card:hover .archive-poster {
-		transform: scale(1.04);
-	}
-
-	.archive-card:hover .archive-poster-wrap::before {
-		transform: translateX(100%);
+		border-radius: 6px;
 	}
 
 	.archive-caption {
+		padding: 0 0.5rem 0.35rem;
 		display: flex;
 		flex-direction: column;
 		gap: 0.75rem;
@@ -357,8 +364,8 @@
 		font-size: 0.7rem;
 		letter-spacing: 0.08em;
 		color: var(--text-muted);
-		padding: 0.5rem 0;
-		border-top: 1px dashed var(--border-subtle);
-		border-bottom: 1px dashed var(--border-subtle);
+		padding: 0.75rem 1rem;
+		border-radius: var(--radius-inner);
+		background: var(--bg-subtle);
 	}
 </style>

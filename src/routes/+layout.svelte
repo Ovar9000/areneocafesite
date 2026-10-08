@@ -54,7 +54,7 @@
 		z-index: 3000;
 		padding: 0.6rem 1rem;
 		border-radius: var(--radius-pill);
-		background: var(--accent-navy);
+		background: var(--tint);
 		color: #ffffff;
 		font-family: var(--font-mono);
 		font-size: 0.75rem;

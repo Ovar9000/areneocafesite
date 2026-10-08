@@ -73,7 +73,7 @@
 	}
 
 	.back-home-link:hover {
-		color: var(--accent-navy);
+		color: var(--tint);
 		transform: translateX(-3px);
 	}
 
@@ -88,7 +88,7 @@
 	.legal-tag {
 		font-size: 0.72rem;
 		font-weight: 700;
-		color: var(--accent-navy);
+		color: var(--tint);
 		letter-spacing: 0.12em;
 		display: block;
 		margin-bottom: 0.5rem;
@@ -152,7 +152,7 @@
 	}
 
 	.legal-content :global(.legal-section a) {
-		color: var(--accent-navy);
+		color: var(--tint);
 		text-decoration: underline;
 		text-underline-offset: 3px;
 		font-weight: 600;

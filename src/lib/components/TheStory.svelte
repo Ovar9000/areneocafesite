@@ -2,7 +2,7 @@
 	import MediaFrame from './MediaFrame.svelte';
 </script>
 
-<section class="story-section paper-texture" id="story">
+<section class="story-section" id="story">
 	<div class="story-inner container">
 		<!-- Section Header -->
 		<div class="section-label">
@@ -29,12 +29,12 @@
 				</blockquote>
 			</div>
 
-			<!-- Right: Storefront Glass Photograph in True Portrait Ratio -->
+			<!-- Right: The room under the tagline ceiling, in true portrait ratio -->
 			<div class="story-media photo-frame">
-				<MediaFrame aspect="3 / 4" maxHeight="560px" tags={['STOREFRONT GLASS', 'ENTRANCE']}>
+				<MediaFrame aspect="3 / 4" maxHeight="560px" title="The Room" detail="Under the tagline">
 					<enhanced:img
-						src="$lib/assets/images/storefront-window.jpg"
-						alt="Lot 7 Cafe Storefront Window Glass Decal"
+						src="$lib/assets/images/room-fisheye.jpg"
+						alt="Wide view of the Lot 7 room: guests at the tables beneath the ceiling lettering 'your neighborhood, just a little better.'"
 						sizes="(min-width: 1200px) 452px, (min-width: 850px) 38vw, 92vw"
 						loading="lazy"
 					/>
@@ -50,9 +50,6 @@
 		display: flex;
 		align-items: center;
 		padding: 5.5rem 0;
-		background-color: var(--bg-surface);
-		border-top: 1px solid var(--border-subtle);
-		border-bottom: 1px solid var(--border-subtle);
 		position: relative;
 		box-sizing: border-box;
 	}
@@ -102,20 +99,9 @@
 
 	.quote-closing {
 		font-size: clamp(1.2rem, 2.2vw, 1.45rem);
-		color: var(--accent-navy);
+		color: var(--tint);
 		line-height: 1.45;
-		border-left: 2px solid var(--accent-navy);
+		border-left: 2px solid var(--tint);
 		padding-left: 1.25rem;
 	}
-
-	/* Media Column */
-	.story-media {
-		transition: border-color 0.3s ease, box-shadow 0.3s ease;
-	}
-
-	.story-media:hover {
-		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-		border-color: var(--border-mid);
-	}
-
 </style>

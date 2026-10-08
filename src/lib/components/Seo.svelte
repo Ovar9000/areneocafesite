@@ -13,8 +13,8 @@
 	let {
 		title,
 		description,
-		image = '/images/brand-cafe-lounge.jpg',
-		imageAlt = 'Interior seating and lounge at Lot 7 Cafe'
+		image = '/images/og-lot7.jpg',
+		imageAlt = 'The illuminated Lot 7 Cafe lightbox sign: your neighborhood, just a little better.'
 	}: Props = $props();
 
 	// Built from the fixed production origin so prerendered HTML and preview deploys

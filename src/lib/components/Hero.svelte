@@ -9,12 +9,15 @@
 
 	$effect(() => {
 		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		const saveData =
-			(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData ===
-			true;
+		const connection = (
+			navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }
+		).connection;
+		const saveData = connection?.saveData === true;
+		// The video is 2–3 MB: on 2G/3G the 66 KB poster is the page, and the play button stays
+		const slowNetwork = ['slow-2g', '2g', '3g'].includes(connection?.effectiveType ?? '');
 
 		// Poster + play button only; with preload="none" the video is never downloaded
-		if (reduceMotion || saveData) {
+		if (reduceMotion || saveData || slowNetwork) {
 			userPaused = true;
 			return;
 		}
@@ -87,10 +90,15 @@
 			</button>
 		</div>
 
-		<!-- Creed Tagline directly below the video -->
+		<!-- Main tagline, set in the official signage artwork (design-assets/LOGOS/SIGNAGE.png) -->
 		<div class="hero-caption-block">
-			<p class="hero-creed font-editorial">
-				“...your neighborhood, just a little better.”
+			<p class="hero-creed">
+				<enhanced:img
+					src="$lib/assets/brand/tagline-serif.png"
+					alt="your neighborhood, just a little better."
+					width="640"
+					class="hero-tagline-art"
+				/>
 			</p>
 		</div>
 
@@ -101,6 +109,9 @@
 			</a>
 			<a href="#room" class="hero-pill">
 				<span>THE ROOM</span>
+			</a>
+			<a href="#menu" class="hero-pill">
+				<span>MENU</span>
 			</a>
 			<a href="#sound" class="hero-pill">
 				<span>SOUND</span>
@@ -134,8 +145,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background-color: var(--bg-base);
-		padding: 1.5rem 0 2rem;
+		padding: 0.5rem 0 1.5rem;
 		box-sizing: border-box;
 		position: relative;
 		overflow: hidden;
@@ -161,7 +171,7 @@
 		overflow: hidden;
 		background: #000000;
 		border-radius: var(--radius-card);
-		box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), 0 24px 60px rgba(0, 0, 0, 0.14);
 	}
 
 	.showcase-video {
@@ -174,31 +184,27 @@
 	/* Pause / play control (WCAG 2.2.2: moving content longer than 5s must be pausable) */
 	.video-toggle {
 		position: absolute;
-		right: 0.85rem;
-		bottom: 0.85rem;
+		right: 0.9rem;
+		bottom: 0.9rem;
 		z-index: 2;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 40px;
-		height: 40px;
+		width: 44px;
+		height: 44px;
 		border-radius: 50%;
-		border: 1px solid rgba(255, 255, 255, 0.6);
-		background: rgba(255, 255, 255, 0.88);
-		color: var(--text-main);
-		backdrop-filter: blur(6px);
-		-webkit-backdrop-filter: blur(6px);
+		border: none;
+		background: var(--glass-dark-bg);
+		-webkit-backdrop-filter: var(--glass-blur);
+		backdrop-filter: var(--glass-blur);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
+		color: #ffffff;
 		cursor: pointer;
-		transition: transform 0.2s var(--ease-spring), background-color 0.2s ease;
-	}
-
-	.video-toggle:hover {
-		background: #ffffff;
-		transform: scale(1.06);
+		transition: transform 0.2s var(--ease-out);
 	}
 
 	.video-toggle:active {
-		transform: scale(0.92);
+		transform: scale(0.9);
 	}
 
 	/* Ring sits over the (usually dark) video */
@@ -214,10 +220,16 @@
 	}
 
 	.hero-creed {
-		font-size: clamp(1.2rem, 2.5vw, 1.75rem);
-		color: var(--text-main);
-		line-height: 1.35;
 		margin: 0;
+		line-height: 0;
+	}
+
+	.hero-creed :global(.hero-tagline-art) {
+		display: block;
+		height: clamp(64px, 9vh, 100px);
+		width: auto;
+		user-select: none;
+		-webkit-user-drag: none;
 	}
 
 	/* Fat Seed Inspired Interactive Pills Dock */
@@ -230,76 +242,51 @@
 		max-width: 850px;
 	}
 
+	/* Glass capsules floating on the canvas */
 	.hero-pill {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		min-height: 40px;
 		padding: 0.5rem 1.15rem;
 		border-radius: var(--radius-pill);
-		border: 1px solid var(--text-main);
-		background: #ffffff;
+		background: var(--glass-bg);
+		-webkit-backdrop-filter: var(--glass-blur);
+		backdrop-filter: var(--glass-blur);
+		box-shadow: var(--glass-edge), 0 1px 2px rgba(0, 0, 0, 0.05), 0 6px 18px rgba(0, 0, 0, 0.06);
 		color: var(--text-main);
 		font-size: 0.72rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
 		text-decoration: none;
 		user-select: none;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-		transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), 
-		            box-shadow 0.2s ease, 
-		            background-color 0.2s ease, 
-		            color 0.2s ease, 
-		            border-color 0.2s ease;
+		transition: transform 0.2s var(--ease-out), background-color 0.15s ease, color 0.15s ease;
 		white-space: nowrap;
-		will-change: transform;
 	}
 
 	.hero-pill:hover {
-		background: var(--text-main);
-		color: #ffffff;
-		transform: translateY(-2.5px) scale(1.03);
-		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+		background: #ffffff;
+		color: var(--tint);
 	}
 
 	.hero-pill:active {
-		transform: translateY(1.5px) scale(0.93);
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-		transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.08s ease;
+		transform: scale(0.95);
 	}
 
 	.hero-pill.hero-pill-accent {
 		gap: 0.4rem;
-		border-color: var(--accent-navy);
-		color: var(--accent-navy);
-		background: #ffffff;
+		background: var(--tint);
+		color: #ffffff;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 6px 18px rgba(0, 56, 138, 0.25);
 	}
 
 	.hero-pill.hero-pill-accent :global(.ig-svg-icon) {
-		transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 		flex-shrink: 0;
 	}
 
 	.hero-pill.hero-pill-accent:hover {
-		background: var(--accent-navy);
-		border-color: var(--accent-navy);
+		background: var(--tint-pressed);
 		color: #ffffff;
-		transform: translateY(-2.5px) scale(1.03);
-		box-shadow: 0 6px 18px rgba(20, 33, 61, 0.22);
-	}
-
-	.hero-pill.hero-pill-accent:hover :global(.ig-svg-icon) {
-		transform: rotate(-12deg) scale(1.2);
-	}
-
-	.hero-pill.hero-pill-accent:active {
-		transform: translateY(2px) scale(0.92);
-		box-shadow: 0 2px 4px rgba(20, 33, 61, 0.12);
-		transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.08s ease;
-	}
-
-	.hero-pill.hero-pill-accent:active :global(.ig-svg-icon) {
-		transform: rotate(0deg) scale(0.92);
-		transition: transform 0.08s ease;
 	}
 
 	/* Mobile View (Matching Fat Seed Portrait Energy) */
@@ -321,12 +308,10 @@
 			width: min(88vw, 360px);
 			height: min(48dvh, 420px);
 			aspect-ratio: 4 / 5;
-			border-radius: 18px;
-			box-shadow: 0 14px 40px rgba(0, 0, 0, 0.14);
 		}
 
-		.hero-creed {
-			font-size: clamp(1.05rem, 4.4vw, 1.35rem);
+		.hero-creed :global(.hero-tagline-art) {
+			height: clamp(56px, 8vh, 72px);
 		}
 
 		/* Centered Ergonomic Dock on Mobile */
