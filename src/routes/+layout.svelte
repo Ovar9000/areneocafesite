@@ -7,6 +7,7 @@
 	import '../app.css';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
+	import ScrollProgress from '$lib/components/ScrollProgress.svelte';
 
 	let { children } = $props();
 </script>
@@ -26,6 +27,7 @@
 	</main>
 
 	<Footer />
+	<ScrollProgress />
 </div>
 
 <style>

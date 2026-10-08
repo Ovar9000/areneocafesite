@@ -6,6 +6,7 @@
 	import TheRoom from '$lib/components/TheRoom.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import SoundBar from '$lib/components/SoundBar.svelte';
+	import Gallery from '$lib/components/Gallery.svelte';
 	import VisitUs from '$lib/components/VisitUs.svelte';
 </script>
 
@@ -20,4 +21,5 @@
 <TheRoom />
 <Menu />
 <SoundBar />
+<Gallery />
 <VisitUs />

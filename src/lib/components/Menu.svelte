@@ -10,10 +10,6 @@
 	<div class="menu-inner container">
 		<!-- Section Header -->
 		<div class="menu-header">
-			<div class="section-label">
-				<span class="section-label-dot"></span>
-				<span>03 / THE MENU</span>
-			</div>
 
 			<div class="header-row">
 				<h2 class="section-headline">ON THE BOARD</h2>

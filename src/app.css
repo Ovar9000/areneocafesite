@@ -48,9 +48,11 @@
 	--glass-edge: inset 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 0 0 0.5px rgba(255, 255, 255, 0.6);
 	--glass-dark-bg: rgba(28, 28, 32, 0.42);
 
-	/* Plate wall background: tile size (scripts/generate-plates.py draws a 1440 x 520 tile),
-	   and the veil that calms it behind the content column */
-	--plates-size: 2880px 1040px;
+	/* Plate wall background: tile size (scripts/generate-plates.py draws a 2400 x 780 tile of
+	   60 unique plates), how far it drifts over a full scroll (kept under one tile height minus
+	   a screen, so no plate ever comes round twice), and the veil behind the content column */
+	--plates-size: 4800px 1560px;
+	--plates-drift: 520px;
 	--plates-veil: rgba(242, 242, 247, 0.72);
 
 	--font-display: 'Bebas Neue', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -68,13 +70,14 @@
 	--ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Like the iOS 27 transparency setting: visitors who ask for less transparency get solid surfaces */
 @media (max-width: 767px) {
 	:root {
-		--plates-size: 1800px 650px;
+		--plates-size: 3360px 1092px;
+		--plates-drift: 200px;
 	}
 }
 
+/* Like the iOS 27 transparency setting: visitors who ask for less transparency get solid surfaces */
 @media (prefers-reduced-transparency: reduce) {
 	:root {
 		--glass-bg: rgba(255, 255, 255, 0.97);
@@ -106,10 +109,33 @@ html {
 	outline-offset: 3px;
 }
 
-/* House identity: the procedural plate wall (scripts/generate-plates.py). It shows in colour at
-   the screen edges and sits under a veil behind the content column, where all the text is.
-   On narrow screens the column is the whole width, so the plates become a quiet texture. */
 html {
+	background: var(--bg-base);
+	color: var(--text-main);
+	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	min-height: 100vh;
+	color: var(--text-main);
+	overflow-x: hidden;
+	position: relative;
+	line-height: 1.5;
+}
+
+/* House identity: the procedural plate wall (scripts/generate-plates.py), on a fixed layer the
+   page scrolls over. It shows in colour at the screen edges and sits under a veil behind the
+   content column, where all the text is; on narrow screens that column is the whole width, so
+   the plates become a quiet texture. A real fixed element, not background-attachment: fixed,
+   which iOS Safari ignores. */
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
 	background:
 		linear-gradient(
 			90deg,
@@ -118,21 +144,23 @@ html {
 			var(--plates-veil) min(100%, calc(50% + 600px)),
 			transparent min(100%, calc(50% + 820px))
 		),
-		url('/images/plates-page.svg') 0 0 / var(--plates-size) repeat,
-		var(--bg-base);
-	color: var(--text-main);
-	font-family: var(--font-sans);
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+		url('/images/plates-page.svg') center 0 / var(--plates-size) repeat;
 }
 
-/* Transparent so the plate wall on <html> shows through */
-body {
-	min-height: 100vh;
-	color: var(--text-main);
-	overflow-x: hidden;
-	position: relative;
-	line-height: 1.5;
+/* The wall drifts up slower than the page: depth, and a different stretch of plates per scroll */
+@supports (animation-timeline: scroll()) {
+	@media (prefers-reduced-motion: no-preference) {
+		body::before {
+			animation: plates-drift linear both;
+			animation-timeline: scroll(root);
+		}
+	}
+}
+
+@keyframes plates-drift {
+	to {
+		background-position: 0 0, center calc(-1 * var(--plates-drift));
+	}
 }
 
 ::selection {
@@ -217,25 +245,6 @@ body {
 	text-transform: uppercase;
 	line-height: 1.1;
 	color: var(--text-main);
-}
-
-.section-label {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.5rem;
-	font-family: var(--font-mono);
-	font-size: 0.72rem;
-	letter-spacing: 0.15em;
-	text-transform: uppercase;
-	color: var(--text-muted);
-	margin-bottom: 0.75rem;
-}
-
-.section-label-dot {
-	width: 6px;
-	height: 6px;
-	border-radius: 50%;
-	background: var(--tint);
 }
 
 /* Capsule buttons: tinted fill for the primary action, grey fill for the rest (iOS 27 button styles) */

@@ -2,12 +2,6 @@
 	import Lot7Logo from './Lot7Logo.svelte';
 	import { clickSpring } from '$lib/attachments/click-spring';
 	import { INSTAGRAM_URL } from '$lib/site';
-
-	function scrollToTop(e: MouseEvent) {
-		e.preventDefault();
-		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
-	}
 </script>
 
 <!-- One footer, one surface: brand, the Instagram door out, navigation and legal
@@ -54,6 +48,7 @@
 				<a href="/#room" class="footer-nav-link">THE ROOM</a>
 				<a href="/#menu" class="footer-nav-link">MENU</a>
 				<a href="/#sound" class="footer-nav-link">SOUND</a>
+				<a href="/#gallery" class="footer-nav-link">GALLERY</a>
 				<a href="/#visit" class="footer-nav-link">VISIT US</a>
 			</nav>
 
@@ -64,12 +59,6 @@
 				<div class="footer-utilities">
 					<a href="/privacy" class="footer-utility-link">PRIVACY</a>
 					<a href="/terms" class="footer-utility-link">TERMS</a>
-					<a href="/#hero" class="back-top-btn" onclick={scrollToTop} aria-label="Back to top of page">
-						<span>TOP</span>
-						<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<polyline points="18 15 12 9 6 15"></polyline>
-						</svg>
-					</a>
 				</div>
 			</div>
 		</div>
@@ -215,29 +204,6 @@
 	.footer-utility-link:hover {
 		color: var(--tint);
 	}
-
-	.back-top-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-		min-height: 32px;
-		padding: 0.35rem 0.85rem;
-		border-radius: var(--radius-pill);
-		background: var(--fill);
-		color: var(--tint);
-		font-weight: 700;
-		text-decoration: none;
-		transition: background-color 0.15s ease, transform 0.2s var(--ease-out);
-	}
-
-	.back-top-btn:hover {
-		background: var(--fill-strong);
-	}
-
-	.back-top-btn:active {
-		transform: scale(0.95);
-	}
-
 	/* Phones: a centred stack, like an iOS sheet: brand, one full-width action,
 	   an even grid of links, and a single legal line */
 	@media (max-width: 799px) {
@@ -277,7 +243,7 @@
 			right: 0;
 		}
 
-		/* 3 + 2 layout: each link spans two of six columns, the last row is centred */
+		/* Two even rows of three: each link spans two of six columns */
 		.footer-nav-link {
 			grid-column: span 2;
 			display: flex;
@@ -288,10 +254,6 @@
 			background: var(--fill);
 			font-size: 0.74rem;
 			text-align: center;
-		}
-
-		.footer-nav-link:nth-child(4) {
-			grid-column: 2 / span 2;
 		}
 
 		.footer-bottom {

@@ -29,7 +29,8 @@ export default defineConfig({
 				mode: 'hash',
 				directives: {
 					'default-src': ['self'],
-					'script-src': ['self'],
+					// The hash allows the intro-hold script in src/app.html
+					'script-src': ['self', 'sha256-mrN3w+bGqoVRPwlh5EQAMTyd8Z60o1GMN4V4GnU9ZL0='],
 					// Svelte writes inline style attributes
 					'style-src': ['self', 'unsafe-inline'],
 					'font-src': ['self'],
