@@ -327,6 +327,14 @@
 		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 6px 18px rgba(0, 56, 138, 0.25);
 	}
 
+	/* The pills are the section nav on phones and tablets, where the header collapses to a
+	   menu button. From 900px the header shows every section, so they would only repeat it. */
+	@media (min-width: 900px) {
+		.hero-pills-dock {
+			display: none;
+		}
+	}
+
 	.hero-pill.hero-pill-accent :global(.ig-svg-icon) {
 		flex-shrink: 0;
 	}

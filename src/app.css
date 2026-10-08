@@ -149,7 +149,7 @@ body::before {
 		url('/images/plates-page.svg') center 0 / var(--plates-size) repeat;
 }
 
-/* Where the reading is dense (the menu board, hours and address) the wall steps back almost
+/* Where the reading is dense (the menu board) the wall steps back almost
    completely, fading out and back in over the section's top and bottom edges, so the motif
    comes and goes instead of sitting behind every line of text */
 .plates-rest {

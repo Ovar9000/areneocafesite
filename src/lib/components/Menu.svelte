@@ -78,11 +78,11 @@
 			<!-- Photo Column: what actually comes across the bar -->
 			<div class="menu-photos">
 				<div class="photo-frame menu-photo-main">
-					<MediaFrame aspect="4 / 5" focus="center 62%" title="House Cup" detail="Iced">
+					<MediaFrame placeholder="drink-cup" aspect="4 / 5" focus="center 62%" title="House Cup" detail="Iced">
 						<enhanced:img
 							src="$lib/assets/images/drink-cup.jpg"
 							alt="An iced coffee in a Lot 7 cup, set down on the bar"
-							sizes="(min-width: 1200px) 400px, (min-width: 980px) 34vw, 92vw"
+							sizes="(min-width: 1200px) 400px, (min-width: 980px) 34vw, 52vw"
 							loading="lazy"
 						/>
 					</MediaFrame>
@@ -90,7 +90,7 @@
 
 				<div class="menu-photo-pair">
 					<div class="photo-frame">
-						<MediaFrame aspect="1 / 1" focus="center 45%">
+						<MediaFrame placeholder="drink-pour" aspect="1 / 1" focus="center 45%">
 							<enhanced:img
 								src="$lib/assets/images/drink-pour.jpg"
 								alt="Milk being poured over espresso and ice"
@@ -100,7 +100,7 @@
 						</MediaFrame>
 					</div>
 					<div class="photo-frame">
-						<MediaFrame aspect="1 / 1" focus="center 58%">
+						<MediaFrame placeholder="drink-soda" aspect="1 / 1" focus="center 58%">
 							<enhanced:img
 								src="$lib/assets/images/drink-soda.jpg"
 								alt="A green soda in a Lot 7 cup on the counter"

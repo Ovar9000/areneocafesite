@@ -30,7 +30,7 @@
 	}
 </script>
 
-<section class="visit-section plates-rest" id="visit">
+<section class="visit-section" id="visit">
 	<div class="visit-inner container">
 		<!-- Section Header -->
 		<div class="visit-header">
