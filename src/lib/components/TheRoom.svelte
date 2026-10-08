@@ -8,7 +8,7 @@
 		<div class="room-header">
 			
 			<div class="header-row">
-				<h2 class="section-headline">ROOM ARTIFACTS &amp; ARCHITECTURE</h2>
+				<h2 class="section-headline">INSIDE LOT 7</h2>
 			</div>
 		</div>
 
