@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { DAY_NAMES, WEEKLY_HOURS, formatTime24 } from '$lib/hours';
 	import { ADD_ONS, MENU, type MenuItem } from '$lib/menu';
-	import { INSTAGRAM_URL, MAPS_URL, SITE_URL } from '$lib/site';
+	import { ADDRESS, GEO, INSTAGRAM_URL, MAPS_URL, PHONE, SITE_URL } from '$lib/site';
 
 	const menuItem = (item: MenuItem) => ({
 		'@type': 'MenuItem',
@@ -38,11 +38,15 @@
 		},
 		address: {
 			'@type': 'PostalAddress',
-			addressLocality: 'Naga City',
-			addressRegion: 'Camarines Sur',
+			streetAddress: `${ADDRESS.street}, ${ADDRESS.area}`,
+			addressLocality: ADDRESS.city,
+			postalCode: ADDRESS.postalCode,
+			addressRegion: ADDRESS.region,
 			addressCountry: 'PH'
 		},
+		geo: { '@type': 'GeoCoordinates', ...GEO },
 		hasMap: MAPS_URL,
+		telephone: PHONE.tel,
 		sameAs: [INSTAGRAM_URL],
 		acceptsReservations: false,
 		openingHoursSpecification: WEEKLY_HOURS.flatMap((hours, day) =>

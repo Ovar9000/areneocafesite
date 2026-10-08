@@ -4,9 +4,66 @@
 
 	// Each board section reads like a side of a record
 	const SIDES = ['A', 'B', 'C', 'D'];
+
+	// Phones show one side at a time behind A–D tabs instead of four sides stacked. Set only in
+	// the browser, so the prerendered page (and anyone without JS) gets the whole board.
+	let tabbed = $state(false);
+	let active = $state(0);
+	const tabs: HTMLButtonElement[] = [];
+	let lens = $state<HTMLElement>();
+
+	// The selection is one glass lens that slides between sides. In flight it stretches, turns
+	// see-through and catches a highlight, then settles back to solid blue.
+	let previous = 0;
+	const TINT = '#00388a';
+	$effect(() => {
+		const to = active;
+		if (!lens || to === previous) return;
+		previous = to;
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		// Peak stretch while the lens is moving fastest, then a slow settle back to solid
+		// so the see-through moment is long enough to register
+		lens.animate(
+			[
+				{ scale: '1 1', backgroundColor: TINT, easing: 'cubic-bezier(0.3, 0, 0.6, 1)' },
+				{ scale: '1.2 0.86', backgroundColor: 'rgba(0, 56, 138, 0.3)', offset: 0.2, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+				{ scale: '1 1', backgroundColor: TINT }
+			],
+			{ duration: 600 }
+		);
+		lens.animate(
+			[
+				{ opacity: 0, backgroundPosition: '130% 0' },
+				{ opacity: 1, offset: 0.35 },
+				{ opacity: 0, backgroundPosition: '-30% 0' }
+			],
+			{ duration: 650, easing: 'ease-in-out', pseudoElement: '::after' }
+		);
+	});
+
+	$effect(() => {
+		const narrow = window.matchMedia('(max-width: 639px)');
+		const sync = () => (tabbed = narrow.matches);
+		sync();
+		narrow.addEventListener('change', sync);
+		return () => narrow.removeEventListener('change', sync);
+	});
+
+	// Arrow keys move between tabs (WAI-ARIA tabs pattern)
+	function onTabKey(event: KeyboardEvent) {
+		const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+		let next: number | undefined;
+		if (step) next = (active + step + MENU.length) % MENU.length;
+		else if (event.key === 'Home') next = 0;
+		else if (event.key === 'End') next = MENU.length - 1;
+		if (next === undefined) return;
+		event.preventDefault();
+		active = next;
+		tabs[next].focus();
+	}
 </script>
 
-<section class="menu-section" id="menu">
+<section class="menu-section plates-rest" id="menu">
 	<div class="menu-inner container">
 		<!-- Section Header -->
 		<div class="menu-header">
@@ -57,9 +114,38 @@
 
 			<!-- The Board -->
 			<div class="menu-board photo-frame">
+				{#if tabbed}
+					<div class="side-tabs" role="tablist" aria-label="Menu sections">
+						<span class="side-lens" style:--active={active} bind:this={lens} aria-hidden="true"></span>
+						{#each MENU as section, i (section.id)}
+							<button
+								type="button"
+								class="side-tab font-mono"
+								role="tab"
+								id="menu-tab-{section.id}"
+								aria-controls="menu-panel-{section.id}"
+								aria-selected={active === i}
+								aria-label="Side {SIDES[i]}: {section.title}"
+								tabindex={active === i ? 0 : -1}
+								onclick={() => (active = i)}
+								onkeydown={onTabKey}
+								bind:this={tabs[i]}
+							>
+								SIDE {SIDES[i]}
+							</button>
+						{/each}
+					</div>
+				{/if}
+
 				<div class="board-grid">
 					{#each MENU as section, i (section.id)}
-						<section class="board-section" aria-labelledby="menu-{section.id}">
+						<section
+							class="board-section"
+							id="menu-panel-{section.id}"
+							aria-labelledby="menu-{section.id}"
+							role={tabbed ? 'tabpanel' : undefined}
+							hidden={tabbed && active !== i}
+						>
 							<header class="board-section-head">
 								<span class="side-tag font-mono" aria-hidden="true">SIDE {SIDES[i]}</span>
 								<h3 id="menu-{section.id}" class="board-title font-sans">{section.title}</h3>
@@ -198,11 +284,119 @@
 		}
 	}
 
-	/* The Board */
+	/* The Board: the one hard-edged surface on the page, cut like a plate from the wall:
+	   tight corners, a stamped rim and four bolts, against the rounded UI around it */
 	.menu-board {
+		position: relative;
 		background: var(--bg-surface);
-		padding: clamp(1.5rem, 4vw, 2.75rem);
+		padding: clamp(1.75rem, 4vw, 2.75rem);
 		color: var(--brand-blue);
+		border-radius: 6px;
+	}
+
+	.menu-board::before,
+	.menu-board::after {
+		content: '';
+		position: absolute;
+		pointer-events: none;
+	}
+
+	/* The stamped rim */
+	.menu-board::before {
+		inset: 7px;
+		border: 1.5px solid rgba(0, 56, 138, 0.16);
+		border-radius: 3px;
+	}
+
+	/* Bolts, one in each corner */
+	.menu-board::after {
+		--bolt: radial-gradient(circle, #d9dde5 0 2.5px, #a3abba 3px 3.5px, transparent 4px);
+		inset: 12px;
+		background:
+			var(--bolt) left top / 9px 9px no-repeat,
+			var(--bolt) right top / 9px 9px no-repeat,
+			var(--bolt) left bottom / 9px 9px no-repeat,
+			var(--bolt) right bottom / 9px 9px no-repeat;
+	}
+
+	/* Phone-only side switcher: a segmented control above the board */
+	.side-tabs {
+		--gap: 2px;
+		--inset: 3px;
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: var(--gap);
+		margin-bottom: 1.75rem;
+		padding: var(--inset);
+		border-radius: var(--radius-pill);
+		background: var(--fill);
+	}
+
+	/* The glass lens under the selected tab: brand blue with a lit top edge and a soft
+	   inner shine, so it reads as a pane of tinted glass rather than a flat pill */
+	.side-lens {
+		position: absolute;
+		top: var(--inset);
+		bottom: var(--inset);
+		left: var(--inset);
+		width: calc((100% - 2 * var(--inset) - 3 * var(--gap)) / 4);
+		border-radius: var(--radius-pill);
+		background-color: var(--tint);
+		background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 55%);
+		-webkit-backdrop-filter: blur(6px) saturate(180%);
+		backdrop-filter: blur(6px) saturate(180%);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.45),
+			inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+			inset 0 0 0 0.5px rgba(255, 255, 255, 0.25),
+			0 4px 12px rgba(0, 56, 138, 0.28);
+		translate: calc(var(--active) * (100% + var(--gap))) 0;
+		transition: translate 0.52s cubic-bezier(0.32, 0.72, 0, 1);
+		overflow: hidden;
+		pointer-events: none;
+	}
+
+	/* The highlight that crosses the glass while it moves */
+	.side-lens::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.6) 50%, transparent 70%) no-repeat;
+		background-size: 250% 100%;
+		background-position: 130% 0;
+		opacity: 0;
+	}
+
+	.side-tab {
+		position: relative;
+		z-index: 1;
+		min-height: 40px;
+		border: none;
+		border-radius: var(--radius-pill);
+		background: transparent;
+		color: var(--brand-blue);
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		cursor: pointer;
+		transition: color 0.25s ease;
+	}
+
+	/* White once the lens has mostly arrived, so the label never sits white on grey */
+	.side-tab[aria-selected='true'] {
+		color: #ffffff;
+		transition-delay: 0.2s;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.side-lens {
+			transition: none;
+		}
+	}
+
+	.side-tab:focus-visible {
+		outline-offset: 2px;
 	}
 
 	.board-grid {
@@ -314,7 +508,7 @@
 		gap: 0.85rem;
 		margin-top: 2.75rem;
 		padding: 1.1rem 1.25rem;
-		border-radius: var(--radius-card-sm);
+		border-radius: 3px;
 		background: var(--tint-soft);
 	}
 

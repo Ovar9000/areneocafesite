@@ -9,7 +9,6 @@
 		{ id: 'room', label: 'THE ROOM' },
 		{ id: 'menu', label: 'MENU' },
 		{ id: 'sound', label: 'SOUND' },
-		{ id: 'gallery', label: 'GALLERY' },
 		{ id: 'visit', label: 'VISIT' }
 	];
 
@@ -288,15 +287,8 @@
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
-			<a href="/#gallery" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 4} aria-current={activeIndex === 4 ? 'location' : undefined}>
+			<a href="/#visit" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 4} aria-current={activeIndex === 4 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">05</span>
-				<span class="nav-text">GALLERY</span>
-				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<polyline points="9 18 15 12 9 6"></polyline>
-				</svg>
-			</a>
-			<a href="/#visit" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 5} aria-current={activeIndex === 5 ? 'location' : undefined}>
-				<span class="nav-idx font-mono">06</span>
 				<span class="nav-text">VISIT US &amp; HOURS</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>

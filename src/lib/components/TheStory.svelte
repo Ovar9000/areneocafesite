@@ -4,16 +4,14 @@
 
 <section class="story-section" id="story">
 	<div class="story-inner container">
-		<!-- Section Header -->
-
 		<!-- Editorial Spread -->
 		<div class="story-layout">
 			<!-- Left: The Verbatim Manifesto Copy -->
 			<div class="story-copy glass">
-				<blockquote class="manifesto-quote">
-					<p class="quote-lead font-sans">
+				<div class="manifesto-quote">
+					<h2 class="quote-lead font-sans">
 						Every space starts with a feeling.
-					</p>
+					</h2>
 
 					<p class="quote-body font-sans">
 						From the cafes we admired to the experiences that stayed with us, Lot 7 grew from a collection of ideas, music, and feelings.
@@ -22,7 +20,7 @@
 					<p class="quote-closing font-editorial">
 						“But what inspires us is only where the story begins.”
 					</p>
-				</blockquote>
+				</div>
 			</div>
 
 			<!-- Right: The room under the tagline ceiling, in true portrait ratio -->

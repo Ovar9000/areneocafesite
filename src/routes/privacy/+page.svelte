@@ -32,7 +32,7 @@
 		</p>
 		<ul>
 			<li>
-				<strong>Direct Inquiries:</strong> If you contact us via Instagram (<a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">@lot7.cafe</a>), we use your handle and message solely to answer your questions regarding hours, beans, or general inquiries.
+				<strong>Direct Inquiries:</strong> If you contact us via Instagram (<a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">@lot7.cafe</a>) or by phone, we use your handle or number and message solely to answer your questions regarding hours, beans, or general inquiries.
 			</li>
 			<li>
 				<strong>In-Store Orders:</strong> In-person transactions at our counter are processed securely through standard point-of-sale terminals. We do not store payment card numbers on our website.

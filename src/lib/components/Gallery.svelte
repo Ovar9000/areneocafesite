@@ -2,11 +2,14 @@
 	import type { Picture } from 'vite-imagetools';
 	import MediaFrame from './MediaFrame.svelte';
 
-	// Every gallery photo, run through the same AVIF/WebP + srcset pipeline as <enhanced:img> literals
-	const files = import.meta.glob<{ default: Picture }>('/src/lib/assets/images/gallery-*.jpg', {
-		eager: true,
-		query: { enhanced: true }
-	});
+	// Every photo in the strip, run through the same AVIF/WebP + srcset pipeline as <enhanced:img> literals
+	const files = import.meta.glob<{ default: Picture }>(
+		[
+			'/src/lib/assets/images/gallery-*.jpg',
+			'/src/lib/assets/images/{plate-wall,sign-closeup,espresso-bar}.jpg'
+		],
+		{ eager: true, query: { enhanced: true } }
+	);
 
 	interface Photo {
 		file: string;
@@ -17,30 +20,47 @@
 		focus?: string;
 	}
 
-	// Portraits and landscapes alternate so the strip has a rhythm
+	// The room first (the plate wall, the bar, the sign), then the night and the drinks.
+	// Portraits and landscapes alternate so the strip has a rhythm.
 	const PHOTOS: Photo[] = [
-		{ file: 'pour', title: 'The Pour', detail: 'Milk over espresso', alt: 'Milk being poured into an iced espresso on the drip tray' },
-		{ file: 'lightbox', title: 'The Lightbox', detail: 'After dark', alt: 'The Lot 7 Cafe lightbox glowing on the dark ceiling: your neighborhood, just a little better.', landscape: true },
-		{ file: 'handoff', title: 'Order Up', detail: 'Iced, to the counter', alt: 'A barista setting two iced lattes in Lot 7 cups on the counter' },
-		{ file: 'cups', title: 'House Cups', detail: 'Ready on the bar', alt: 'Empty Lot 7 cups lined up on the bar, the espresso machine behind' },
-		{ file: 'rush', title: 'Rush Hour', detail: 'Long exposure', alt: 'A long-exposure blur of people moving through the cafe', landscape: true },
-		{ file: 'grinder', title: 'The Grinder', detail: 'Dialled in daily', alt: 'The espresso grinder and machine at the end of the counter', focus: 'center 60%' },
-		{ file: 'booth', title: 'The Booth', detail: 'Under the sign', alt: 'A DJ at the booth by the window, the Lot 7 lightbox overhead' },
-		{ file: 'iced-black', title: 'Iced Black', detail: 'On the wood', alt: 'An iced black coffee in a Lot 7 cup on a wooden ledge', landscape: true },
-		{ file: 'soda', title: 'Green Soda', detail: 'From the B-Sides', alt: 'A hand lifting a green soda in a Lot 7 cup from the counter', focus: 'center 60%' },
-		{ file: 'portrait', title: 'In the Moment', detail: 'Night session', alt: 'A guest looking down in warm flash light under the ceiling lettering' },
-		{ file: 'ceiling', title: 'Overhead', detail: 'The grid ceiling', alt: 'The black metal grid ceiling of the cafe', landscape: true }
+		{ file: 'plate-wall', title: 'The License Plate Wall', detail: 'Stamped highway steel', alt: 'The Lot 7 license plate wall: rows of American state plates framed in dark wood', landscape: true },
+		{ file: 'espresso-bar', title: 'The Espresso Bar', detail: 'Pulled to order, iced or hot', alt: 'A barista locking in a portafilter beside iced drinks in Lot 7 cups' },
+		{ file: 'gallery-rush', title: 'Rush Hour', detail: 'Long exposure', alt: 'A long-exposure blur of people moving through the cafe', landscape: true },
+		{ file: 'gallery-pour', title: 'The Pour', detail: 'Milk over espresso', alt: 'Milk being poured into an iced espresso on the drip tray' },
+		{ file: 'gallery-handoff', title: 'Order Up', detail: 'Iced, to the counter', alt: 'A barista setting two iced lattes in Lot 7 cups on the counter' },
+		{ file: 'sign-closeup', title: 'The Ceiling Sign', detail: 'Lit overhead, above the bar', alt: 'Close-up of the illuminated Lot 7 Cafe lightbox sign', landscape: true, focus: '70% center' },
+		{ file: 'gallery-cups', title: 'House Cups', detail: 'Ready on the bar', alt: 'Empty Lot 7 cups lined up on the bar, the espresso machine behind' },
+		{ file: 'gallery-grinder', title: 'The Grinder', detail: 'Dialled in daily', alt: 'The espresso grinder and machine at the end of the counter', focus: 'center 60%' },
+		{ file: 'gallery-iced-black', title: 'Iced Black', detail: 'On the wood', alt: 'An iced black coffee in a Lot 7 cup on a wooden ledge', landscape: true },
+		{ file: 'gallery-booth', title: 'The Booth', detail: 'Under the sign', alt: 'A DJ at the booth by the window, the Lot 7 lightbox overhead' },
+		{ file: 'gallery-soda', title: 'Green Soda', detail: 'From the B-Sides', alt: 'A hand lifting a green soda in a Lot 7 cup from the counter', focus: 'center 60%' },
+		{ file: 'gallery-lightbox', title: 'The Lightbox', detail: 'After dark', alt: 'The Lot 7 Cafe lightbox glowing on the dark ceiling: your neighborhood, just a little better.', landscape: true },
+		{ file: 'gallery-portrait', title: 'In the Moment', detail: 'Night session', alt: 'A guest looking down in warm flash light under the ceiling lettering' },
+		{ file: 'gallery-ceiling', title: 'Overhead', detail: 'The grid ceiling', alt: 'The black metal grid ceiling of the cafe', landscape: true }
 	];
 
-	const picture = (file: string) => files[`/src/lib/assets/images/gallery-${file}.jpg`].default;
+	const picture = (file: string) => files[`/src/lib/assets/images/${file}.jpg`].default;
 
 	let track: HTMLElement;
 	let atStart = $state(true);
 	let atEnd = $state(false);
+	// 1-based number of the photo at the left edge (the last one once the strip is at its end)
+	let current = $state(1);
+
+	const pad = (n: number) => String(n).padStart(2, '0');
 
 	function update() {
 		atStart = track.scrollLeft < 8;
 		atEnd = track.scrollLeft + track.clientWidth > track.scrollWidth - 8;
+		if (atEnd) {
+			current = PHOTOS.length;
+			return;
+		}
+		const cards = track.children as HTMLCollectionOf<HTMLElement>;
+		const left = track.scrollLeft + cards[0].offsetLeft + 8;
+		let index = 0;
+		while (index + 1 < cards.length && cards[index + 1].offsetLeft <= left) index++;
+		current = index + 1;
 	}
 
 	function page(direction: 1 | -1) {
@@ -56,12 +76,13 @@
 	});
 </script>
 
-<section class="gallery-section" id="gallery">
+<section class="gallery-section" id="room">
 	<div class="gallery-header container">
-		<h2 class="section-headline">AROUND THE ROOM</h2>
+		<h2 class="section-headline">INSIDE LOT 7</h2>
 
 		<!-- Glass paging buttons; the strip also swipes, scrolls and takes arrow keys -->
 		<div class="gallery-controls">
+			<span class="gallery-count font-mono" aria-hidden="true">{pad(current)} / {pad(PHOTOS.length)}</span>
 			<button type="button" class="gallery-btn glass" onclick={() => page(-1)} disabled={atStart} aria-label="Previous photos">
 				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 					<polyline points="15 18 9 12 15 6"></polyline>
@@ -120,8 +141,17 @@
 
 	.gallery-controls {
 		display: flex;
+		align-items: center;
 		gap: 0.5rem;
 		flex-shrink: 0;
+	}
+
+	.gallery-count {
+		margin-right: 0.35rem;
+		font-size: 0.78rem;
+		letter-spacing: 0.08em;
+		color: var(--text-secondary);
+		font-variant-numeric: tabular-nums;
 	}
 
 	.gallery-btn {
@@ -140,9 +170,15 @@
 		scale: 0.92;
 	}
 
+	/* The glass disc stays solid so the pair still reads as controls over the plate wall;
+	   only the arrow dims */
 	.gallery-btn:disabled {
-		opacity: 0.4;
+		color: var(--text-muted);
 		cursor: default;
+	}
+
+	.gallery-btn:disabled svg {
+		opacity: 0.45;
 	}
 
 	/* The strip stays inside the content column like every other section. A few pixels of

@@ -7,8 +7,6 @@ Writes:
   static/images/plates-page.svg        60 unique plates, colours faded most of the way into the
                                        canvas. app.css lays it on a fixed layer with a slow
                                        parallax drift and a veil behind the content column.
-  src/lib/assets/brand/plate-lot7.svg  the wall's LOT 7 plate on its own, full colour; inlined
-                                       into the hero intro so it never waits on the network
 
 For a full-colour wall, call build(0, WOOD).
 
@@ -33,7 +31,6 @@ from fontTools.ttLib import TTFont
 ROOT = Path(__file__).resolve().parent.parent
 FONT = ROOT / 'node_modules' / '@fontsource' / 'bebas-neue' / 'files' / 'bebas-neue-latin-400-normal.woff'
 OUT = ROOT / 'static' / 'images'
-BRAND = ROOT / 'src' / 'lib' / 'assets' / 'brand'
 
 SEED = 7
 COLS, ROWS = 10, 6  # 60 unique plates: about two screens of wall before anything repeats
@@ -362,23 +359,7 @@ def build(fade: float, gap: str | None) -> str:
 	)
 
 
-def build_hero_plate() -> str:
-	"""The LOT 7 plate from the wall (row 0, column 2) on its own, full colour, for the hero intro.
-	Its ids are prefixed so they can't collide with anything else once it's inlined in the page."""
-	g = Glyphs()
-	plate = make_plates()[(0, 2)]
-	body = render_plate(g, plate, 0, 0, 0)
-	svg = (
-		f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {PW} {PH + 2}" preserveAspectRatio="xMidYMid meet">'
-		f'<defs>{shared_defs(lambda col: col)}{g.defs()}</defs>{body}</svg>\n'
-	)
-	for name in ['pc', 'sunfade', 'dirt', 'grime', 'rust', 'bleed', 'warp', 'dent', 'bolt-rust', 'bolt']:
-		svg = svg.replace(f'id="{name}"', f'id="hp-{name}"').replace(f'url(#{name})', f'url(#hp-{name})')
-	svg = svg.replace('id="g', 'id="hp-g').replace('href="#g', 'href="#hp-g')
-	return svg
-
-
 if __name__ == '__main__':
-	for path, svg in [(OUT / 'plates-page.svg', build(0.78, None)), (BRAND / 'plate-lot7.svg', build_hero_plate())]:
-		path.write_text(svg, encoding='utf-8')
-		print(f'{path.relative_to(ROOT)}  {path.stat().st_size // 1024} KB')
+	path = OUT / 'plates-page.svg'
+	path.write_text(build(0.78, None), encoding='utf-8')
+	print(f'{path.relative_to(ROOT)}  {path.stat().st_size // 1024} KB')
