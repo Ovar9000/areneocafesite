@@ -17,7 +17,7 @@
 					</a>
 					<div class="brand-info">
 						<p class="brand-desc font-editorial">
-							Specialty coffee &amp; resident vinyl listening room.
+							Specialty coffee &amp; Chill sessions.
 						</p>
 						<span class="brand-location font-mono">NAGA CITY · CAMARINES SUR · PH</span>
 					</div>
@@ -48,7 +48,6 @@
 				<a href="/#room" class="footer-nav-link">THE ROOM</a>
 				<a href="/#menu" class="footer-nav-link">MENU</a>
 				<a href="/#sound" class="footer-nav-link">SOUND</a>
-				<a href="/#gallery" class="footer-nav-link">GALLERY</a>
 				<a href="/#visit" class="footer-nav-link">VISIT US</a>
 			</nav>
 
@@ -192,10 +191,16 @@
 	.footer-utilities {
 		display: inline-flex;
 		align-items: center;
-		gap: 1.25rem;
+		gap: 0.25rem;
 	}
 
+	/* A 44px tap target around small text; the negative margin keeps the line's footprint */
 	.footer-utility-link {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		padding: 0 0.5rem;
+		margin-block: -13px;
 		color: var(--text-muted);
 		text-decoration: none;
 		transition: color 0.15s ease;
@@ -243,7 +248,7 @@
 			right: 0;
 		}
 
-		/* Two even rows of three: each link spans two of six columns */
+		/* Five links: a row of three, then two wider ones (each spans 2 or 3 of six columns) */
 		.footer-nav-link {
 			grid-column: span 2;
 			display: flex;
@@ -254,6 +259,10 @@
 			background: var(--fill);
 			font-size: 0.74rem;
 			text-align: center;
+		}
+
+		.footer-nav-link:nth-last-child(-n + 2) {
+			grid-column: span 3;
 		}
 
 		.footer-bottom {

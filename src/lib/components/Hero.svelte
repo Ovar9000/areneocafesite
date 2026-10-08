@@ -8,8 +8,6 @@
 	import { browser } from '$app/environment';
 	import { clickSpring } from '$lib/attachments/click-spring';
 	import { INSTAGRAM_URL } from '$lib/site';
-	// Inlined at build time: the intro never waits on a download, cold cache or not
-	import plateSvg from '$lib/assets/brand/plate-lot7.svg?raw';
 
 	const skipIntro = browser && introPlayed;
 	if (browser) introPlayed = true;
@@ -80,7 +78,7 @@
 </script>
 
 <svelte:head>
-	<!-- The poster is what the plate opens onto: fetch it first so the reveal never shows an empty frame -->
+	<!-- The poster is what the intro opens onto: fetch it first so the reveal never shows an empty frame -->
 	<link rel="preload" as="image" href="/videos/lot7-showcase-poster.webp" fetchpriority="high" />
 </svelte:head>
 
@@ -88,8 +86,7 @@
 	<div class="hero-inner container">
 		<h1 class="visually-hidden">Lot 7 Cafe — specialty coffee and vinyl listening room in Naga City</h1>
 
-		<!-- Main Visual: Dynamic Showcase Video (4:5 Portrait on mobile, 16:9 Landscape on desktop).
-		     The stage is a size container so the intro can line the plate up with the video frame. -->
+		<!-- Main Visual: Dynamic Showcase Video (4:5 Portrait on mobile, 16:9 Landscape on desktop) -->
 		<div class="showcase-stage">
 			<div class="showcase-video-wrapper photo-frame">
 				<!-- Playback is started from script (not `autoplay`) so reduced-motion and
@@ -130,9 +127,6 @@
 					{/if}
 				</button>
 			</div>
-
-			<!-- Intro: the LOT 7 plate from the wall drops in, then opens into the video frame -->
-			<div class="intro-plate" aria-hidden="true">{@html plateSvg}</div>
 		</div>
 
 		<!-- Main tagline, set in the official signage artwork (design-assets/LOGOS/SIGNAGE.png) -->
@@ -161,10 +155,7 @@
 			<a href="#sound" class="hero-pill" style="--i: 3">
 				<span>SOUND</span>
 			</a>
-			<a href="#gallery" class="hero-pill" style="--i: 4">
-				<span>GALLERY</span>
-			</a>
-			<a href="#visit" class="hero-pill" style="--i: 5">
+			<a href="#visit" class="hero-pill" style="--i: 4">
 				<span>VISIT US</span>
 			</a>
 			<a 
@@ -172,7 +163,7 @@
 				target="_blank" 
 				rel="noopener noreferrer" 
 				class="hero-pill hero-pill-accent"
-				style="--i: 6"
+				style="--i: 5"
 				{@attach clickSpring}
 				aria-label="@LOT7.CAFE on Instagram"
 			>
@@ -197,8 +188,9 @@
 		padding: 0.5rem 0 1.5rem;
 		box-sizing: border-box;
 		position: relative;
-		/* Sideways only: the intro plate falls in from above the screen, behind the glass header */
-		overflow-x: clip;
+		--intro-ease: cubic-bezier(0.32, 0.72, 0, 1);
+		/* Slow to start, so the frost is seen before it clears */
+		--defrost-ease: cubic-bezier(0.55, 0, 0.3, 1);
 	}
 
 	.hero-inner {
@@ -214,18 +206,10 @@
 
 	/* Dynamic Showcase Video Player (Desktop 16:9) */
 	.showcase-stage {
-		/* Plate size in the stage's own units: 2:1, never taller than the frame */
-		--plate-w: min(64cqw, 108cqh);
-		/* The plate art is 220 x 112 (face plus its drop edge) */
-		--plate-h: calc(var(--plate-w) * 0.509);
-		--morph-ease: cubic-bezier(0.32, 0.72, 0, 1);
-		--morph-at: 1.6s;
-		--morph-for: 1.5s;
 		width: min(92vw, 1150px);
 		max-height: calc(75dvh - 5.5rem);
 		aspect-ratio: 16 / 9;
 		position: relative;
-		container-type: size;
 	}
 
 	.showcase-video-wrapper {
@@ -353,188 +337,94 @@
 	}
 
 	/* =========================================
-	   INTRO: THE PLATE DROP (about 3.7s, plain CSS so it runs while scripts load)
-	   0.15s  the LOT 7 plate falls in and lands with a spring and a swing
-	   1.0s   a glint runs across the embossed letters
-	   1.6s   the morph, 1.5s: the plate's box grows into the video frame while the frame's
-	          clip grows in step (same curve, same timing, so their edges always meet). The
-	          lettering dissolves into a brand-blue slab, which then clears to the footage.
-	   2.8s   the tagline is written in; 3.0s the pills rise one by one
-	   The plate art is inlined and the poster preloaded, so nothing here waits on the network;
+	   INTRO: THE FROSTED REVEAL (about 2.8s, plain CSS so it runs while scripts load)
+	   0.15s  the frame opens out of a smaller pane of frosted glass
+	   0.35s  after a beat, the frost clears over 1.8s: the milky tint lifts, the blur melts
+	          and the footage settles from a slight zoom
+	   1.3s   a highlight runs once across the clearing glass
+	   1.7s   the tagline is written in; 1.85s the pills rise one by one
+	   The poster is preloaded, so nothing here waits on the network;
 	   html.intro-hold (set in app.html) pauses it all while the page loads in a background tab.
 	   ========================================= */
-	.intro-plate {
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		z-index: 3;
-		width: var(--plate-w);
-		height: var(--plate-h);
-		translate: -50% -50%;
-		/* Matches the plate's corner (rx 10 on a 220-wide face) */
-		border-radius: calc(var(--plate-w) * 0.045);
-		background-color: transparent;
-		pointer-events: none;
-		overflow: hidden;
-	}
-
-	.intro-plate :global(svg) {
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		display: block;
-	}
-
-	/* The glint */
-	.intro-plate::after {
+	.showcase-video-wrapper::before,
+	.showcase-video-wrapper::after {
 		content: '';
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.6) 50%, transparent 62%) no-repeat;
-		background-size: 250% 100%;
-		background-position: 130% 0;
+		z-index: 1;
+		pointer-events: none;
 		opacity: 0;
 	}
 
-	.hero-section.intro-played .intro-plate {
-		display: none;
+	/* The frost: a milky white tint over the blurred footage */
+	.showcase-video-wrapper::before {
+		background: linear-gradient(160deg, rgba(255, 255, 255, 0.5), rgba(235, 240, 250, 0.32));
 	}
 
-	.hero-section:not(.intro-played) .intro-plate {
-		animation:
-			intro-drop 0.95s 0.15s both,
-			intro-grow var(--morph-for) var(--morph-ease) var(--morph-at) forwards,
-			intro-clear var(--morph-for) linear var(--morph-at) forwards;
-	}
-
-	.hero-section:not(.intro-played) .intro-plate :global(svg) {
-		animation: intro-art-fade calc(var(--morph-for) * 0.45) ease-in var(--morph-at) forwards;
-	}
-
-	.hero-section:not(.intro-played) .intro-plate::after {
-		animation: intro-glint 0.7s ease-in-out 1s both;
+	/* The highlight */
+	.showcase-video-wrapper::after {
+		background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.38) 50%, transparent 65%) no-repeat;
+		background-size: 250% 100%;
+		background-position: 130% 0;
 	}
 
 	.hero-section:not(.intro-played) .showcase-video-wrapper {
 		animation:
-			intro-show 1ms var(--morph-at) backwards,
-			intro-open var(--morph-for) var(--morph-ease) var(--morph-at) backwards,
-			intro-shadow 0.6s ease calc(var(--morph-at) + var(--morph-for)) backwards;
+			intro-open 1.3s var(--intro-ease) 0.15s backwards,
+			intro-shadow 0.5s ease 1.45s backwards;
+	}
+
+	.hero-section:not(.intro-played) .showcase-video-wrapper::before {
+		animation: intro-frost 1.8s var(--defrost-ease) 0.35s backwards;
+	}
+
+	.hero-section:not(.intro-played) .showcase-video-wrapper::after {
+		animation: intro-sheen 1.1s ease-in-out 1.3s both;
 	}
 
 	.hero-section:not(.intro-played) .showcase-video {
-		animation: intro-settle calc(var(--morph-for) + 0.4s) var(--morph-ease) var(--morph-at) backwards;
+		animation: intro-defrost 1.8s var(--defrost-ease) 0.35s backwards;
 	}
 
 	.hero-section:not(.intro-played) .video-toggle {
-		animation: intro-fade 0.4s ease 3.1s backwards;
+		animation: intro-fade 0.4s ease 2s backwards;
 	}
 
 	.hero-section:not(.intro-played) .hero-creed {
-		animation: intro-write 0.9s cubic-bezier(0.22, 1, 0.36, 1) 2.8s backwards;
+		animation: intro-write 0.9s cubic-bezier(0.22, 1, 0.36, 1) 1.7s backwards;
 	}
 
 	.hero-section:not(.intro-played) .hero-pill {
 		animation: intro-rise 0.7s var(--ease-spring) backwards;
-		animation-delay: calc(3s + var(--i, 0) * 70ms);
+		animation-delay: calc(1.85s + var(--i, 0) * 60ms);
+	}
+
+	/* Seen in the last 12 hours (html.intro-seen, set in app.html): straight to the footage */
+	:global(html.intro-seen) .hero-section .showcase-video-wrapper,
+	:global(html.intro-seen) .hero-section .showcase-video-wrapper::before,
+	:global(html.intro-seen) .hero-section .showcase-video-wrapper::after,
+	:global(html.intro-seen) .hero-section .showcase-video,
+	:global(html.intro-seen) .hero-section .video-toggle,
+	:global(html.intro-seen) .hero-section .hero-creed,
+	:global(html.intro-seen) .hero-section .hero-pill {
+		animation: none !important;
 	}
 
 	/* Page opened in a background tab: wait until it's actually on screen */
 	:global(html.intro-hold) .hero-section :global(*),
+	:global(html.intro-hold) .hero-section :global(*::before),
 	:global(html.intro-hold) .hero-section :global(*::after) {
 		animation-play-state: paused !important;
 	}
 
-	@keyframes intro-drop {
-		0% {
-			transform: translateY(-110vh) rotate(-9deg);
-			filter: drop-shadow(0 50px 40px rgba(0, 0, 0, 0));
-			animation-timing-function: cubic-bezier(0.55, 0, 0.85, 0.35);
-		}
-		55% {
-			transform: translateY(2.5%) rotate(2.5deg);
-			animation-timing-function: ease-out;
-		}
-		70% {
-			transform: translateY(-1.5%) rotate(-1.2deg);
-			animation-timing-function: ease-in-out;
-		}
-		85% {
-			transform: translateY(0.5%) rotate(0.4deg);
-			animation-timing-function: ease-in-out;
-		}
-		100% {
-			transform: none;
-			filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.28));
-		}
-	}
-
-	@keyframes intro-glint {
-		0% {
-			opacity: 0;
-			background-position: 130% 0;
-		}
-		30% {
-			opacity: 1;
-		}
-		100% {
-			opacity: 0;
-			background-position: -30% 0;
-		}
-	}
-
-	/* The plate's box becomes the frame */
-	@keyframes intro-grow {
-		to {
-			width: 100cqw;
-			height: 100cqh;
-			border-radius: var(--radius-card);
-		}
-	}
-
-	/* Brand-blue slab: fills in behind the dissolving lettering, then clears to the footage,
-	   catching a glass highlight on the way; the landing shadow fades as it becomes the frame */
-	@keyframes intro-clear {
-		0% {
-			background-color: rgba(0, 56, 138, 0);
-			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0);
-			filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.28));
-		}
-		15% {
-			background-color: rgba(0, 56, 138, 1);
-			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
-		}
-		100% {
-			background-color: rgba(0, 56, 138, 0);
-			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0);
-			filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0));
-			/* Done: take the now-empty box out of the way entirely */
-			visibility: hidden;
-		}
-	}
-
-	@keyframes intro-art-fade {
-		to {
-			opacity: 0;
-			transform: scale(1.04);
-		}
-	}
-
-	/* The frame waits, hidden, until the plate has landed */
-	@keyframes intro-show {
-		from {
-			opacity: 0;
-		}
-	}
-
-	/* ...then grows out of the plate's exact outline, centred in the stage */
+	/* The frame opens out of a smaller, rounder pane */
 	@keyframes intro-open {
 		from {
-			clip-path: inset(
-				calc((100cqh - var(--plate-h)) / 2) calc((100cqw - var(--plate-w)) / 2)
-					round calc(var(--plate-w) * 0.045)
-			);
+			opacity: 0;
+			clip-path: inset(9% 12% round calc(var(--radius-card) * 2));
+		}
+		45% {
+			opacity: 1;
 		}
 		to {
 			clip-path: inset(0 round var(--radius-card));
@@ -548,9 +438,31 @@
 		}
 	}
 
-	@keyframes intro-settle {
+	/* Frosted and slightly zoomed, the footage clears and settles */
+	@keyframes intro-defrost {
 		from {
-			transform: scale(1.2);
+			transform: scale(1.12);
+			filter: blur(24px) saturate(1.2) brightness(1.12);
+		}
+	}
+
+	@keyframes intro-frost {
+		from {
+			opacity: 1;
+		}
+	}
+
+	@keyframes intro-sheen {
+		0% {
+			opacity: 0;
+			background-position: 130% 0;
+		}
+		30% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0;
+			background-position: -30% 0;
 		}
 	}
 
@@ -581,11 +493,9 @@
 	/* No intro at all for visitors who ask for less motion (the global rule only shortens
 	   durations, which would still leave everything waiting out its delay) */
 	@media (prefers-reduced-motion: reduce) {
-		.intro-plate {
-			display: none;
-		}
-
 		.hero-section .showcase-video-wrapper,
+		.hero-section .showcase-video-wrapper::before,
+		.hero-section .showcase-video-wrapper::after,
 		.hero-section .showcase-video,
 		.hero-section .video-toggle,
 		.hero-section .hero-creed,
@@ -610,7 +520,6 @@
 
 		/* 4:5 Vertical Portrait Video on Phone */
 		.showcase-stage {
-			--plate-w: min(88cqw, 108cqh);
 			width: min(88vw, 360px);
 			height: min(48dvh, 420px);
 			max-height: none;

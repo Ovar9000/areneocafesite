@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getCafeStatus, type CafeStatus } from '$lib/hours';
-	import { MAPS_URL } from '$lib/site';
+	import { ADDRESS, MAPS_URL, PHONE } from '$lib/site';
 
 	// Computed in the browser only: the page is prerendered, so a value computed
 	// during the build would be frozen into the HTML that crawlers and previews see.
@@ -13,9 +13,24 @@
 		}, 60000);
 		return () => clearInterval(interval);
 	});
+
+	let copied = $state(false);
+	let copiedTimer: ReturnType<typeof setTimeout>;
+
+	async function copyAddress() {
+		const text = `Lot 7 Cafe, ${ADDRESS.street}, ${ADDRESS.area}, ${ADDRESS.postalCode} ${ADDRESS.city}, ${ADDRESS.region}`;
+		try {
+			await navigator.clipboard.writeText(text);
+		} catch {
+			return;
+		}
+		copied = true;
+		clearTimeout(copiedTimer);
+		copiedTimer = setTimeout(() => (copied = false), 2500);
+	}
 </script>
 
-<section class="visit-section" id="visit">
+<section class="visit-section plates-rest" id="visit">
 	<div class="visit-inner container">
 		<!-- Section Header -->
 		<div class="visit-header">
@@ -26,12 +41,11 @@
 			</p>
 		</div>
 
-		<!-- 2-Card Intentional Layout: Storefront Hours & Confirmed Location -->
 		<div class="visit-grid">
-			<!-- Card 1: Authoritative Storefront Hours & Live Local Status -->
+			<!-- Card 1: Hours (from the window decal) & live open/closed status -->
 			<div class="visit-card photo-frame">
 				<div class="card-head font-mono">
-					<span class="head-tag">WINDOW DECAL HOURS</span>
+					<h3 class="head-tag">OPENING HOURS</h3>
 					<div class="live-pill" class:is-open={status?.isOpen}>
 						<span class="live-dot"></span>
 						<span>{status?.statusText ?? 'CHECKING HOURS'}</span>
@@ -40,58 +54,66 @@
 
 				<div class="hours-schedule">
 					<div class="schedule-row">
-						<div class="day-group">
-							<span class="day-name font-sans">MON — SAT</span>
-						</div>
+						<span class="day-name font-sans">MON — FRI</span>
 						<span class="time-slot font-mono">10:00 AM — 10:00 PM</span>
 					</div>
 
-					<div class="schedule-row is-closed">
-						<div class="day-group">
-							<span class="day-name font-sans">SUNDAY</span>
-							<span class="day-badge closed-badge font-mono">CLOSED</span>
-						</div>
+					<div class="schedule-row">
+						<span class="day-name font-sans">SATURDAY</span>
+						<span class="time-slot font-mono">2:00 PM — 10:00 PM</span>
+					</div>
+
+					<div class="schedule-row">
+						<span class="day-name font-sans">SUNDAY</span>
 						<span class="time-slot closed-text font-mono">CLOSED</span>
 					</div>
 				</div>
 
-				<div class="card-foot font-mono">
-					<span class="foot-label">LOCAL STATUS:</span>
-					<span class="foot-time">{status?.nextChangeText ?? 'All times in Philippine time'} (Asia/Manila)</span>
-				</div>
+				<p class="card-foot font-mono">
+					{status?.nextChangeText ?? 'All times in Philippine time'}
+				</p>
 			</div>
 
-			<!-- Card 2: Confirmed Location & Map Door Out -->
+			<!-- Card 2: Address & directions -->
 			<div class="visit-card photo-frame">
 				<div class="card-head font-mono">
-					<span class="head-tag">LOCATION &amp; DIRECTIONS</span>
-					<span class="head-city">CAMARINES SUR</span>
+					<h3 class="head-tag">ADDRESS</h3>
+					<span class="head-city">NAGA CITY</span>
 				</div>
 
 				<div class="location-body">
-					<div class="location-info">
-						<span class="location-label font-mono">CONFIRMED LOCATION</span>
-						<h3 class="location-city font-sans">NAGA CITY, PHILIPPINES</h3>
-						<p class="location-desc font-sans">
-							Located in Naga City, Camarines Sur. Tap below for the direct verified GPS pin and real-time driving or walking directions on Google Maps.
-						</p>
-					</div>
+					<address class="location-info">
+						<span class="location-street font-sans">{ADDRESS.street}</span>
+						<span class="location-area font-sans">
+							{ADDRESS.area}, {ADDRESS.postalCode} {ADDRESS.city}, {ADDRESS.region}
+						</span>
+						<a href="tel:{PHONE.tel}" class="location-phone font-mono">
+							<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path>
+							</svg>
+							<span><span class="visually-hidden">Call </span>{PHONE.display}</span>
+						</a>
+					</address>
 
-					<!-- Primary Door Out #1: Google Maps Navigation -->
 					<div class="location-action">
-						<a 
-							href={MAPS_URL} 
-							target="_blank" 
-							rel="noopener noreferrer" 
+						<a
+							href={MAPS_URL}
+							target="_blank"
+							rel="noopener noreferrer"
 							class="btn-pill btn-pill-primary map-btn"
 						>
-							<span>GET DIRECTIONS (GOOGLE MAPS)</span>
+							<span>GET DIRECTIONS</span>
 							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
 								<polyline points="15 3 21 3 21 9"></polyline>
 								<line x1="10" y1="14" x2="21" y2="3"></line>
 							</svg>
 						</a>
+						<!-- For handing to a tricycle or Grab driver -->
+						<button type="button" class="btn-pill copy-btn" onclick={copyAddress}>
+							{copied ? 'ADDRESS COPIED' : 'COPY ADDRESS'}
+						</button>
+						<span class="visually-hidden" aria-live="polite">{copied ? 'Address copied' : ''}</span>
 					</div>
 				</div>
 			</div>
@@ -155,6 +177,7 @@
 	}
 
 	.head-tag {
+		font-size: inherit;
 		color: var(--tint);
 		font-weight: 700;
 	}
@@ -223,12 +246,6 @@
 		border-top: 1px solid var(--border-subtle);
 	}
 
-	.day-group {
-		display: flex;
-		align-items: center;
-		gap: 0.65rem;
-	}
-
 	.day-name,
 	.time-slot {
 		white-space: nowrap;
@@ -238,14 +255,6 @@
 		font-size: 0.9rem;
 		font-weight: 700;
 		color: var(--text-main);
-	}
-
-	.day-badge {
-		font-size: 0.7rem;
-		padding: 0.15rem 0.5rem;
-		border-radius: var(--radius-pill);
-		background: var(--fill);
-		color: var(--text-secondary);
 	}
 
 	.time-slot {
@@ -260,16 +269,7 @@
 
 	.card-foot {
 		padding: 0 1.6rem 1.5rem;
-		font-size: 0.72rem;
-		display: flex;
-		gap: 0.5rem;
-	}
-
-	.foot-label {
-		color: var(--text-muted);
-	}
-
-	.foot-time {
+		font-size: 0.78rem;
 		color: var(--text-main);
 		font-weight: 600;
 	}
@@ -287,31 +287,52 @@
 	.location-info {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: 0.4rem;
+		font-style: normal;
 	}
 
-	.location-label {
-		font-size: 0.7rem;
-		letter-spacing: 0.12em;
-		color: var(--accent-amber-text);
-		font-weight: 700;
-	}
-
-	.location-city {
+	.location-street {
 		font-size: 1.45rem;
 		font-weight: 700;
 		color: var(--text-main);
 		letter-spacing: -0.01em;
+		line-height: 1.2;
 	}
 
-	.location-desc {
-		font-size: 0.9rem;
+	.location-area {
+		font-size: 0.95rem;
 		color: var(--text-secondary);
-		line-height: 1.55;
-		margin-top: 0.25rem;
+		line-height: 1.5;
 	}
 
-	.map-btn {
+	/* Tap to call: a 44px target, read as part of the address block */
+	.location-phone {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		align-self: flex-start;
+		min-height: 44px;
+		margin-top: 0.15rem;
+		font-size: 0.9rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		color: var(--tint);
+		text-decoration: none;
+	}
+
+	.location-phone:hover {
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.location-action {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+	}
+
+	.map-btn,
+	.copy-btn {
 		width: 100%;
 		padding: 0.9rem 1.5rem;
 		font-size: 0.85rem;

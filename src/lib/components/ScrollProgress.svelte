@@ -1,18 +1,28 @@
 <script lang="ts">
 	// Floating glass button: the ring fills as you read down the page, a tap goes back to the top.
-	// It appears once the hero is behind you.
+	// It appears once the hero is behind you. On phones, where it would sit over prices and
+	// captions, it only shows while you scroll back up.
 	const CIRCUMFERENCE = 2 * Math.PI * 21;
 
 	let progress = $state(0);
 	let visible = $state(false);
 
 	$effect(() => {
+		const narrow = window.matchMedia('(max-width: 768px)');
 		let frame = 0;
+		let lastY = window.scrollY;
+		let scrollingUp = false;
 		const update = () => {
 			frame = 0;
+			const y = window.scrollY;
 			const max = document.documentElement.scrollHeight - window.innerHeight;
-			progress = max > 0 ? Math.min(1, window.scrollY / max) : 0;
-			visible = window.scrollY > window.innerHeight * 0.8;
+			progress = max > 0 ? Math.min(1, y / max) : 0;
+			// A few pixels of slack so momentum jitter doesn't flicker it
+			if (Math.abs(y - lastY) > 6) {
+				scrollingUp = y < lastY;
+				lastY = y;
+			}
+			visible = y > window.innerHeight * 0.8 && (!narrow.matches || scrollingUp);
 		};
 		const schedule = () => {
 			if (!frame) frame = requestAnimationFrame(update);

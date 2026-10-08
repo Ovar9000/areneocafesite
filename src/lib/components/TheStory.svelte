@@ -4,16 +4,14 @@
 
 <section class="story-section" id="story">
 	<div class="story-inner container">
-		<!-- Section Header -->
-
 		<!-- Editorial Spread -->
 		<div class="story-layout">
 			<!-- Left: The Verbatim Manifesto Copy -->
 			<div class="story-copy glass">
-				<blockquote class="manifesto-quote">
-					<p class="quote-lead font-sans">
+				<div class="manifesto-quote">
+					<h2 class="quote-lead font-sans">
 						Every space starts with a feeling.
-					</p>
+					</h2>
 
 					<p class="quote-body font-sans">
 						From the cafes we admired to the experiences that stayed with us, Lot 7 grew from a collection of ideas, music, and feelings.
@@ -22,7 +20,7 @@
 					<p class="quote-closing font-editorial">
 						“But what inspires us is only where the story begins.”
 					</p>
-				</blockquote>
+				</div>
 			</div>
 
 			<!-- Right: The room under the tagline ceiling, in true portrait ratio -->
@@ -58,10 +56,34 @@
 		margin-top: 1.5rem;
 	}
 
+	/* Side by side, both cards share one height: the copy centres in its card and the photo
+	   fills its own (cropping, never leaving a gap), whichever of the two is taller */
 	@media (min-width: 850px) {
 		.story-layout {
 			grid-template-columns: 1.25fr 1fr;
 			gap: 4.5rem;
+			align-items: stretch;
+		}
+
+		.story-copy {
+			justify-content: center;
+		}
+
+		.story-media {
+			display: flex;
+		}
+
+		.story-media :global(.media-frame) {
+			aspect-ratio: auto !important;
+			max-height: none !important;
+			height: auto;
+			min-height: clamp(440px, 40vw, 560px);
+		}
+
+		/* Out of flow, so the photo's own 2:3 shape doesn't set the row's height */
+		.story-media :global(.media-frame img) {
+			position: absolute;
+			inset: 0;
 		}
 	}
 

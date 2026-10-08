@@ -54,6 +54,8 @@
 	--plates-size: 4800px 1560px;
 	--plates-drift: 520px;
 	--plates-veil: rgba(242, 242, 247, 0.72);
+	/* How far the wall fades out behind .plates-rest sections and section headlines */
+	--plates-rest: rgba(242, 242, 247, 0.9);
 
 	--font-display: 'Bebas Neue', -apple-system, BlinkMacSystemFont, sans-serif;
 	--font-editorial: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
@@ -147,6 +149,29 @@ body::before {
 		url('/images/plates-page.svg') center 0 / var(--plates-size) repeat;
 }
 
+/* Where the reading is dense (the menu board, hours and address) the wall steps back almost
+   completely, fading out and back in over the section's top and bottom edges, so the motif
+   comes and goes instead of sitting behind every line of text */
+.plates-rest {
+	position: relative;
+	isolation: isolate;
+}
+
+.plates-rest::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background: linear-gradient(
+		180deg,
+		transparent,
+		var(--plates-rest) clamp(3rem, 12%, 8rem),
+		var(--plates-rest) calc(100% - clamp(3rem, 12%, 8rem)),
+		transparent
+	);
+}
+
 /* The wall drifts up slower than the page: depth, and a different stretch of plates per scroll */
 @supports (animation-timeline: scroll()) {
 	@media (prefers-reduced-motion: no-preference) {
@@ -237,7 +262,9 @@ body::before {
 }
 
 /* Section Header Typography */
+/* The halo lifts headlines off the plate lettering behind them */
 .section-headline {
+	text-shadow: 0 0 6px var(--bg-base), 0 0 18px var(--bg-base), 0 0 32px var(--bg-base);
 	font-family: var(--font-sans);
 	font-size: clamp(1.6rem, 3.2vw, 2.4rem);
 	font-weight: 700;

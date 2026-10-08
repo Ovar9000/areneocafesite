@@ -12,24 +12,27 @@ export interface DayHours {
 
 export const CAFE_TIMEZONE = 'Asia/Manila';
 
-const daily: DayHours = { open: 10 * 60, close: 22 * 60 };
+const weekday: DayHours = { open: 10 * 60, close: 22 * 60 };
+const saturday: DayHours = { open: 14 * 60, close: 22 * 60 };
 
 /**
- * Single source of truth for opening hours, as printed on the official window decal
- * (design-assets/LOGOS/STICKER SLIDING.png):
- * MON - SAT: 10:00 AM - 10:00 PM
+ * Single source of truth for opening hours, as on the window decal at the shop
+ * (design-assets/brand-storefront-window.jpg; the older artwork in
+ * design-assets/LOGOS/STICKER SLIDING.png still says MON - SAT 10 - 10):
+ * MON - FRI: 10:00 AM - 10:00 PM
+ * SAT: 2:00 PM - 10:00 PM
  * SUN: CLOSED
  *
  * Indexed like Date#getDay(): 0 = Sunday … 6 = Saturday; null = closed.
  */
 export const WEEKLY_HOURS: readonly (DayHours | null)[] = [
 	null,
-	daily,
-	daily,
-	daily,
-	daily,
-	daily,
-	daily
+	weekday,
+	weekday,
+	weekday,
+	weekday,
+	weekday,
+	saturday
 ];
 
 export const DAY_NAMES = [

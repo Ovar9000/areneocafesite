@@ -13,10 +13,12 @@
 
 		<!-- Fonts are self-hosted via @fontsource (imported in src/routes/+layout.svelte) -->
 
-		<!-- Hold the hero intro while the page loads in a background tab, so it isn't over before
-		     anyone sees it. Allowed by its sha256 hash in the CSP (vite.config.ts): if you edit
-		     this script, update that hash. -->
-		<script>if(document.visibilityState==='hidden'){var d=document.documentElement;d.classList.add('intro-hold');document.addEventListener('visibilitychange',function(){d.classList.remove('intro-hold')},{once:true})}</script>
+		<!-- Hero intro: skip it if this browser saw it in the last 12 hours (intro-seen; add ?intro
+		     to the URL to see it again), and hold
+		     it while the page loads in a background tab, so it isn't over before anyone sees it.
+		     Allowed by its sha256 hash in the CSP (vite.config.ts): if you edit this script,
+		     update that hash. -->
+		<script>(function(){var d=document.documentElement;try{var k='lot7-intro',t=+localStorage.getItem(k);if(Date.now()-t<432e5&&!/[?&]intro/.test(location.search)){d.classList.add('intro-seen');return}localStorage.setItem(k,Date.now())}catch(e){}if(document.visibilityState==='hidden'){d.classList.add('intro-hold');document.addEventListener('visibilitychange',function(){d.classList.remove('intro-hold')},{once:true})}})()</script>
 
 		%sveltekit.head%
 	</head>
