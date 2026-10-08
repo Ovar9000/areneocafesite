@@ -13,7 +13,7 @@
 		<!-- Editorial Spread -->
 		<div class="story-layout">
 			<!-- Left: The Verbatim Manifesto Copy -->
-			<div class="story-copy">
+			<div class="story-copy glass">
 				<blockquote class="manifesto-quote">
 					<p class="quote-lead font-sans">
 						Every space starts with a feeling.
@@ -70,10 +70,13 @@
 	}
 
 	/* Copy Column */
+	/* The manifesto sits on a frosted glass panel over the plate wall */
 	.story-copy {
 		display: flex;
 		flex-direction: column;
 		gap: 2rem;
+		padding: clamp(1.5rem, 4vw, 2.75rem);
+		border-radius: var(--radius-card);
 	}
 
 	.manifesto-quote {
