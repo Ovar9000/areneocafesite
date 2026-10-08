@@ -19,10 +19,6 @@
 	<div class="visit-inner container">
 		<!-- Section Header -->
 		<div class="visit-header">
-			<div class="section-label">
-				<span class="section-label-dot"></span>
-				<span>05 / VISIT US</span>
-			</div>
 			
 			<h2 class="section-headline">FIND THE ROOM</h2>
 			<p class="visit-subtext font-sans">

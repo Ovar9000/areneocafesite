@@ -6,10 +6,6 @@
 	<div class="room-inner container">
 		<!-- Section Header -->
 		<div class="room-header">
-			<div class="section-label">
-				<span class="section-label-dot"></span>
-				<span>02 / THE ROOM</span>
-			</div>
 			
 			<div class="header-row">
 				<h2 class="section-headline">ROOM ARTIFACTS &amp; ARCHITECTURE</h2>

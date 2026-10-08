@@ -5,10 +5,6 @@
 <section class="story-section" id="story">
 	<div class="story-inner container">
 		<!-- Section Header -->
-		<div class="section-label">
-			<span class="section-label-dot"></span>
-			<span>01 / THE MANIFESTO</span>
-		</div>
 
 		<!-- Editorial Spread -->
 		<div class="story-layout">
