@@ -2,11 +2,9 @@
 
     python -I scripts/generate-plates.py
 
-Writes two seamless SVG tiles drawn from the same seeded plates:
-
-  static/images/plates-page.svg     colours faded most of the way into the canvas: page texture
-                                    (app.css adds a veil behind the content column on top)
-  static/images/plates-footer.svg   full colour on dark wood: the wall behind the glass footer
+Writes static/images/plates-page.svg, a seamless tile with the colours faded most of the way
+into the canvas (app.css adds a veil behind the content column on top). For a full-colour
+version, call build(0, WOOD).
 
 Each plate gets a colourway, a design (bands, a Mayon sunset, stripes...), embossed lettering,
 bolts, a registration sticker and random wear: rust, scratches, sun fade, grime, dents, chipped
@@ -301,7 +299,6 @@ def build(fade: float, gap: str | None) -> str:
 
 
 if __name__ == '__main__':
-	for name, fade, gap in [('plates-page.svg', 0.78, None), ('plates-footer.svg', 0, WOOD)]:
-		path = OUT / name
-		path.write_text(build(fade, gap), encoding='utf-8')
-		print(f'{path.relative_to(ROOT)}  {path.stat().st_size // 1024} KB')
+	path = OUT / 'plates-page.svg'
+	path.write_text(build(0.78, None), encoding='utf-8')
+	print(f'{path.relative_to(ROOT)}  {path.stat().st_size // 1024} KB')

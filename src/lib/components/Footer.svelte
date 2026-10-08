@@ -13,8 +13,6 @@
 <!-- One footer, one surface: brand, the Instagram door out, navigation and legal
      all live on a single solid card instead of a banner stacked on a footer. -->
 <footer class="site-footer">
-	<!-- The plate shelf: one complete row of the wall in full colour on dark wood -->
-	<div class="plate-shelf" aria-hidden="true"></div>
 	<div class="container">
 		<div class="footer-card">
 			<!-- Brand & Instagram -->
@@ -80,29 +78,8 @@
 
 <style>
 	.site-footer {
-		--shelf-scale: 1.4;
-		padding: 0 0 1.25rem;
-		margin-top: 2rem;
+		padding: 1rem 0 1.25rem;
 		color: var(--text-secondary);
-	}
-
-	/* Row 0 of the 1440 x 520 tile (scripts/generate-plates.py) is a full row of plates,
-	   so a 130px-high window onto it at any scale shows whole plates only */
-	.plate-shelf {
-		height: calc(130px * var(--shelf-scale));
-		margin-bottom: 1.25rem;
-		background: #2b211b url('/images/plates-footer.svg') repeat-x;
-		background-size: calc(1440px * var(--shelf-scale)) calc(520px * var(--shelf-scale));
-		background-position: center 0;
-		box-shadow:
-			inset 0 10px 18px -10px rgba(0, 0, 0, 0.55),
-			inset 0 -10px 18px -10px rgba(0, 0, 0, 0.55);
-	}
-
-	@media (max-width: 799px) {
-		.site-footer {
-			--shelf-scale: 1;
-		}
 	}
 
 	.footer-card {
