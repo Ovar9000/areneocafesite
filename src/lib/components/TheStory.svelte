@@ -25,7 +25,7 @@
 
 			<!-- Right: The room under the tagline ceiling, in true portrait ratio -->
 			<div class="story-media photo-frame">
-				<MediaFrame aspect="3 / 4" maxHeight="560px" title="The Room" detail="Under the tagline">
+				<MediaFrame placeholder="room-fisheye" aspect="3 / 4" maxHeight="560px" title="The Room" detail="Under the tagline">
 					<enhanced:img
 						src="$lib/assets/images/room-fisheye.jpg"
 						alt="Wide view of the Lot 7 room: guests at the tables beneath the ceiling lettering 'your neighborhood, just a little better.'"

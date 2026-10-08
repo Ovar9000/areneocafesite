@@ -20,7 +20,7 @@
 		<div class="sound-bento">
 			<div class="tile tile-deck photo-frame">
 				<!-- Portrait source in a landscape frame: keep the selector and the deck in view -->
-				<MediaFrame aspect="4 / 3" focus="center 62%" title="The Deck by the Window" detail="Resident night sessions">
+				<MediaFrame placeholder="dj-night" aspect="4 / 3" focus="center 62%" title="The Deck by the Window" detail="Resident night sessions">
 					<enhanced:img
 						src="$lib/assets/images/dj-night.jpg"
 						alt="A DJ playing a set at the Lot 7 deck by the window, with guests looking on"
@@ -53,7 +53,7 @@
 			</div>
 
 			<div class="tile tile-night photo-frame">
-				<MediaFrame aspect="4 / 5" focus="center 40%" title="In the Mirror" detail="Night sessions">
+				<MediaFrame placeholder="crowd-mirror" aspect="4 / 5" focus="center 40%" title="In the Mirror" detail="Night sessions">
 					<enhanced:img
 						src="$lib/assets/images/crowd-mirror.jpg"
 						alt="The crowd around the deck, reflected in the room's round convex mirror"
@@ -63,7 +63,7 @@
 				</MediaFrame>
 			</div>
 			<div class="tile tile-night photo-frame">
-				<MediaFrame aspect="4 / 5" focus="center 35%" title="Regulars" detail="After hours">
+				<MediaFrame placeholder="portrait-night" aspect="4 / 5" focus="center 35%" title="Regulars" detail="After hours">
 					<enhanced:img
 						src="$lib/assets/images/portrait-night.jpg"
 						alt="A regular in a plaid shirt caught in warm flash light during a night session"
@@ -73,7 +73,7 @@
 				</MediaFrame>
 			</div>
 			<div class="tile tile-night photo-frame">
-				<MediaFrame aspect="4 / 5" focus="center 45%" title="Hands On" detail="The controller">
+				<MediaFrame placeholder="dj-controller" aspect="4 / 5" focus="center 45%" title="Hands On" detail="The controller">
 					<enhanced:img
 						src="$lib/assets/images/dj-controller.jpg"
 						alt="Close-up of hands on the DJ controller's jog wheel and pads"

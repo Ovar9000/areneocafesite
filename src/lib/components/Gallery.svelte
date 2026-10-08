@@ -8,7 +8,10 @@
 			'/src/lib/assets/images/gallery-*.jpg',
 			'/src/lib/assets/images/{plate-wall,sign-closeup,espresso-bar}.jpg'
 		],
-		{ eager: true, query: { enhanced: true } }
+		// imgSizes: what the plugin adds for an <enhanced:img> literal with a `sizes` attribute. With it
+		// each photo gets 540/768/1080/... widths for the `sizes` below to pick from; without it, only
+		// 1x and 2x copies, and every phone downloads the full 1400-2000px master.
+		{ eager: true, query: { enhanced: true, imgSizes: 'w' } }
 	);
 
 	interface Photo {
@@ -74,6 +77,26 @@
 		observer.observe(track);
 		return () => observer.disconnect();
 	});
+
+	// A lazy image only starts downloading once it's inside the strip's own visible area, so
+	// every swipe would land on a card that is just starting to load. Once the strip is near
+	// the screen, the cards from the current one to a few beyond it load straight away.
+	const LOAD_AHEAD = 5;
+	let near = $state(false);
+
+	$effect(() => {
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting) {
+					near = true;
+					observer.disconnect();
+				}
+			},
+			{ rootMargin: '800px 0px' }
+		);
+		observer.observe(track);
+		return () => observer.disconnect();
+	});
 </script>
 
 <section class="gallery-section" id="room">
@@ -109,14 +132,16 @@
 			role="region"
 			aria-label="Photo gallery, scrolls sideways"
 		>
-			{#each PHOTOS as photo (photo.file)}
+			{#each PHOTOS as photo, i (photo.file)}
 				<div class="gallery-card photo-frame" class:landscape={photo.landscape}>
-					<MediaFrame aspect={photo.landscape ? '3 / 2' : '2 / 3'} focus={photo.focus} title={photo.title} detail={photo.detail}>
+					<MediaFrame aspect={photo.landscape ? '3 / 2' : '2 / 3'} focus={photo.focus} title={photo.title} detail={photo.detail} placeholder={photo.file}>
 						<enhanced:img
 							src={picture(photo.file)}
 							alt={photo.alt}
-							sizes={photo.landscape ? '(min-width: 900px) 690px, 510px' : '(min-width: 900px) 310px, 230px'}
-							loading="lazy"
+							sizes={photo.landscape
+								? '(min-width: 900px) 690px, (min-width: 560px) 510px, calc(100vw - 2.5rem)'
+								: '(min-width: 900px) 310px, 230px'}
+							loading={near && i < current + LOAD_AHEAD ? 'eager' : 'lazy'}
 						/>
 					</MediaFrame>
 				</div>

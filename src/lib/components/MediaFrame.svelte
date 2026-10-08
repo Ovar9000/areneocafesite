@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { PLACEHOLDERS } from '$lib/placeholders';
 
 	interface Props {
 		/** CSS aspect-ratio of the photo window, e.g. "16 / 9" */
@@ -10,16 +11,28 @@
 		/** The card's one description: a title and an optional short detail, on a glass caption */
 		title?: string;
 		detail?: string;
+		/** File name (no extension) of the photo in src/lib/assets/images: its blurred preview
+		    shows while the photo downloads (scripts/generate-placeholders.py) */
+		placeholder?: string;
 		/** The photo, usually an <enhanced:img> (it must live in the parent's template) */
 		children: Snippet;
 	}
 
-	let { aspect, maxHeight, focus = 'center', title, detail, children }: Props = $props();
+	let { aspect, maxHeight, focus = 'center', title, detail, placeholder, children }: Props = $props();
+
+	const preview = $derived(placeholder ? PLACEHOLDERS[placeholder] : undefined);
 </script>
 
 <!-- Photo window used inside .photo-frame cards. The caption is the card's only text, so a
      photo is never described twice. Deliberately static: no hover zoom or sweep. -->
-<figure class="media-frame" style:aspect-ratio={aspect} style:max-height={maxHeight} style:--focus={focus}>
+<figure
+	class="media-frame"
+	class:has-preview={preview}
+	style:aspect-ratio={aspect}
+	style:max-height={maxHeight}
+	style:--focus={focus}
+	style:--preview={preview ? `url(${preview})` : undefined}
+>
 	{@render children()}
 
 	{#if title}
@@ -41,7 +54,18 @@
 		background: #e5e5ea;
 	}
 
+	/* The blurred preview, painted under the photo until it arrives (the photo covers it) */
+	.media-frame.has-preview::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: var(--preview) var(--focus) / cover no-repeat;
+		filter: blur(14px);
+		transform: scale(1.15);
+	}
+
 	.media-frame :global(img) {
+		position: relative;
 		display: block;
 		width: 100%;
 		height: 100%;

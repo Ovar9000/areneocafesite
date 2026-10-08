@@ -44,6 +44,8 @@ Photos are rendered with `<enhanced:img>` from [`@sveltejs/enhanced-img`](https:
 
 The photo masters, brand artwork, link-preview image and favicons are exported from the official files in `design-assets/` by `python -I scripts/export-assets.py` (needs Pillow). The raw camera files in `design-assets/PICTURES/` are about 400 MB and are not committed: keep them in the shared drive and copy them in before re-running the script. To swap a photo, change its entry in `PHOTOS` and re-run.
 
+Each photo also has a tiny blurred preview that shows while it downloads. After adding or swapping a photo, run `python -I scripts/generate-placeholders.py` (needs Pillow) to refresh `src/lib/placeholders.ts`, and pass the file name to the card as `placeholder="photo"`.
+
 Inside a photo card, wrap it in `<MediaFrame aspect="16 / 10" tags={['LEFT', 'RIGHT']}>` for the hover zoom, light sweep and caption pill.
 
 ### Hero video
