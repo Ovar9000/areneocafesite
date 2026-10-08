@@ -1,11 +1,86 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import Lot7Logo from './Lot7Logo.svelte';
 	import { clickSpring } from '$lib/attachments/click-spring';
 	import { INSTAGRAM_URL } from '$lib/site';
 
+	const SECTIONS = [
+		{ id: 'story', label: 'THE STORY' },
+		{ id: 'room', label: 'THE ROOM' },
+		{ id: 'menu', label: 'MENU' },
+		{ id: 'sound', label: 'SOUND' },
+		{ id: 'visit', label: 'VISIT' }
+	];
+
 	let scrolled = $state(false);
 	let mobileOpen = $state(false);
 	let drawer: HTMLDialogElement;
+	let headerBar: HTMLElement;
+
+	// Where we are on the page: the section crossing 40% of the way down the screen
+	let activeIndex = $state(-1);
+	// The nav item under the pointer, which the lens previews
+	let hoverIndex = $state(-1);
+	let lensIndex = $derived(hoverIndex >= 0 ? hoverIndex : activeIndex);
+	let navEl: HTMLElement;
+	let navItems: HTMLAnchorElement[] = $state([]);
+	let navLayout = $state(0);
+	// Keeps its last position while hidden, so it reappears where it left rather than sliding in from 0
+	let lensBox = $state({ x: 0, w: 0 });
+
+	$effect(() => {
+		void navLayout;
+		const item = navItems[lensIndex];
+		if (item) lensBox = { x: item.offsetLeft, w: item.offsetWidth };
+	});
+
+	// Scroll-spy (home page only; the legal pages have no sections)
+	$effect(() => {
+		if (page.url.pathname !== '/') {
+			activeIndex = -1;
+			return;
+		}
+		const sections = SECTIONS.map(({ id }) => document.getElementById(id));
+		let frame = 0;
+		const update = () => {
+			frame = 0;
+			const line = window.innerHeight * 0.4;
+			let index = -1;
+			sections.forEach((section, i) => {
+				if (section && section.getBoundingClientRect().top <= line) index = i;
+			});
+			activeIndex = index;
+		};
+		const schedule = () => {
+			if (!frame) frame = requestAnimationFrame(update);
+		};
+		update();
+		window.addEventListener('scroll', schedule, { passive: true });
+		window.addEventListener('resize', schedule);
+		return () => {
+			cancelAnimationFrame(frame);
+			window.removeEventListener('scroll', schedule);
+			window.removeEventListener('resize', schedule);
+		};
+	});
+
+	// Re-measure the lens when the nav reflows (web fonts arriving, window resizing)
+	$effect(() => {
+		const observer = new ResizeObserver(() => navLayout++);
+		observer.observe(navEl);
+		return () => observer.disconnect();
+	});
+
+	// A soft light that follows the pointer across the glass bar (mouse and trackpad only)
+	$effect(() => {
+		if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+		const move = (e: PointerEvent) => {
+			const rect = headerBar.getBoundingClientRect();
+			headerBar.style.setProperty('--spec-x', `${e.clientX - rect.left}px`);
+		};
+		headerBar.addEventListener('pointermove', move);
+		return () => headerBar.removeEventListener('pointermove', move);
+	});
 
 	$effect(() => {
 		const handleScroll = () => {
@@ -59,7 +134,7 @@
 <!-- Floating Liquid Glass bar: page content scrolls underneath it -->
 <header class="site-header" class:scrolled>
 	<div class="container">
-	<div class="header-inner glass">
+	<div class="header-inner glass" bind:this={headerBar}>
 		<!-- Left: Hamburger on Mobile / Brand Logo on Desktop -->
 		<div class="header-left">
 			<button 
@@ -89,12 +164,41 @@
 		</a>
 
 		<!-- Center: Desktop In-Page Jumps -->
-		<nav class="desktop-nav font-sans" aria-label="Page Sections">
-			<a href="/#story" class="nav-item">THE STORY</a>
-			<a href="/#room" class="nav-item">THE ROOM</a>
-			<a href="/#menu" class="nav-item">MENU</a>
-			<a href="/#sound" class="nav-item">SOUND</a>
-			<a href="/#visit" class="nav-item">VISIT</a>
+		<nav
+			class="desktop-nav font-sans"
+			aria-label="Page Sections"
+			bind:this={navEl}
+			onpointerleave={() => (hoverIndex = -1)}
+		>
+			{#each SECTIONS as section, i (section.id)}
+				<a
+					href="/#{section.id}"
+					class="nav-item"
+					class:active={activeIndex === i}
+					aria-current={activeIndex === i ? 'location' : undefined}
+					bind:this={navItems[i]}
+					onpointerenter={() => (hoverIndex = i)}
+				>
+					{section.label}
+				</a>
+			{/each}
+
+			<!-- Magnifying glass lens: glides to the section in view (or the hovered item). It holds a
+			     scaled copy of the labels lined up with the real ones, so whatever is under it is
+			     enlarged, mid-glide included. -->
+			<span
+				class="nav-lens"
+				class:visible={lensIndex >= 0}
+				style:--lens-x="{lensBox.x}px"
+				style:--lens-w="{lensBox.w}px"
+				aria-hidden="true"
+			>
+				<span class="lens-track">
+					{#each SECTIONS as section (section.id)}
+						<span class="lens-label">{section.label}</span>
+					{/each}
+				</span>
+			</span>
 		</nav>
 
 		<!-- Right: Primary Instagram Door Only -->
@@ -155,35 +259,35 @@
 	<!-- Drawer Navigation Links -->
 	<div class="drawer-body">
 		<nav class="drawer-nav font-sans" aria-label="Page sections">
-			<a href="/#story" onclick={closeMobile} class="drawer-nav-item">
+			<a href="/#story" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 0} aria-current={activeIndex === 0 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">01</span>
 				<span class="nav-text">THE STORY</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
-			<a href="/#room" onclick={closeMobile} class="drawer-nav-item">
+			<a href="/#room" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 1} aria-current={activeIndex === 1 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">02</span>
 				<span class="nav-text">THE ROOM</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
-			<a href="/#menu" onclick={closeMobile} class="drawer-nav-item">
+			<a href="/#menu" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 2} aria-current={activeIndex === 2 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">03</span>
 				<span class="nav-text">THE MENU</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
-			<a href="/#sound" onclick={closeMobile} class="drawer-nav-item">
+			<a href="/#sound" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 3} aria-current={activeIndex === 3 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">04</span>
 				<span class="nav-text">SOUND &amp; VINYL</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
-			<a href="/#visit" onclick={closeMobile} class="drawer-nav-item">
+			<a href="/#visit" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 4} aria-current={activeIndex === 4 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">05</span>
 				<span class="nav-text">VISIT US &amp; HOURS</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -305,11 +409,31 @@
 		}
 	}
 
-	/* Desktop Nav: labels that pick up a grey capsule on hover, like an iOS segmented bar */
+	/* Pointer light on the glass bar */
+	.header-inner::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		border-radius: inherit;
+		pointer-events: none;
+		background: radial-gradient(260px 90px at var(--spec-x, 50%) 0%, rgba(255, 255, 255, 0.9), transparent 70%);
+		opacity: 0;
+		transition: opacity 0.35s ease;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.header-inner:hover::before {
+			opacity: 1;
+		}
+	}
+
+	/* Desktop Nav */
 	.desktop-nav {
 		display: none;
 		align-items: center;
 		gap: 0.15rem;
+		position: relative;
 	}
 
 	@media (min-width: 900px) {
@@ -330,13 +454,84 @@
 		transition: background-color 0.15s ease, color 0.15s ease, transform 0.2s var(--ease-out);
 	}
 
-	.nav-item:hover {
-		background: var(--fill);
+	.nav-item:hover,
+	.nav-item.active {
 		color: var(--text-main);
 	}
 
 	.nav-item:active {
 		transform: scale(0.96);
+	}
+
+	/* The lens: a bright, thick glass bubble. Its own backdrop blur softens the real label
+	   underneath; the crisp, enlarged copy inside it reads through. */
+	.nav-lens {
+		position: absolute;
+		top: 0;
+		left: var(--lens-x);
+		width: var(--lens-w);
+		height: 100%;
+		border-radius: var(--radius-pill);
+		overflow: hidden;
+		pointer-events: none;
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.6));
+		-webkit-backdrop-filter: blur(5px) saturate(170%);
+		backdrop-filter: blur(5px) saturate(170%);
+		box-shadow:
+			inset 0 1px 1px #ffffff,
+			inset 0 -1.5px 2px rgba(0, 56, 138, 0.1),
+			inset 0 0 0 0.5px rgba(255, 255, 255, 0.9),
+			0 0 0 0.5px rgba(0, 0, 0, 0.06),
+			0 1px 3px rgba(0, 0, 0, 0.08),
+			0 6px 16px rgba(0, 0, 0, 0.12);
+		opacity: 0;
+		scale: 0.8;
+		transition:
+			left 0.55s var(--ease-spring),
+			width 0.55s var(--ease-spring),
+			opacity 0.25s ease,
+			scale 0.4s var(--ease-spring);
+	}
+
+	.nav-lens.visible {
+		opacity: 1;
+		scale: 1;
+	}
+
+	/* Specular highlight across the top of the bubble */
+	.nav-lens::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		background: radial-gradient(90% 70% at 35% 0%, rgba(255, 255, 255, 0.85), transparent 60%);
+		pointer-events: none;
+	}
+
+	/* The copy of the labels: shifted so it lines up with the real ones, scaled about the
+	   centre of the lens */
+	.lens-track {
+		position: absolute;
+		top: 0;
+		left: calc(-1 * var(--lens-x));
+		height: 100%;
+		display: flex;
+		align-items: center;
+		gap: 0.15rem;
+		transform: scale(1.16);
+		transform-origin: calc(var(--lens-x) + var(--lens-w) / 2) 50%;
+		transition:
+			left 0.55s var(--ease-spring),
+			transform-origin 0.55s var(--ease-spring);
+	}
+
+	.lens-label {
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		padding: 0.55rem 0.95rem;
+		white-space: nowrap;
+		color: var(--tint);
 	}
 
 	/* Header Actions & Instagram Button */
@@ -597,6 +792,24 @@
 	.drawer-nav-item:hover,
 	.drawer-nav-item:active {
 		background: var(--fill);
+	}
+
+	/* "You are here" in the drawer: the row lifts into a white glass capsule */
+	.drawer-nav-item.active {
+		margin: 4px;
+		border-radius: calc(var(--radius-card-sm) - 4px);
+		background: #ffffff;
+		color: var(--tint);
+		box-shadow: inset 0 1px 0 #ffffff, 0 1px 2px rgba(0, 0, 0, 0.06), 0 6px 16px rgba(0, 0, 0, 0.1);
+	}
+
+	.drawer-nav-item.active::before,
+	.drawer-nav-item.active + .drawer-nav-item::before {
+		display: none;
+	}
+
+	.drawer-nav-item.active .nav-arrow {
+		color: var(--tint);
 	}
 
 	.nav-idx {
