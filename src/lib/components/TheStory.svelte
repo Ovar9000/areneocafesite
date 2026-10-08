@@ -56,10 +56,34 @@
 		margin-top: 1.5rem;
 	}
 
+	/* Side by side, both cards share one height: the copy centres in its card and the photo
+	   fills its own (cropping, never leaving a gap), whichever of the two is taller */
 	@media (min-width: 850px) {
 		.story-layout {
 			grid-template-columns: 1.25fr 1fr;
 			gap: 4.5rem;
+			align-items: stretch;
+		}
+
+		.story-copy {
+			justify-content: center;
+		}
+
+		.story-media {
+			display: flex;
+		}
+
+		.story-media :global(.media-frame) {
+			aspect-ratio: auto !important;
+			max-height: none !important;
+			height: auto;
+			min-height: clamp(440px, 40vw, 560px);
+		}
+
+		/* Out of flow, so the photo's own 2:3 shape doesn't set the row's height */
+		.story-media :global(.media-frame img) {
+			position: absolute;
+			inset: 0;
 		}
 	}
 
