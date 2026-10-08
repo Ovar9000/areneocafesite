@@ -24,7 +24,9 @@ IMAGES = ROOT / 'src' / 'lib' / 'assets' / 'images'
 BRAND = ROOT / 'src' / 'lib' / 'assets' / 'brand'
 STATIC = ROOT / 'static'
 
-MASTER_EDGE = 2400
+# Build inputs only (visitors get AVIF/WebP generated from these): big enough for a 2x
+# full-width display, small enough to keep the repo and builds light
+MASTER_EDGE = 2000
 BRAND_BLUE = (0, 56, 138)  # sampled from the official sticker artwork (#00388A)
 
 # web name -> camera file
@@ -51,7 +53,7 @@ def open_photo(name: str) -> Image.Image:
 def save_jpeg(im: Image.Image, path: Path) -> None:
 	path.parent.mkdir(parents=True, exist_ok=True)
 	# No EXIF is passed through: camera serials and timestamps stay out of the site
-	im.save(path, 'JPEG', quality=86, optimize=True, progressive=True)
+	im.save(path, 'JPEG', quality=80, optimize=True, progressive=True)
 	print(f'{path.relative_to(ROOT)}  {im.width}x{im.height}  {path.stat().st_size // 1024} KB')
 
 
@@ -71,7 +73,7 @@ def crop_band(path: Path, top: int, bottom: int) -> Image.Image:
 
 def save_png(im: Image.Image, path: Path) -> None:
 	path.parent.mkdir(parents=True, exist_ok=True)
-	im.save(path, 'PNG', optimize=True)
+	im.save(path, 'PNG', optimize=True, compress_level=9)
 	print(f'{path.relative_to(ROOT)}  {im.width}x{im.height}  {path.stat().st_size // 1024} KB')
 
 
