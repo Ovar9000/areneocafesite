@@ -8,9 +8,8 @@
 		maxHeight?: string;
 		/** CSS object-position: which part of the photo to keep when cropping */
 		focus?: string;
-		/** The card's one description: a title and an optional short detail, on a glass caption */
+		/** The card's one description: a short title on a glass caption */
 		title?: string;
-		detail?: string;
 		/** File name (no extension) of the photo in src/lib/assets/images: its blurred preview
 		    shows while the photo downloads (scripts/generate-placeholders.py) */
 		placeholder?: string;
@@ -18,7 +17,7 @@
 		children: Snippet;
 	}
 
-	let { aspect, maxHeight, focus = 'center', title, detail, placeholder, children }: Props = $props();
+	let { aspect, maxHeight, focus = 'center', title, placeholder, children }: Props = $props();
 
 	const preview = $derived(placeholder ? PLACEHOLDERS[placeholder] : undefined);
 </script>
@@ -38,9 +37,6 @@
 	{#if title}
 		<figcaption class="media-caption">
 			<span class="caption-title font-sans">{title}</span>
-			{#if detail}
-				<span class="caption-detail font-mono">{detail}</span>
-			{/if}
 		</figcaption>
 	{/if}
 </figure>
@@ -99,11 +95,5 @@
 		letter-spacing: -0.01em;
 		text-transform: uppercase;
 		color: var(--text-main);
-	}
-
-	.caption-detail {
-		font-size: 0.68rem;
-		letter-spacing: 0.06em;
-		color: var(--text-secondary);
 	}
 </style>
