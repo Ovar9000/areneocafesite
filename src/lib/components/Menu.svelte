@@ -78,7 +78,7 @@
 			<!-- Photo Column: what actually comes across the bar -->
 			<div class="menu-photos">
 				<div class="photo-frame menu-photo-main">
-					<MediaFrame placeholder="drink-cup" aspect="4 / 5" focus="center 62%" title="House Cup" detail="Iced">
+					<MediaFrame placeholder="drink-cup" aspect="4 / 5" focus="center 62%" title="House Cup">
 						<enhanced:img
 							src="$lib/assets/images/drink-cup.jpg"
 							alt="An iced coffee in a Lot 7 cup, set down on the bar"

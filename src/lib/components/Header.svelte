@@ -14,6 +14,9 @@
 
 	let scrolled = $state(false);
 	let mobileOpen = $state(false);
+	// The phone menu button, down by the thumb. The hero's pills do its job on the first screen
+	// (and fill that corner), so it waits until they are behind you, then stays put.
+	let menuButtonVisible = $state(false);
 	let drawer: HTMLDialogElement;
 	let headerBar: HTMLElement;
 
@@ -84,7 +87,9 @@
 
 	$effect(() => {
 		const handleScroll = () => {
-			scrolled = window.scrollY > 20;
+			const y = window.scrollY;
+			scrolled = y > 20;
+			menuButtonVisible = page.url.pathname !== '/' || y > window.innerHeight * 0.8;
 		};
 
 		// The drawer only exists in the mobile layout; close it if the viewport grows past it
@@ -135,31 +140,15 @@
 <header class="site-header" class:scrolled>
 	<div class="container">
 	<div class="header-inner glass" bind:this={headerBar}>
-		<!-- Left: Hamburger on Mobile / Brand Logo on Desktop -->
+		<!-- Left: Brand Logo on Desktop (the phone menu button floats at the bottom) -->
 		<div class="header-left">
-			<button 
-				type="button" 
-				class="mobile-toggle"
-				onclick={openMobile}
-				aria-label="Open navigation menu"
-				aria-haspopup="dialog"
-				aria-controls="site-drawer"
-				aria-expanded={mobileOpen}
-			>
-				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-					<line x1="3" y1="6" x2="21" y2="6"></line>
-					<line x1="3" y1="12" x2="21" y2="12"></line>
-					<line x1="3" y1="18" x2="21" y2="18"></line>
-				</svg>
-			</button>
-
 			<a href="/" class="brand-link desktop-only-brand" aria-label="Lot 7 Cafe home">
 				<Lot7Logo height="38px" />
 			</a>
 		</div>
 
-		<!-- Mobile Centered Brand Logo (Matches Fat Seed Mascot style) -->
-		<a href="/" class="brand-link mobile-center-brand" class:drawer-open={mobileOpen} aria-label="Lot 7 Cafe home">
+		<!-- Mobile Brand Logo, at the left end of the bar -->
+		<a href="/" class="brand-link mobile-brand" class:drawer-open={mobileOpen} aria-label="Lot 7 Cafe home">
 			<Lot7Logo height="36px" />
 		</a>
 
@@ -224,13 +213,33 @@
 	</div>
 </header>
 
-<!-- Sideswipe Navigation Drawer: a native modal dialog that slides in from the left.
+<!-- Phones: the menu button floats in the bottom corner, within reach of the thumb -->
+<button
+	type="button"
+	class="mobile-toggle glass"
+	class:visible={menuButtonVisible}
+	onclick={openMobile}
+	aria-label="Open navigation menu"
+	aria-haspopup="dialog"
+	aria-controls="site-drawer"
+	aria-expanded={mobileOpen}
+	aria-hidden={!menuButtonVisible}
+	tabindex={menuButtonVisible ? 0 : -1}
+>
+	<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+		<line x1="3" y1="6" x2="21" y2="6"></line>
+		<line x1="3" y1="12" x2="21" y2="12"></line>
+		<line x1="3" y1="18" x2="21" y2="18"></line>
+	</svg>
+</button>
+
+<!-- Navigation sheet: a native modal dialog that slides up from the bottom of the screen.
      Escape closes it natively, so the backdrop click handler needs no key equivalent. -->
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
 <dialog
 	bind:this={drawer}
 	id="site-drawer"
-	class="sideswipe-drawer"
+	class="nav-sheet"
 	aria-label="Site navigation"
 	onclose={handleDrawerClose}
 	onclick={handleBackdropClick}
@@ -352,15 +361,23 @@
 		box-shadow: var(--glass-edge), 0 4px 12px rgba(0, 0, 0, 0.06), 0 20px 48px rgba(0, 0, 0, 0.12);
 	}
 
+	/* Phones: the desktop logo slot is empty, so the mobile logo takes the left end, inset
+	   like the desktop one */
 	@media (max-width: 899px) {
 		.header-inner {
-			padding: 0 0.5rem;
+			padding: 0 0.5rem 0 1.1rem;
 		}
 	}
 
 	.header-left {
 		display: flex;
 		align-items: center;
+	}
+
+	@media (max-width: 899px) {
+		.header-left {
+			display: none;
+		}
 	}
 
 	.brand-link {
@@ -380,21 +397,18 @@
 		display: none;
 	}
 
-	/* Mobile Center Logo */
-	.mobile-center-brand {
+	/* Mobile Logo: at the left end of the bar, the Instagram button at the right */
+	.mobile-brand {
 		display: flex;
-		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
 		transition: transform 0.3s var(--ease-out), opacity 0.25s ease;
 	}
 
-	.mobile-center-brand:active {
-		transform: translateX(-50%) scale(0.95);
+	.mobile-brand:active {
+		transform: scale(0.95);
 	}
 
-	.mobile-center-brand.drawer-open {
-		transform: translateX(-50%) scale(0.9);
+	.mobile-brand.drawer-open {
+		transform: scale(0.9);
 		opacity: 0;
 		pointer-events: none;
 	}
@@ -404,7 +418,7 @@
 			display: flex;
 		}
 
-		.mobile-center-brand {
+		.mobile-brand {
 			display: none;
 		}
 	}
@@ -585,28 +599,42 @@
 		}
 	}
 
-	/* Mobile Toggle Button */
+	/* Phone menu button: a floating glass disc in the bottom-right corner (where the
+	   back-to-top button sits on desktop) */
 	.mobile-toggle {
+		position: fixed;
+		right: max(1rem, env(safe-area-inset-right));
+		bottom: max(1.25rem, env(safe-area-inset-bottom));
+		z-index: 950;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: var(--fill);
 		border: none;
 		color: var(--text-main);
-		width: 42px;
-		height: 42px;
+		width: 56px;
+		height: 56px;
 		border-radius: 50%;
 		cursor: pointer;
 		user-select: none;
-		transition: transform 0.2s var(--ease-out), background-color 0.15s ease;
+		opacity: 0;
+		translate: 0 14px;
+		scale: 0.85;
+		pointer-events: none;
+		transition:
+			opacity 0.3s ease,
+			translate 0.45s var(--ease-spring),
+			scale 0.45s var(--ease-spring);
 	}
 
-	.mobile-toggle:hover {
-		background: var(--fill-strong);
+	.mobile-toggle.visible {
+		opacity: 1;
+		translate: 0 0;
+		scale: 1;
+		pointer-events: auto;
 	}
 
 	.mobile-toggle:active {
-		transform: scale(0.92);
+		scale: 0.92;
 	}
 
 	@media (min-width: 900px) {
@@ -616,26 +644,26 @@
 	}
 
 	/* =========================================
-	   SIDESWIPE NAVIGATION DRAWER ANIMATION
+	   NAVIGATION SHEET ANIMATION
 	   ========================================= */
 
-	/* Lock page scroll behind the open drawer */
-	:global(body:has(dialog.sideswipe-drawer[open])) {
+	/* Lock page scroll behind the open sheet */
+	:global(body:has(dialog.nav-sheet[open])) {
 		overflow: hidden;
 	}
 
-	/* Sideswipe Drawer: a modal <dialog> that slides in from the left.
+	/* Navigation sheet: a modal <dialog> that slides up from the bottom, inset from the
+	   screen edges like an iOS 27 sheet, so the links land under the thumb.
 	   `display` and `overlay` transition discretely so the exit animation
 	   plays before the dialog leaves the top layer. */
-	/* A floating glass sheet inset from the screen edge, like an iOS 27 sidebar */
-	.sideswipe-drawer {
+	.nav-sheet {
 		position: fixed;
-		inset: 0.6rem auto 0.6rem 0.6rem;
-		width: min(85vw, 360px);
-		max-width: none;
-		height: calc(100dvh - 1.2rem);
-		max-height: none;
-		margin: 0;
+		inset: auto 0.6rem max(0.6rem, env(safe-area-inset-bottom)) 0.6rem;
+		width: auto;
+		max-width: 480px;
+		height: auto;
+		max-height: calc(100dvh - 1.2rem);
+		margin: 0 auto;
 		padding: 0;
 		border: none;
 		border-radius: var(--radius-card);
@@ -644,7 +672,7 @@
 		backdrop-filter: var(--glass-blur);
 		color: var(--text-main);
 		flex-direction: column;
-		transform: translateX(calc(-100% - 1rem));
+		transform: translateY(calc(100% + 1rem));
 		box-shadow: none;
 		transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
 		            box-shadow 0.4s ease,
@@ -653,13 +681,13 @@
 	}
 
 	/* display is only set while open, so the UA's dialog:not([open]) { display: none } still applies */
-	.sideswipe-drawer[open] {
+	.nav-sheet[open] {
 		display: flex;
-		transform: translateX(0);
+		transform: translateY(0);
 		box-shadow: var(--glass-edge), 0 24px 64px rgba(0, 0, 0, 0.22);
 	}
 
-	.sideswipe-drawer::backdrop {
+	.nav-sheet::backdrop {
 		background: rgba(0, 0, 0, 0.25);
 		opacity: 0;
 		transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
@@ -667,26 +695,26 @@
 		            display 0.4s allow-discrete;
 	}
 
-	.sideswipe-drawer[open]::backdrop {
+	.nav-sheet[open]::backdrop {
 		opacity: 1;
 	}
 
 	/* Entry animation start points (the dialog goes from display:none to flex) */
 	@starting-style {
-		.sideswipe-drawer[open] {
-			transform: translateX(calc(-100% - 1rem));
+		.nav-sheet[open] {
+			transform: translateY(calc(100% + 1rem));
 		}
 
-		.sideswipe-drawer[open]::backdrop {
+		.nav-sheet[open]::backdrop {
 			opacity: 0;
 		}
 
-		.sideswipe-drawer[open] .drawer-logo {
-			transform: translateX(-14px) scale(0.92);
+		.nav-sheet[open] .drawer-logo {
+			transform: translateY(10px) scale(0.92);
 			opacity: 0;
 		}
 
-		.sideswipe-drawer[open] .drawer-ig-cta {
+		.nav-sheet[open] .drawer-ig-cta {
 			transform: translateY(16px);
 			opacity: 0;
 		}
@@ -706,15 +734,15 @@
 		text-decoration: none;
 		user-select: none;
 		cursor: pointer;
-		transform: translateX(-14px) scale(0.92);
+		transform: translateY(10px) scale(0.92);
 		opacity: 0;
 		transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.08s, 
 		            opacity 0.3s ease 0.08s;
 		will-change: transform, opacity;
 	}
 
-	.sideswipe-drawer[open] .drawer-logo {
-		transform: translateX(0) scale(1);
+	.nav-sheet[open] .drawer-logo {
+		transform: none;
 		opacity: 1;
 	}
 
@@ -855,7 +883,7 @@
 		            background-color 0.15s ease;
 	}
 
-	.sideswipe-drawer[open] .drawer-ig-cta {
+	.nav-sheet[open] .drawer-ig-cta {
 		transform: none;
 		opacity: 1;
 	}
