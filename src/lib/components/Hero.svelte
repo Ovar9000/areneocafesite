@@ -24,7 +24,7 @@
 			navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }
 		).connection;
 		const saveData = connection?.saveData === true;
-		// The video is 2–3 MB: on 2G/3G the 66 KB poster is the page, and the play button stays
+		// The video is 2–3 MB: on 2G/3G the 73 KB poster is the page, and the play button stays
 		const slowNetwork = ['slow-2g', '2g', '3g'].includes(connection?.effectiveType ?? '');
 
 		// Poster + play button only; with preload="none" the video is never downloaded
@@ -189,8 +189,8 @@
 		box-sizing: border-box;
 		position: relative;
 		--intro-ease: cubic-bezier(0.32, 0.72, 0, 1);
-		/* Slow to start, so the frost is seen before it clears */
-		--defrost-ease: cubic-bezier(0.55, 0, 0.3, 1);
+		/* A hand on the focus ring: eases in, pulls quickly, eases out */
+		--focus-ease: cubic-bezier(0.45, 0, 0.2, 1);
 	}
 
 	.hero-inner {
@@ -225,6 +225,9 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+		/* The footage is 4:3: the 16:9 desktop frame crops it top and bottom, and the opening
+		   and closing shots sit low (the couch, the tagline card) */
+		object-position: 50% 70%;
 		display: block;
 	}
 
@@ -345,72 +348,55 @@
 	}
 
 	/* =========================================
-	   INTRO: THE FROSTED REVEAL (about 2.8s, plain CSS so it runs while scripts load)
-	   0.15s  the frame opens out of a smaller pane of frosted glass
-	   0.35s  after a beat, the frost clears over 1.8s: the milky tint lifts, the blur melts
-	          and the footage settles from a slight zoom
-	   1.3s   a highlight runs once across the clearing glass
-	   1.7s   the tagline is written in; 1.85s the pills rise one by one
+	   INTRO: THE FOCUS PULL (about 2.4s, plain CSS so it runs while scripts load)
+	   0.15s  the frame opens out of a slightly smaller pane, edges in shadow like a lens vignette
+	   0.3s   the focus racks in over 1.6s: the blur pulls sharp, passes focus by a hair and
+	          locks, while the footage settles from a slight zoom and the vignette opens up
+	   1.5s   the tagline is written in; 1.65s the pills rise one by one
 	   The poster is preloaded, so nothing here waits on the network;
 	   html.intro-hold (set in app.html) pauses it all while the page loads in a background tab.
 	   ========================================= */
-	.showcase-video-wrapper::before,
-	.showcase-video-wrapper::after {
+	/* The vignette: darkened edges that open up as the lens comes into focus */
+	.showcase-video-wrapper::before {
 		content: '';
 		position: absolute;
 		inset: 0;
 		z-index: 1;
 		pointer-events: none;
 		opacity: 0;
-	}
-
-	/* The frost: a milky white tint over the blurred footage */
-	.showcase-video-wrapper::before {
-		background: linear-gradient(160deg, rgba(255, 255, 255, 0.5), rgba(235, 240, 250, 0.32));
-	}
-
-	/* The highlight */
-	.showcase-video-wrapper::after {
-		background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.38) 50%, transparent 65%) no-repeat;
-		background-size: 250% 100%;
-		background-position: 130% 0;
+		background: radial-gradient(ellipse at center, transparent 35%, rgba(0, 0, 0, 0.55) 100%);
 	}
 
 	.hero-section:not(.intro-played) .showcase-video-wrapper {
 		animation:
-			intro-open 1.3s var(--intro-ease) 0.15s backwards,
-			intro-shadow 0.5s ease 1.45s backwards;
+			intro-open 1.1s var(--intro-ease) 0.15s backwards,
+			intro-shadow 0.5s ease 1.25s backwards;
 	}
 
 	.hero-section:not(.intro-played) .showcase-video-wrapper::before {
-		animation: intro-frost 1.8s var(--defrost-ease) 0.35s backwards;
-	}
-
-	.hero-section:not(.intro-played) .showcase-video-wrapper::after {
-		animation: intro-sheen 1.1s ease-in-out 1.3s both;
+		animation: intro-vignette 1.6s var(--focus-ease) 0.3s backwards;
 	}
 
 	.hero-section:not(.intro-played) .showcase-video {
-		animation: intro-defrost 1.8s var(--defrost-ease) 0.35s backwards;
+		animation: intro-focus 1.6s var(--focus-ease) 0.3s backwards;
 	}
 
 	.hero-section:not(.intro-played) .video-toggle {
-		animation: intro-fade 0.4s ease 2s backwards;
+		animation: intro-fade 0.4s ease 1.8s backwards;
 	}
 
 	.hero-section:not(.intro-played) .hero-creed {
-		animation: intro-write 0.9s cubic-bezier(0.22, 1, 0.36, 1) 1.7s backwards;
+		animation: intro-write 0.9s cubic-bezier(0.22, 1, 0.36, 1) 1.5s backwards;
 	}
 
 	.hero-section:not(.intro-played) .hero-pill {
 		animation: intro-rise 0.7s var(--ease-spring) backwards;
-		animation-delay: calc(1.85s + var(--i, 0) * 60ms);
+		animation-delay: calc(1.65s + var(--i, 0) * 60ms);
 	}
 
 	/* Seen in the last 12 hours (html.intro-seen, set in app.html): straight to the footage */
 	:global(html.intro-seen) .hero-section .showcase-video-wrapper,
 	:global(html.intro-seen) .hero-section .showcase-video-wrapper::before,
-	:global(html.intro-seen) .hero-section .showcase-video-wrapper::after,
 	:global(html.intro-seen) .hero-section .showcase-video,
 	:global(html.intro-seen) .hero-section .video-toggle,
 	:global(html.intro-seen) .hero-section .hero-creed,
@@ -425,11 +411,11 @@
 		animation-play-state: paused !important;
 	}
 
-	/* The frame opens out of a smaller, rounder pane */
+	/* The frame opens out of a slightly smaller, rounder pane */
 	@keyframes intro-open {
 		from {
 			opacity: 0;
-			clip-path: inset(9% 12% round calc(var(--radius-card) * 2));
+			clip-path: inset(5% 7% round calc(var(--radius-card) * 2));
 		}
 		45% {
 			opacity: 1;
@@ -446,31 +432,27 @@
 		}
 	}
 
-	/* Frosted and slightly zoomed, the footage clears and settles */
-	@keyframes intro-defrost {
-		from {
-			transform: scale(1.12);
-			filter: blur(24px) saturate(1.2) brightness(1.12);
-		}
-	}
-
-	@keyframes intro-frost {
-		from {
-			opacity: 1;
-		}
-	}
-
-	@keyframes intro-sheen {
+	/* Out of focus and slightly zoomed, the footage racks sharp, overshoots a hair and locks */
+	@keyframes intro-focus {
 		0% {
-			opacity: 0;
-			background-position: 130% 0;
+			transform: scale(1.08);
+			filter: blur(18px) brightness(1.06);
 		}
-		30% {
-			opacity: 1;
+		70% {
+			filter: blur(0) brightness(1);
+		}
+		82% {
+			filter: blur(1.5px);
 		}
 		100% {
-			opacity: 0;
-			background-position: -30% 0;
+			transform: none;
+			filter: blur(0);
+		}
+	}
+
+	@keyframes intro-vignette {
+		from {
+			opacity: 1;
 		}
 	}
 
@@ -503,7 +485,6 @@
 	@media (prefers-reduced-motion: reduce) {
 		.hero-section .showcase-video-wrapper,
 		.hero-section .showcase-video-wrapper::before,
-		.hero-section .showcase-video-wrapper::after,
 		.hero-section .showcase-video,
 		.hero-section .video-toggle,
 		.hero-section .hero-creed,
