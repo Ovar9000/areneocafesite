@@ -11,7 +11,7 @@
 	<div class="sound-inner container">
 		<!-- Section Header -->
 		<div class="sound-header">
-			<h2 class="section-headline">THE DECK</h2>
+			<h2 class="section-headline">SOUND</h2>
 		</div>
 
 		<!-- Ordered grid. Desktop: the deck and the poster share row one at the same height;
@@ -20,7 +20,7 @@
 		<div class="sound-bento">
 			<div class="tile tile-deck photo-frame">
 				<!-- Portrait source in a landscape frame: keep the selector and the deck in view -->
-				<MediaFrame placeholder="dj-night" aspect="4 / 3" focus="center 62%" title="The Deck by the Window">
+				<MediaFrame placeholder="dj-night" aspect="4 / 3" focus="center 62%" title="Window deck">
 					<enhanced:img
 						src="$lib/assets/images/dj-night.jpg"
 						alt="A DJ playing a set at the Lot 7 deck by the window, with guests looking on"
@@ -32,7 +32,7 @@
 
 			<div class="tile tile-poster archive-card photo-frame">
 				<div class="archive-top font-mono">
-					<span class="archive-pill">PAST EVENTS</span>
+					<span class="archive-pill">ARCHIVE</span>
 					<span class="archive-date font-mono">09.08.26 · 5:00 PM</span>
 				</div>
 
@@ -47,13 +47,13 @@
 				</div>
 
 				<div class="archive-caption">
-					<span class="lineup-label font-mono">SOFT OPENING LINEUP · POP-UP BY GROOVY</span>
+					<span class="lineup-label font-mono">SOFT OPENING W/ GROOVY</span>
 					<p class="lineup-names font-display">VINZ · PANCAKE · BOS · KIM · SUKI</p>
 				</div>
 			</div>
 
 			<div class="tile tile-night photo-frame">
-				<MediaFrame placeholder="crowd-mirror" aspect="4 / 5" focus="center 40%" title="In the Mirror">
+				<MediaFrame placeholder="crowd-mirror" aspect="4 / 5" focus="center 40%" title="In the mirror">
 					<enhanced:img
 						src="$lib/assets/images/crowd-mirror.jpg"
 						alt="The crowd around the deck, reflected in the room's round convex mirror"
@@ -73,7 +73,7 @@
 				</MediaFrame>
 			</div>
 			<div class="tile tile-night photo-frame">
-				<MediaFrame placeholder="dj-controller" aspect="4 / 5" focus="center 45%" title="Hands On">
+				<MediaFrame placeholder="dj-controller" aspect="4 / 5" focus="center 45%" title="On the controller">
 					<enhanced:img
 						src="$lib/assets/images/dj-controller.jpg"
 						alt="Close-up of hands on the DJ controller's jog wheel and pads"
@@ -87,7 +87,7 @@
 			<div class="tile tile-sleeves sleeves-box photo-frame">
 				<div class="sleeves-head">
 					<span class="status-verified font-mono"><span class="status-dot"></span>ON ROTATION</span>
-					<span class="sleeves-title font-sans">Sleeves at the bar</span>
+					<span class="sleeves-title font-sans">Spinning at the bar</span>
 				</div>
 
 				<div class="sleeves-list">

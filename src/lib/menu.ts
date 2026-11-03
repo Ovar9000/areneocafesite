@@ -9,7 +9,7 @@ export interface MenuItem {
 export interface MenuSection {
 	id: string;
 	title: string;
-	/** Small line under the title on the printed menu */
+	/** Small line under the title */
 	subtitle?: string;
 	items: MenuItem[];
 }
@@ -22,7 +22,7 @@ export const MENU: readonly MenuSection[] = [
 	{
 		id: 'originals',
 		title: 'The Originals',
-		subtitle: 'Served iced or hot',
+		subtitle: 'Hot or iced',
 		items: [
 			{ name: 'Americano', price: 99 },
 			{ name: 'Cafe Latte', price: 119 },
@@ -36,7 +36,7 @@ export const MENU: readonly MenuSection[] = [
 	{
 		id: 'house-mix',
 		title: 'House Mix',
-		subtitle: 'Served iced only',
+		subtitle: 'Iced only',
 		items: [
 			{ name: 'Sunset Drive', notes: 'Orange + Espresso', price: 149 },
 			{ name: 'Acid House', notes: 'Honey + Lemon + Espresso', price: 149 },
@@ -46,7 +46,7 @@ export const MENU: readonly MenuSection[] = [
 	{
 		id: 'soft-grooves',
 		title: 'Soft Grooves',
-		subtitle: 'Milk series',
+		subtitle: 'Milk drinks, no coffee',
 		items: [
 			{ name: 'Purple Haze', notes: 'Taro + Milk', price: 139 },
 			{ name: 'Strawberry Fields', notes: 'Strawberry Jam + Milk', price: 139 },
@@ -56,7 +56,7 @@ export const MENU: readonly MenuSection[] = [
 	{
 		id: 'b-sides',
 		title: 'B-Sides',
-		subtitle: 'Soda pop',
+		subtitle: 'Sodas',
 		items: [
 			{ name: 'Peach House', notes: 'Honey Peach + Soda', price: 99 },
 			{ name: 'Apple FM', notes: 'Green Apple + Soda', price: 99 },

@@ -339,7 +339,7 @@
 			</a>
 
 			<div class="drawer-location font-mono">
-				<span>NAGA CITY · CAMARINES SUR</span>
+				<span>NAGA CITY · CAMSUR</span>
 			</div>
 		</div>
 	</div>

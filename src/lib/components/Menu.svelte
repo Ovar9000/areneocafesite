@@ -69,8 +69,8 @@
 		<div class="menu-header">
 
 			<div class="header-row">
-				<h2 class="section-headline">ON THE BOARD</h2>
-				<p class="header-note font-mono">PRICES IN ₱</p>
+				<h2 class="section-headline">MENU</h2>
+				<p class="header-note font-mono">ALL PRICES IN ₱</p>
 			</div>
 		</div>
 
@@ -78,7 +78,7 @@
 			<!-- Photo Column: what actually comes across the bar -->
 			<div class="menu-photos">
 				<div class="photo-frame menu-photo-main">
-					<MediaFrame placeholder="drink-cup" aspect="4 / 5" focus="center 62%" title="House Cup">
+					<MediaFrame placeholder="drink-cup" aspect="4 / 5" focus="center 62%" title="House cup">
 						<enhanced:img
 							src="$lib/assets/images/drink-cup.jpg"
 							alt="An iced coffee in a Lot 7 cup, set down on the bar"
@@ -174,7 +174,7 @@
 
 				<!-- Add-ons run along the bottom of the board -->
 				<div class="board-addons">
-					<h3 class="addons-title font-mono">ADD-ONS</h3>
+					<h3 class="addons-title font-mono">EXTRAS</h3>
 					<ul class="addons-list">
 						{#each ADD_ONS as addon (addon.name)}
 							<li class="addon font-sans">
@@ -185,7 +185,7 @@
 					</ul>
 				</div>
 
-				<p class="board-foot font-mono">MENU MAY CHANGE · ASK AT THE BAR</p>
+				<p class="board-foot font-mono">MENU MAY CHANGE · ASK AT THE BAR WHAT'S NEW</p>
 			</div>
 		</div>
 	</div>

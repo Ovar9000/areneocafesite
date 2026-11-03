@@ -18,7 +18,7 @@
 		name: 'Lot 7 Cafe',
 		slogan: 'Your neighborhood, just a little better.',
 		description:
-			'Espresso classics, house mixes and sodas with a resident deck in Naga City, Camarines Sur.',
+			'Espresso, house mixes and cold sodas, with vinyl on the deck, in Naga City, Camarines Sur.',
 		url: `${SITE_URL}/`,
 		image: `${SITE_URL}/images/og-lot7.jpg`,
 		priceRange: '₱₱',

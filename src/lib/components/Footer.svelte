@@ -19,7 +19,7 @@
 						<p class="brand-desc font-editorial">
 							Espresso at the bar, records on the deck.
 						</p>
-						<span class="brand-location font-mono">NAGA CITY · CAMARINES SUR</span>
+						<span class="brand-location font-mono">NAGA CITY · CAMSUR</span>
 					</div>
 				</div>
 
