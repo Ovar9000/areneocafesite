@@ -5,8 +5,8 @@
 </script>
 
 <Seo
-	title="TERMS OF SERVICE — LOT 7 CAFE"
-	description="Terms of service and room guidelines for Lot 7 Cafe in Naga City, Camarines Sur. Specialty coffee, listening room etiquette, and house principles."
+	title="Terms of Service | Lot 7 Cafe"
+	description="Terms of service and room guidelines for Lot 7 Cafe in Naga City, Camarines Sur. House rules for the room and the deck."
 />
 
 <LegalPage

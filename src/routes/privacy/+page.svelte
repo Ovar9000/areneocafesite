@@ -5,7 +5,7 @@
 </script>
 
 <Seo
-	title="PRIVACY POLICY — LOT 7 CAFE"
+	title="Privacy Policy | Lot 7 Cafe"
 	description="Privacy policy for Lot 7 Cafe in Naga City, Camarines Sur. Simple, respectful, and transparent data practices."
 />
 

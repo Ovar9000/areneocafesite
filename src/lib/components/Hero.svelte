@@ -84,7 +84,7 @@
 
 <section class="hero-section" class:intro-played={skipIntro} id="hero" bind:this={section}>
 	<div class="hero-inner container">
-		<h1 class="visually-hidden">Lot 7 Cafe: coffee and records in Naga City</h1>
+		<h1 class="visually-hidden">Lot 7 Cafe, a coffee shop in Naga City, Camarines Sur</h1>
 
 		<!-- Main Visual: Dynamic Showcase Video (4:5 Portrait on mobile, 16:9 Landscape on desktop) -->
 		<div class="showcase-stage">
