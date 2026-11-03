@@ -35,9 +35,9 @@
 		<!-- Section Header -->
 		<div class="visit-header">
 			
-			<h2 class="section-headline">FIND THE ROOM</h2>
+			<h2 class="section-headline">COME BY</h2>
 			<p class="visit-subtext font-sans">
-				No reservations. Walk in, grab a seat, and push the door open.
+				No reservations. Just walk in.
 			</p>
 		</div>
 

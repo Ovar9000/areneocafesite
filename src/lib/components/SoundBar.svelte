@@ -11,7 +11,7 @@
 	<div class="sound-inner container">
 		<!-- Section Header -->
 		<div class="sound-header">
-			<h2 class="section-headline">RESIDENT DECK &amp; SLEEVES</h2>
+			<h2 class="section-headline">THE DECK</h2>
 		</div>
 
 		<!-- Ordered grid. Desktop: the deck and the poster share row one at the same height;
@@ -108,7 +108,7 @@
 
 <style>
 	.sound-section {
-		min-height: 100dvh;
+		min-height: 100svh;
 		display: flex;
 		align-items: center;
 		padding: 5.5rem 0;

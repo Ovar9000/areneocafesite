@@ -37,7 +37,7 @@
 		{ file: 'gallery-booth', title: 'The Booth', alt: 'A DJ at the booth by the window, the Lot 7 lightbox overhead' },
 		{ file: 'gallery-soda', title: 'Green Soda', alt: 'A hand lifting a green soda in a Lot 7 cup from the counter', focus: 'center 60%' },
 		{ file: 'gallery-lightbox', title: 'The Lightbox', alt: 'The Lot 7 Cafe lightbox glowing on the dark ceiling: your neighborhood, just a little better.', landscape: true },
-		{ file: 'gallery-portrait', title: 'In the Moment', alt: 'A guest looking down in warm flash light under the ceiling lettering' },
+		{ file: 'gallery-portrait', title: 'Under the Sign', alt: 'A guest looking down in warm flash light under the ceiling lettering' },
 		{ file: 'gallery-ceiling', title: 'Overhead', alt: 'The black metal grid ceiling of the cafe', landscape: true }
 	];
 

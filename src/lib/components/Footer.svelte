@@ -17,9 +17,9 @@
 					</a>
 					<div class="brand-info">
 						<p class="brand-desc font-editorial">
-							Specialty coffee &amp; Chill sessions.
+							Espresso at the bar, records on the deck.
 						</p>
-						<span class="brand-location font-mono">NAGA CITY · CAMARINES SUR · PH</span>
+						<span class="brand-location font-mono">NAGA CITY · CAMARINES SUR</span>
 					</div>
 				</div>
 
@@ -44,11 +44,11 @@
 
 			<!-- Navigation Jumps -->
 			<nav class="footer-nav font-sans" aria-label="Footer navigation">
-				<a href="/#story" class="footer-nav-link">THE STORY</a>
-				<a href="/#room" class="footer-nav-link">THE ROOM</a>
+				<a href="/#story" class="footer-nav-link">STORY</a>
+				<a href="/#room" class="footer-nav-link">ROOM</a>
 				<a href="/#menu" class="footer-nav-link">MENU</a>
 				<a href="/#sound" class="footer-nav-link">SOUND</a>
-				<a href="/#visit" class="footer-nav-link">VISIT US</a>
+				<a href="/#visit" class="footer-nav-link">VISIT</a>
 			</nav>
 
 			<!-- Legal & Back to Top -->

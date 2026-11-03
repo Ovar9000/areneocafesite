@@ -18,7 +18,7 @@
 					</p>
 
 					<p class="quote-closing font-editorial">
-						“But what inspires us is only where the story begins.”
+						But what inspires us is only where the story begins.
 					</p>
 				</div>
 			</div>
@@ -40,7 +40,7 @@
 
 <style>
 	.story-section {
-		min-height: 100dvh;
+		min-height: 100svh;
 		display: flex;
 		align-items: center;
 		padding: 5.5rem 0;

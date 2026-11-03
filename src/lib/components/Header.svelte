@@ -5,8 +5,8 @@
 	import { INSTAGRAM_URL } from '$lib/site';
 
 	const SECTIONS = [
-		{ id: 'story', label: 'THE STORY' },
-		{ id: 'room', label: 'THE ROOM' },
+		{ id: 'story', label: 'STORY' },
+		{ id: 'room', label: 'ROOM' },
 		{ id: 'menu', label: 'MENU' },
 		{ id: 'sound', label: 'SOUND' },
 		{ id: 'visit', label: 'VISIT' }
@@ -37,6 +37,22 @@
 		if (item) lensBox = { x: item.offsetLeft, w: item.offsetWidth };
 	});
 
+	// Screen height for the scroll thresholds. On phones innerHeight grows and shrinks as the
+	// address bar hides and shows, which would move the thresholds mid-scroll and flicker the
+	// state, so it is only re-read when the width changes (rotation, a resized window).
+	let viewportHeight = 0;
+	$effect(() => {
+		let width = window.innerWidth;
+		viewportHeight = window.innerHeight;
+		const onResize = () => {
+			if (window.innerWidth === width) return;
+			width = window.innerWidth;
+			viewportHeight = window.innerHeight;
+		};
+		window.addEventListener('resize', onResize);
+		return () => window.removeEventListener('resize', onResize);
+	});
+
 	// Scroll-spy (home page only; the legal pages have no sections)
 	$effect(() => {
 		if (page.url.pathname !== '/') {
@@ -47,7 +63,7 @@
 		let frame = 0;
 		const update = () => {
 			frame = 0;
-			const line = window.innerHeight * 0.4;
+			const line = viewportHeight * 0.4;
 			let index = -1;
 			sections.forEach((section, i) => {
 				if (section && section.getBoundingClientRect().top <= line) index = i;
@@ -89,7 +105,7 @@
 		const handleScroll = () => {
 			const y = window.scrollY;
 			scrolled = y > 20;
-			menuButtonVisible = page.url.pathname !== '/' || y > window.innerHeight * 0.8;
+			menuButtonVisible = page.url.pathname !== '/' || y > viewportHeight * 0.8;
 		};
 
 		// The drawer only exists in the mobile layout; close it if the viewport grows past it
@@ -270,35 +286,35 @@
 		<nav class="drawer-nav font-sans" aria-label="Page sections">
 			<a href="/#story" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 0} aria-current={activeIndex === 0 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">01</span>
-				<span class="nav-text">THE STORY</span>
+				<span class="nav-text">STORY</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
 			<a href="/#room" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 1} aria-current={activeIndex === 1 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">02</span>
-				<span class="nav-text">THE ROOM</span>
+				<span class="nav-text">ROOM</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
 			<a href="/#menu" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 2} aria-current={activeIndex === 2 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">03</span>
-				<span class="nav-text">THE MENU</span>
+				<span class="nav-text">MENU</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
 			<a href="/#sound" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 3} aria-current={activeIndex === 3 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">04</span>
-				<span class="nav-text">SOUND &amp; VINYL</span>
+				<span class="nav-text">SOUND</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>
 			</a>
 			<a href="/#visit" onclick={closeMobile} class="drawer-nav-item" class:active={activeIndex === 4} aria-current={activeIndex === 4 ? 'location' : undefined}>
 				<span class="nav-idx font-mono">05</span>
-				<span class="nav-text">VISIT US &amp; HOURS</span>
+				<span class="nav-text">VISIT</span>
 				<svg class="nav-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="9 18 15 12 9 6"></polyline>
 				</svg>

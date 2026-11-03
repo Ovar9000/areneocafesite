@@ -18,7 +18,7 @@
 	<section class="legal-section">
 		<h2 class="section-title font-mono">01. OUR CORE PHILOSOPHY</h2>
 		<p>
-			Lot 7 Cafe (“Lot 7”, “we”, “us”, or “our”) is an independent specialty coffee bar and vinyl listening room based in Naga City, Camarines Sur. We believe your privacy should be handled with the same care and intentionality as our coffee and sound.
+			Lot 7 Cafe (“Lot 7”, “we”, “us”, or “our”) is an independent specialty coffee bar and vinyl listening room based in Naga City, Camarines Sur.
 		</p>
 		<p>
 			We do not sell, rent, monetize, or broker personal information. We do not use third-party advertising tracking pixels, cross-site trackers, or invasive data brokers.

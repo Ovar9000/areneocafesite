@@ -84,7 +84,7 @@
 
 <section class="hero-section" class:intro-played={skipIntro} id="hero" bind:this={section}>
 	<div class="hero-inner container">
-		<h1 class="visually-hidden">Lot 7 Cafe — specialty coffee and vinyl listening room in Naga City</h1>
+		<h1 class="visually-hidden">Lot 7 Cafe: coffee and records in Naga City</h1>
 
 		<!-- Main Visual: Dynamic Showcase Video (4:5 Portrait on mobile, 16:9 Landscape on desktop) -->
 		<div class="showcase-stage">
@@ -144,10 +144,10 @@
 		<!-- Fat Seed Inspired Bottom In-Page Navigation Pills Dock -->
 		<nav class="hero-pills-dock font-mono" aria-label="Hero quick jump">
 			<a href="#story" class="hero-pill" style="--i: 0">
-				<span>THE STORY</span>
+				<span>STORY</span>
 			</a>
 			<a href="#room" class="hero-pill" style="--i: 1">
-				<span>THE ROOM</span>
+				<span>ROOM</span>
 			</a>
 			<a href="#menu" class="hero-pill" style="--i: 2">
 				<span>MENU</span>
@@ -156,7 +156,7 @@
 				<span>SOUND</span>
 			</a>
 			<a href="#visit" class="hero-pill" style="--i: 4">
-				<span>VISIT US</span>
+				<span>VISIT</span>
 			</a>
 			<a 
 				href={INSTAGRAM_URL} 
@@ -180,7 +180,7 @@
 
 <style>
 	.hero-section {
-		height: calc(100dvh - var(--header-height));
+		height: calc(100svh - var(--header-height));
 		min-height: 580px;
 		display: flex;
 		align-items: center;
@@ -207,7 +207,7 @@
 	/* Dynamic Showcase Video Player (Desktop 16:9) */
 	.showcase-stage {
 		width: min(92vw, 1150px);
-		max-height: calc(75dvh - 5.5rem);
+		max-height: calc(75svh - 5.5rem);
 		aspect-ratio: 16 / 9;
 		position: relative;
 	}
@@ -496,8 +496,8 @@
 	/* Mobile View (Matching Fat Seed Portrait Energy) */
 	@media (max-width: 768px) {
 		.hero-section {
-			height: calc(100dvh - var(--header-height));
-			min-height: calc(100dvh - var(--header-height));
+			height: calc(100svh - var(--header-height));
+			min-height: calc(100svh - var(--header-height));
 			padding: 0.75rem var(--page-padding) 1.25rem;
 		}
 
@@ -510,7 +510,7 @@
 		/* 4:5 Vertical Portrait Video on Phone */
 		.showcase-stage {
 			width: min(88vw, 360px);
-			height: min(48dvh, 420px);
+			height: min(48svh, 420px);
 			max-height: none;
 			aspect-ratio: 4 / 5;
 		}

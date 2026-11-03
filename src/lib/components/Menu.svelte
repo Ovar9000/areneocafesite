@@ -70,7 +70,7 @@
 
 			<div class="header-row">
 				<h2 class="section-headline">ON THE BOARD</h2>
-				<p class="header-note font-mono">PRICES IN PHILIPPINE PESOS · ₱</p>
+				<p class="header-note font-mono">PRICES IN ₱</p>
 			</div>
 		</div>
 
@@ -185,7 +185,7 @@
 					</ul>
 				</div>
 
-				<p class="board-foot font-mono">MENU MAY CHANGE · ASK AT THE BAR FOR TODAY'S POUR</p>
+				<p class="board-foot font-mono">MENU MAY CHANGE · ASK AT THE BAR</p>
 			</div>
 		</div>
 	</div>
@@ -193,7 +193,7 @@
 
 <style>
 	.menu-section {
-		min-height: 100dvh;
+		min-height: 100svh;
 		display: flex;
 		align-items: center;
 		padding: 5.5rem 0;
