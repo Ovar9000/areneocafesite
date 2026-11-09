@@ -8,6 +8,7 @@
 	import { browser } from '$app/environment';
 	import { clickSpring } from '$lib/attachments/click-spring';
 	import { INSTAGRAM_URL } from '$lib/site';
+	import poster from '$lib/assets/images/lot7-showcase-poster.webp';
 
 	const skipIntro = browser && introPlayed;
 	if (browser) introPlayed = true;
@@ -79,7 +80,7 @@
 
 <svelte:head>
 	<!-- The poster is what the intro opens onto: fetch it first so the reveal never shows an empty frame -->
-	<link rel="preload" as="image" href="/videos/lot7-showcase-poster.webp" fetchpriority="high" />
+	<link rel="preload" as="image" href={poster} fetchpriority="high" />
 </svelte:head>
 
 <section class="hero-section" class:intro-played={skipIntro} id="hero" bind:this={section}>
@@ -94,7 +95,7 @@
 				     in the manifesto section, so the video itself is hidden from screen readers. -->
 				<video
 					bind:this={video}
-					poster="/videos/lot7-showcase-poster.webp"
+					{poster}
 					preload="none"
 					loop
 					muted
@@ -133,7 +134,8 @@
 		<div class="hero-caption-block">
 			<p class="hero-creed">
 				<enhanced:img
-					src="$lib/assets/brand/tagline-serif.png"
+					src="$lib/assets/brand/tagline-serif.png?w=240;400;640;940"
+					sizes="(max-width: 768px) 226px, 314px"
 					alt="your neighborhood, just a little better."
 					width="640"
 					class="hero-tagline-art"

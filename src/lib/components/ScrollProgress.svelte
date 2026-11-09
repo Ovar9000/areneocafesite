@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { afterLayout } from '$lib/after-layout';
+
 	// Floating glass button: the ring fills as you read down the page, a tap goes back to the top.
 	// It appears once the hero is behind you. Desktop only: on phones and tablets that corner
 	// holds the menu button (Header.svelte).
@@ -19,10 +21,11 @@
 		const schedule = () => {
 			if (!frame) frame = requestAnimationFrame(update);
 		};
-		update();
+		const cancelFirstRead = afterLayout(update);
 		window.addEventListener('scroll', schedule, { passive: true });
 		window.addEventListener('resize', schedule);
 		return () => {
+			cancelFirstRead();
 			cancelAnimationFrame(frame);
 			window.removeEventListener('scroll', schedule);
 			window.removeEventListener('resize', schedule);

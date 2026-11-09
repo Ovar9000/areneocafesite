@@ -146,7 +146,7 @@ body::before {
 			var(--plates-veil) min(100%, calc(50% + 600px)),
 			transparent min(100%, calc(50% + 820px))
 		),
-		url('/images/plates-page.svg') center 0 / var(--plates-size) repeat;
+		url('./lib/assets/images/plates-page.svg') center 0 / var(--plates-size) repeat;
 }
 
 /* Where the reading is dense (the menu board) the wall steps back almost

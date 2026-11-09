@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import Lot7Logo from './Lot7Logo.svelte';
+	import { afterLayout } from '$lib/after-layout';
 	import { clickSpring } from '$lib/attachments/click-spring';
 	import { INSTAGRAM_URL } from '$lib/site';
 
@@ -44,27 +45,23 @@
 			return;
 		}
 		const sections = SECTIONS.map(({ id }) => document.getElementById(id));
-		let frame = 0;
-		const update = () => {
-			frame = 0;
-			const line = window.innerHeight * 0.4;
-			let index = -1;
-			sections.forEach((section, i) => {
-				if (section && section.getBoundingClientRect().top <= line) index = i;
-			});
-			activeIndex = index;
-		};
-		const schedule = () => {
-			if (!frame) frame = requestAnimationFrame(update);
-		};
-		update();
-		window.addEventListener('scroll', schedule, { passive: true });
-		window.addEventListener('resize', schedule);
-		return () => {
-			cancelAnimationFrame(frame);
-			window.removeEventListener('scroll', schedule);
-			window.removeEventListener('resize', schedule);
-		};
+		const passed = sections.map(() => false);
+		// The observed area runs from far above the page down to the 40% line, so a section
+		// intersects it once its top has crossed that line. The browser reports this after its
+		// own layout, so nothing is measured from script on load or while scrolling.
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					passed[sections.indexOf(entry.target as HTMLElement)] = entry.isIntersecting;
+				}
+				activeIndex = passed.lastIndexOf(true);
+			},
+			{ rootMargin: '1000000px 0px -60% 0px' }
+		);
+		for (const section of sections) {
+			if (section) observer.observe(section);
+		}
+		return () => observer.disconnect();
 	});
 
 	// Re-measure the lens when the nav reflows (web fonts arriving, window resizing)
@@ -86,10 +83,12 @@
 	});
 
 	$effect(() => {
+		// Read here, not in the handler, so this effect re-runs when the page changes
+		const onHome = page.url.pathname === '/';
 		const handleScroll = () => {
 			const y = window.scrollY;
 			scrolled = y > 20;
-			menuButtonVisible = page.url.pathname !== '/' || y > window.innerHeight * 0.8;
+			menuButtonVisible = !onHome || y > window.innerHeight * 0.8;
 		};
 
 		// The drawer only exists in the mobile layout; close it if the viewport grows past it
@@ -104,9 +103,10 @@
 		document.body.addEventListener('touchstart', noop, { passive: true });
 		window.addEventListener('scroll', handleScroll, { passive: true });
 		desktopQuery.addEventListener('change', handleBreakpoint);
-		handleScroll();
+		const cancelFirstRead = afterLayout(handleScroll);
 
 		return () => {
+			cancelFirstRead();
 			document.body.removeEventListener('touchstart', noop);
 			window.removeEventListener('scroll', handleScroll);
 			desktopQuery.removeEventListener('change', handleBreakpoint);

@@ -22,6 +22,9 @@ export default defineConfig({
 				// Served by Vercel for unknown URLs; renders the +error page client-side
 				fallback: '404.html'
 			}),
+			// Put the CSS in the HTML: first paint then waits on one request instead of three, and
+			// fonts and the plate wall start downloading as soon as the HTML has arrived
+			inlineStyleThreshold: 64 * 1024,
 			// Prerendered pages receive this as a <meta http-equiv> tag, with a sha256 hash
 			// for SvelteKit's inline bootstrap script, so script-src needs no 'unsafe-inline'.
 			// Header-only protections (frame-ancestors, X-Frame-Options, etc.) live in vercel.json.
