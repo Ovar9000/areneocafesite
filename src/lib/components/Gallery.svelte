@@ -25,20 +25,20 @@
 	// The room first (the plate wall, the bar, the sign), then the night and the drinks.
 	// Portraits and landscapes alternate so the strip has a rhythm.
 	const PHOTOS: Photo[] = [
-		{ file: 'plate-wall', title: 'The License Plate Wall', alt: 'The Lot 7 license plate wall: rows of American state plates framed in dark wood', landscape: true },
-		{ file: 'espresso-bar', title: 'The Espresso Bar', alt: 'A barista locking in a portafilter beside iced drinks in Lot 7 cups' },
-		{ file: 'gallery-rush', title: 'Rush Hour', alt: 'A long-exposure blur of people moving through the cafe', landscape: true },
-		{ file: 'gallery-pour', title: 'The Pour', alt: 'Milk being poured into an iced espresso on the drip tray' },
-		{ file: 'gallery-handoff', title: 'Order Up', alt: 'A barista setting two iced lattes in Lot 7 cups on the counter' },
-		{ file: 'sign-closeup', title: 'The Ceiling Sign', alt: 'Close-up of the illuminated Lot 7 Cafe lightbox sign', landscape: true, focus: '70% center' },
-		{ file: 'gallery-cups', title: 'House Cups', alt: 'Empty Lot 7 cups lined up on the bar, the espresso machine behind' },
-		{ file: 'gallery-grinder', title: 'The Grinder', alt: 'The espresso grinder and machine at the end of the counter', focus: 'center 60%' },
-		{ file: 'gallery-iced-black', title: 'Iced Black', alt: 'An iced black coffee in a Lot 7 cup on a wooden ledge', landscape: true },
-		{ file: 'gallery-booth', title: 'The Booth', alt: 'A DJ at the booth by the window, the Lot 7 lightbox overhead' },
-		{ file: 'gallery-soda', title: 'Green Soda', alt: 'A hand lifting a green soda in a Lot 7 cup from the counter', focus: 'center 60%' },
-		{ file: 'gallery-lightbox', title: 'The Lightbox', alt: 'The Lot 7 Cafe lightbox glowing on the dark ceiling: your neighborhood, just a little better.', landscape: true },
-		{ file: 'gallery-portrait', title: 'In the Moment', alt: 'A guest looking down in warm flash light under the ceiling lettering' },
-		{ file: 'gallery-ceiling', title: 'Overhead', alt: 'The black metal grid ceiling of the cafe', landscape: true }
+		{ file: 'plate-wall', title: 'Plate wall', alt: 'The Lot 7 license plate wall: rows of American state plates framed in dark wood', landscape: true },
+		{ file: 'espresso-bar', title: 'Espresso bar', alt: 'A barista locking in a portafilter beside iced drinks in Lot 7 cups' },
+		{ file: 'gallery-rush', title: 'Full house', alt: 'A long-exposure blur of people moving through the cafe', landscape: true },
+		{ file: 'gallery-pour', title: 'Milk pour', alt: 'Milk being poured into an iced espresso on the drip tray' },
+		{ file: 'gallery-handoff', title: 'Counter', alt: 'A barista setting two iced lattes in Lot 7 cups on the counter' },
+		{ file: 'sign-closeup', title: 'Signage', alt: 'Close-up of the illuminated Lot 7 Cafe lightbox sign', landscape: true, focus: '70% center' },
+		{ file: 'gallery-cups', title: 'To-go', alt: 'Empty Lot 7 cups lined up on the bar, the espresso machine behind' },
+		{ file: 'gallery-grinder', title: 'Grinder', alt: 'The espresso grinder and machine at the end of the counter', focus: 'center 60%' },
+		{ file: 'gallery-iced-black', title: 'Iced black', alt: 'An iced black coffee in a Lot 7 cup on a wooden ledge', landscape: true },
+		{ file: 'gallery-booth', title: 'DJ booth', alt: 'A DJ at the booth by the window, the Lot 7 lightbox overhead' },
+		{ file: 'gallery-soda', title: 'Apple FM', alt: 'A hand lifting a green soda in a Lot 7 cup from the counter', focus: 'center 60%' },
+		{ file: 'gallery-lightbox', title: 'Lightbox', alt: 'The Lot 7 Cafe lightbox glowing on the dark ceiling: your neighborhood, just a little better.', landscape: true },
+		{ file: 'gallery-portrait', title: 'Under the sign', alt: 'A guest looking down in warm flash light under the ceiling lettering' },
+		{ file: 'gallery-ceiling', title: 'Ceiling', alt: 'The black metal grid ceiling of the cafe', landscape: true }
 	];
 
 	const picture = (file: string) => files[`/src/lib/assets/images/${file}.jpg`].default;
@@ -100,7 +100,7 @@
 
 <section class="gallery-section" id="room">
 	<div class="gallery-header container">
-		<h2 class="section-headline">INSIDE LOT 7</h2>
+		<h2 class="section-headline">ROOM</h2>
 
 		<!-- Glass paging buttons; the strip also swipes, scrolls and takes arrow keys -->
 		<div class="gallery-controls">

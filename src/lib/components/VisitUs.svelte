@@ -35,9 +35,9 @@
 		<!-- Section Header -->
 		<div class="visit-header">
 			
-			<h2 class="section-headline">FIND THE ROOM</h2>
+			<h2 class="section-headline">VISIT</h2>
 			<p class="visit-subtext font-sans">
-				No reservations. Walk in, grab a seat, and push the door open.
+				No reservations. Just walk in and grab a seat.
 			</p>
 		</div>
 
@@ -45,7 +45,7 @@
 			<!-- Card 1: Hours (from the window decal) & live open/closed status -->
 			<div class="visit-card photo-frame">
 				<div class="card-head font-mono">
-					<h3 class="head-tag">OPENING HOURS</h3>
+					<h3 class="head-tag">HOURS</h3>
 					<div class="live-pill" class:is-open={status?.isOpen}>
 						<span class="live-dot"></span>
 						<span>{status?.statusText ?? 'CHECKING HOURS'}</span>
@@ -54,17 +54,17 @@
 
 				<div class="hours-schedule">
 					<div class="schedule-row">
-						<span class="day-name font-sans">MON — FRI</span>
-						<span class="time-slot font-mono">10:00 AM — 10:00 PM</span>
+						<span class="day-name font-sans">MON–FRI</span>
+						<span class="time-slot font-mono">10 AM–10 PM</span>
 					</div>
 
 					<div class="schedule-row">
-						<span class="day-name font-sans">SATURDAY</span>
-						<span class="time-slot font-mono">2:00 PM — 10:00 PM</span>
+						<span class="day-name font-sans">SAT</span>
+						<span class="time-slot font-mono">2 PM–10 PM</span>
 					</div>
 
 					<div class="schedule-row">
-						<span class="day-name font-sans">SUNDAY</span>
+						<span class="day-name font-sans">SUN</span>
 						<span class="time-slot closed-text font-mono">CLOSED</span>
 					</div>
 				</div>
@@ -102,7 +102,7 @@
 							rel="noopener noreferrer"
 							class="btn-pill btn-pill-primary map-btn"
 						>
-							<span>GET DIRECTIONS</span>
+							<span>OPEN IN GOOGLE MAPS</span>
 							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
 								<polyline points="15 3 21 3 21 9"></polyline>

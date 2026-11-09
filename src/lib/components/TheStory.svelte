@@ -18,14 +18,14 @@
 					</p>
 
 					<p class="quote-closing font-editorial">
-						“But what inspires us is only where the story begins.”
+						But what inspires us is only where the story begins.
 					</p>
 				</div>
 			</div>
 
 			<!-- Right: The room under the tagline ceiling, in true portrait ratio -->
 			<div class="story-media photo-frame">
-				<MediaFrame placeholder="room-fisheye" aspect="3 / 4" maxHeight="560px" title="The Room">
+				<MediaFrame placeholder="room-fisheye" aspect="3 / 4" maxHeight="560px" title="The room">
 					<enhanced:img
 						src="$lib/assets/images/room-fisheye.jpg"
 						alt="Wide view of the Lot 7 room: guests at the tables beneath the ceiling lettering 'your neighborhood, just a little better.'"
@@ -40,7 +40,7 @@
 
 <style>
 	.story-section {
-		min-height: 100dvh;
+		min-height: 100svh;
 		display: flex;
 		align-items: center;
 		padding: 5.5rem 0;

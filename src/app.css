@@ -135,7 +135,13 @@ body {
 body::before {
 	content: '';
 	position: fixed;
-	inset: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	/* Sized to the large viewport plus the drift distance, so the phone address bar showing or
+	   hiding never resizes it, and the slide up never shows its bottom edge */
+	height: calc(100vh + var(--plates-drift));
+	height: calc(100lvh + var(--plates-drift));
 	z-index: -1;
 	pointer-events: none;
 	background:
@@ -178,13 +184,16 @@ body::before {
 		body::before {
 			animation: plates-drift linear both;
 			animation-timeline: scroll(root);
+			will-change: transform;
 		}
 	}
 }
 
+/* Moved with transform, not background-position, so the browser slides the layer on the GPU
+   instead of repainting the whole screen (and every glass panel above it) on each scroll frame */
 @keyframes plates-drift {
 	to {
-		background-position: 0 0, center calc(-1 * var(--plates-drift));
+		transform: translate3d(0, calc(-1 * var(--plates-drift)), 0);
 	}
 }
 

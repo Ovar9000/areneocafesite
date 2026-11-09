@@ -12,15 +12,19 @@
 
 	// schema.org structured data so search engines can show hours, location, menu and links.
 	// Hours and menu come from the same tables that drive the page.
-	const schema = {
-		'@context': 'https://schema.org',
+	const cafe = {
 		'@type': 'CafeOrCoffeeShop',
+		'@id': `${SITE_URL}/#cafe`,
 		name: 'Lot 7 Cafe',
+		alternateName: ['LOT 7 CAFE', 'Lot 7'],
 		slogan: 'Your neighborhood, just a little better.',
 		description:
-			'Espresso classics, house mixes and sodas with a resident deck in Naga City, Camarines Sur.',
+			'Espresso, house mixes and cold sodas, with vinyl on the deck, in Naga City, Camarines Sur.',
 		url: `${SITE_URL}/`,
 		image: `${SITE_URL}/images/og-lot7.jpg`,
+		logo: `${SITE_URL}/apple-touch-icon.png`,
+		areaServed: { '@type': 'City', name: 'Naga City' },
+		currenciesAccepted: 'PHP',
 		priceRange: '₱₱',
 		servesCuisine: 'Coffee',
 		hasMenu: {
@@ -62,6 +66,18 @@
 				: []
 		)
 	};
+
+	const website = {
+		'@type': 'WebSite',
+		'@id': `${SITE_URL}/#website`,
+		name: 'Lot 7 Cafe',
+		alternateName: ['LOT 7 CAFE', 'lot7.cafe'],
+		url: `${SITE_URL}/`,
+		inLanguage: 'en-PH',
+		publisher: { '@id': `${SITE_URL}/#cafe` }
+	};
+
+	const schema = { '@context': 'https://schema.org', '@graph': [website, cafe] };
 
 	// Escape "<" so the JSON can never close the <script> element early
 	const json = JSON.stringify(schema).replace(/</g, '\\u003c');

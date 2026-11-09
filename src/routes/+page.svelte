@@ -10,8 +10,8 @@
 </script>
 
 <Seo
-	title="LOT 7 CAFE — Your neighborhood, just a little better."
-	description="Lot 7 Cafe in Naga City, Camarines Sur: your neighborhood, just a little better. Espresso classics, house mixes and sodas from ₱99, with a resident deck. Open Monday to Friday 10 AM to 10 PM, Saturday 2 PM to 10 PM."
+	title="Lot 7 Cafe | Coffee Shop in Naga City, Camarines Sur"
+	description="Coffee shop in Bagumbayan Sur, Naga City. Espresso, house mixes and sodas from ₱99, with a DJ deck and vinyl. Open Mon–Fri 10 AM–10 PM, Sat 2–10 PM."
 />
 <CafeSchema />
 
