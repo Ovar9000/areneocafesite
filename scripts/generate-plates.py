@@ -4,7 +4,8 @@
 
 Writes:
 
-  static/images/plates-page.svg        60 unique plates, colours faded most of the way into the
+  src/lib/assets/images/plates-page.svg
+                                       60 unique plates, colours faded most of the way into the
                                        canvas. app.css lays it on a fixed layer with a slow
                                        parallax drift and a veil behind the content column.
 
@@ -30,7 +31,7 @@ from fontTools.ttLib import TTFont
 
 ROOT = Path(__file__).resolve().parent.parent
 FONT = ROOT / 'node_modules' / '@fontsource' / 'bebas-neue' / 'files' / 'bebas-neue-latin-400-normal.woff'
-OUT = ROOT / 'static' / 'images'
+OUT = ROOT / 'src' / 'lib' / 'assets' / 'images'
 
 SEED = 7
 COLS, ROWS = 10, 6  # 60 unique plates: about two screens of wall before anything repeats

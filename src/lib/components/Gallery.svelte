@@ -71,7 +71,7 @@
 	}
 
 	$effect(() => {
-		update();
+		// Also fires once as soon as it starts observing, after layout, which sets the first state
 		const observer = new ResizeObserver(update);
 		observer.observe(track);
 		return () => observer.disconnect();

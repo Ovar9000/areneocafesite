@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import Lot7Logo from './Lot7Logo.svelte';
+	import { afterLayout } from '$lib/after-layout';
 	import { clickSpring } from '$lib/attachments/click-spring';
 	import { INSTAGRAM_URL } from '$lib/site';
 
@@ -42,15 +43,21 @@
 	// state, so it is only re-read when the width changes (rotation, a resized window).
 	let viewportHeight = 0;
 	$effect(() => {
-		let width = window.innerWidth;
-		viewportHeight = window.innerHeight;
-		const onResize = () => {
-			if (window.innerWidth === width) return;
+		let width = 0;
+		const measure = () => {
 			width = window.innerWidth;
 			viewportHeight = window.innerHeight;
 		};
+		// Stays above the effects that read viewportHeight: their first reads queue after this one
+		const cancelFirstRead = afterLayout(measure);
+		const onResize = () => {
+			if (window.innerWidth !== width) measure();
+		};
 		window.addEventListener('resize', onResize);
-		return () => window.removeEventListener('resize', onResize);
+		return () => {
+			cancelFirstRead();
+			window.removeEventListener('resize', onResize);
+		};
 	});
 
 	// Scroll-spy (home page only; the legal pages have no sections)
@@ -73,10 +80,11 @@
 		const schedule = () => {
 			if (!frame) frame = requestAnimationFrame(update);
 		};
-		update();
+		const cancelFirstRead = afterLayout(update);
 		window.addEventListener('scroll', schedule, { passive: true });
 		window.addEventListener('resize', schedule);
 		return () => {
+			cancelFirstRead();
 			cancelAnimationFrame(frame);
 			window.removeEventListener('scroll', schedule);
 			window.removeEventListener('resize', schedule);
@@ -102,10 +110,12 @@
 	});
 
 	$effect(() => {
+		// Read here, not in the handler, so this effect re-runs when the page changes
+		const onHome = page.url.pathname === '/';
 		const handleScroll = () => {
 			const y = window.scrollY;
 			scrolled = y > 20;
-			menuButtonVisible = page.url.pathname !== '/' || y > viewportHeight * 0.8;
+			menuButtonVisible = !onHome || y > viewportHeight * 0.8;
 		};
 
 		// The drawer only exists in the mobile layout; close it if the viewport grows past it
@@ -120,9 +130,10 @@
 		document.body.addEventListener('touchstart', noop, { passive: true });
 		window.addEventListener('scroll', handleScroll, { passive: true });
 		desktopQuery.addEventListener('change', handleBreakpoint);
-		handleScroll();
+		const cancelFirstRead = afterLayout(handleScroll);
 
 		return () => {
+			cancelFirstRead();
 			document.body.removeEventListener('touchstart', noop);
 			window.removeEventListener('scroll', handleScroll);
 			desktopQuery.removeEventListener('change', handleBreakpoint);
